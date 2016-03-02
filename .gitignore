@@ -1,0 +1,8 @@
+*.xml
+122GameServer/nbproject/private/private.properties
+*.properties
+122GameServer/build/classes/Server/Main.class
+*.class
+122GameServer/build/classes/.netbeans_update_resources
+*.netbeans_automatic_build
+122GameServer/manifest.mf
