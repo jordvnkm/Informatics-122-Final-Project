@@ -29,8 +29,11 @@ public class Board{
 		return columns;
 	}
 	
-	
 	public Tile getTile(int row, int col){
 		return this.board[row][col];
+	}
+	
+	public void setTile(int row, int col, Tile t){
+		this.board[row][col] = t;
 	}
 }

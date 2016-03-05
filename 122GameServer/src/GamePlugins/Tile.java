@@ -4,9 +4,20 @@ import java.util.ArrayList;
 
 public class Tile{
 	private ArrayList<Piece> pieces;
+	private String backgroundColor;
 	
 	public Tile(){
 		pieces = new ArrayList<Piece>();
+		backgroundColor = "White";
+	}
+	
+	public Tile(String color){
+		pieces = new ArrayList<Piece>();
+		backgroundColor = color;
+	}
+	
+	public String getBackgroundColor(){
+		return this.backgroundColor;
 	}
 	
 	public void clearTile(){
@@ -32,11 +43,13 @@ public class Tile{
 		return true;
 	}
 	
-	public PieceType getPieceType(){
+	public char getPieceType(){
 		return this.pieces.get(0).getType();
 	}
 	
-	public Piece getPiece(){
-		return this.pieces.get(0);
+	public Piece getFirstPiece(){
+		if(this.pieces.size() > 0)
+			return this.pieces.get(0);
+		return null;
 	}
 }

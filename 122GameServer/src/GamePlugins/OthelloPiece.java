@@ -7,7 +7,7 @@ public class OthelloPiece extends Piece{
 	private String shape;
 	
 	public OthelloPiece(String color, String shape, String otherColor){
-		super(color, shape);
+		super(color, shape, 'W');
 		this.otherColor = otherColor;
 	}
 	

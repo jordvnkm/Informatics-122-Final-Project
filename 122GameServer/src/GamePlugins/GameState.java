@@ -17,7 +17,6 @@ public abstract class GameState {
 	
 	
 	public GameState(int row, int col, List<Player> players){
-		this.board = new Board(row, col);			
 		this.players = players;
 		this.isRunning = true;
 		this.turn = 0;

@@ -2,14 +2,16 @@ package GamePlugins;
 
 public class Piece{
 	
-	protected String color;
-	protected String shape;
-	protected PieceType type;
+	private String color;
+	private String shape;
+	private char type;
+	private int layer; 
 	
-	public Piece(String color, String shape){
+	public Piece(String color, String shape, char type){
 		this.color = color;
 		this.shape = shape;
-		this.type = PieceType.NONE;
+		this.type = type;
+		this.layer = 1;
 	}
 	
 	public String getColor(){
@@ -20,8 +22,11 @@ public class Piece{
 		return this.shape;
 	}
 	
-	public PieceType getType(){
-		return this.getType();
+	public char getType(){
+		return this.type;
 	}
 	
+	public int getLayer(){
+		return this.layer;
+	}
 }

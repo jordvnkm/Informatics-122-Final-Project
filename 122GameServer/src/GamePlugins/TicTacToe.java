@@ -12,13 +12,14 @@ public class TicTacToe extends GameState{
 	public TicTacToe(int x, int y, List<Player> players){
 		super(x, y, players);
 		playerToPiece = new HashMap<String, Piece>();
-		playerToPiece.put(players.get(0).getName(), new TicTacToeXPiece("Black", "X"));
-		playerToPiece.put(players.get(1).getName(), new TicTacToeOPiece("Red", "Circle"));
+		playerToPiece.put(players.get(0).getName(), new Piece("Black", "Cross", 'X'));
+		playerToPiece.put(players.get(1).getName(), new Piece("Red", "Circle", 'O'));
+		setUpBoard();
 	}
 	
 	@Override
 	public void setUpBoard() {
-		
+		this.board = new Board(3, 3);
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class TicTacToe extends GameState{
 	public boolean checkValidMove(int x, int y) {
 		if(x < 0 || x > 2 || y < 0 || y > 2)
 			return false;
-		else if(board.getTile(x, y).getPieceType() != PieceType.NONE)
+		else if(board.getTile(x, y).hasPieces())
 			return false;
 		
 		return true;
@@ -63,7 +64,8 @@ public class TicTacToe extends GameState{
 	
 	private boolean checkRowsForWin(){
 		for(int i = 0; i < 3; i++){
-			if(checkRowCol(board.getTile(i, 0).getPiece(), board.getTile(i,  1).getPiece(), board.getTile(i, 2).getPiece()))
+			if(checkRowCol(board.getTile(i, 0).getFirstPiece(), 
+					board.getTile(i,  1).getFirstPiece(), board.getTile(i, 2).getFirstPiece()))
 				return true;
 		}
 		return false;
@@ -71,20 +73,25 @@ public class TicTacToe extends GameState{
 	
 	private boolean checkColumnsForWin(){
 		for(int i = 0; i < 3; i++){
-			if(checkRowCol(board.getTile(0, i).getPiece(), board.getTile(1, i).getPiece(), board.getTile(2, i).getPiece()))
+			if(checkRowCol(board.getTile(0, i).getFirstPiece(), 
+					board.getTile(1, i).getFirstPiece(), board.getTile(2, i).getFirstPiece()))
 				return true;
 		}
 		return false;
 	}
 	
+	
 	private boolean checkDiagonalsForWin(){
-		return (checkRowCol(board.getTile(0, 0).getPiece(), board.getTile(1, 1).getPiece(), board.getTile(2, 2).getPiece()) ||
-				 checkRowCol(board.getTile(0, 2).getPiece(), board.getTile(1, 1).getPiece(), board.getTile(2, 0).getPiece()));	
+		return (checkRowCol(board.getTile(0, 0).getFirstPiece(), 
+				board.getTile(1, 1).getFirstPiece(), board.getTile(2, 2).getFirstPiece()) ||
+				 checkRowCol(board.getTile(0, 2).getFirstPiece(), 
+						 board.getTile(1, 1).getFirstPiece(), board.getTile(2, 0).getFirstPiece()));	
 	}
 	
 	
 	private boolean checkRowCol(Piece p1, Piece p2, Piece p3){
-		return ((p1.getType() != PieceType.NONE) && (p1.equals(p2)) && (p2.equals(p3)));
+		return (!(p1 == null || p2 == null || p3 == null) &&
+				(p1.getType() != '\0' && p1.getType() == p2.getType() && p2.getType() == p3.getType()));
 	}
 
 
