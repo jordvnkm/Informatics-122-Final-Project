@@ -1,3 +1,5 @@
+package GamePlugins;
+
 import java.util.ArrayList;
 
 public class Tile{
@@ -28,5 +30,13 @@ public class Tile{
 			return false;
 		}
 		return true;
+	}
+	
+	public PieceType getPieceType(){
+		return this.pieces.get(0).getType();
+	}
+	
+	public Piece getPiece(){
+		return this.pieces.get(0);
 	}
 }
