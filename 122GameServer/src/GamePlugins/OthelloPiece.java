@@ -1,17 +1,18 @@
 package GamePlugins;
 
+// This class might not be needed anymore
 public class OthelloPiece extends Piece{
 	
-	private String color;
 	private String otherColor;
 	private String shape;
 	
-	public OthelloPiece(String color, String shape, String otherColor){
-		super(color, shape, 'W');
-		this.otherColor = otherColor;
+	// Have to change constructor
+	public OthelloPiece(int[] color, String shape, String layer, char type){
+		super(color, shape, layer, type);
 	}
 	
-	public String getColor(){
+	/*
+	public int[] getColor(){
 		return this.color;
 	}
 	
@@ -22,6 +23,6 @@ public class OthelloPiece extends Piece{
 	public void switchColor(){
 		this.color = this.otherColor;
 	}
-	
+	*/
 	
 }

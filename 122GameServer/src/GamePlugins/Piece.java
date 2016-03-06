@@ -4,20 +4,10 @@ public class Piece{
 	
 	private String shape;
 	private char type;
-	private int layer; 
-	
-	public Piece(String color, String shape, char type){
-		this.color = color;
-		this.shape = shape;
-		this.type = type;
-		this.layer = 1;
-	//altered datat type for RGB
+	private String layer; 
+	//altered data type for RGB
 	private int[]  color;
-
-	//added data members
-	private String layer;
-	private char type;
-	
+		
 	public Piece(int[] color, String shape, String layer, char type){
 		this.color = color;
 		this.shape = shape;
@@ -25,19 +15,23 @@ public class Piece{
 		this.type = type;
 	}
 	
-	public String getColor(){
+	//changed the return type to work for RGB
+	public int[] getColor()
+	{
 		return this.color;
 	}
 	
 	public String getShape(){
 		return this.shape;
 	}
-	
-	public char getType(){
-		return this.type;
+
+	public String getLayer()
+	{
+		return layer;
 	}
 	
-	public int getLayer(){
-		return this.layer;
+	public char getType()
+	{
+		return type;
 	}
 }

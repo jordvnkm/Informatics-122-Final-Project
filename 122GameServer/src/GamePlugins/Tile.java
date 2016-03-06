@@ -4,25 +4,23 @@ import java.util.ArrayList;
 
 public class Tile{
 	
-	private ArrayList<Piece> pieces;
-	private String backgroundColor;
-	
+	private ArrayList<Piece> pieces;	
 	//new data member to store the background color of the tile
 	private int[] backgroundColor;
 	
 	
 	public Tile(){
 		pieces = new ArrayList<Piece>();
-		backgroundColor = "White";
+		backgroundColor = new int[3];
 	}
 	
-	public Tile(String color){
+	public Tile(int[] color){
 		pieces = new ArrayList<Piece>();
 		backgroundColor = color;
 	}
 	
-	public String getBackgroundColor(){
-		return this.backgroundColor;
+	public int[] getBackgroundColor(){
+		return backgroundColor;
 	}
 	
 	public void clearTile(){
@@ -48,7 +46,6 @@ public class Tile{
 		return true;
 	}
 	
-<<<<<<< HEAD
 	public char getPieceType(){
 		return this.pieces.get(0).getType();
 	}
@@ -57,18 +54,13 @@ public class Tile{
 		if(this.pieces.size() > 0)
 			return this.pieces.get(0);
 		return null;
-=======
+	}
+
 	//new methods to set and get background color
 	public void setBackgroundColor(int r, int g, int b)
 	{
 		backgroundColor[0] = r;
 		backgroundColor[1] = g;
 		backgroundColor[2] = b;		
-	}
-	
-	public int[] getBackgroundColor()
-	{
-		return backgroundColor;
->>>>>>> refs/remotes/origin/master
 	}
 }
