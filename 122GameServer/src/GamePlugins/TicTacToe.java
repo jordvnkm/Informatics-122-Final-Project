@@ -2,7 +2,6 @@ package GamePlugins;
 
 import java.util.HashMap;
 import java.util.List;
-
 import Server.Player;
 
 public class TicTacToe extends GameState{
@@ -36,6 +35,7 @@ public class TicTacToe extends GameState{
 	public boolean playMove(int x, int y) {
 		if(checkValidMove(x, y)){
 			board.addPiece(x, y, playerToPiece.get(currentTurn));
+			changeTurn();
 			return true;
 		}
 		return false;
@@ -93,6 +93,4 @@ public class TicTacToe extends GameState{
 		return (!(p1 == null || p2 == null || p3 == null) &&
 				(p1.getType() != '\0' && p1.getType() == p2.getType() && p2.getType() == p3.getType()));
 	}
-
-
 }

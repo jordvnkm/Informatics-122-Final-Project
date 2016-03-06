@@ -53,8 +53,11 @@ public abstract class GameState {
 		return this.turn;
 	}
 	
-	
 	public boolean getIsRunning(){
 		return this.isRunning;
+	}
+	
+	public Board getBoard(){
+		return this.board;
 	}
 }
