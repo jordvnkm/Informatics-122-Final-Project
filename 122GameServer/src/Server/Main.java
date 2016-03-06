@@ -24,7 +24,10 @@ public class Main
         Server server = new Server(PORT); // This theoretically will us to have multiple
                                           // virtual servers running on one machine
                                           // each with its own player/game list
-        server.execute();
+//        server.execute();
+    Plugin plugin = new Plugin("plugin");
+
+                
     }
     
 }
