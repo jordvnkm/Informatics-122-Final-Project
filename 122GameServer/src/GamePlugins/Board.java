@@ -1,3 +1,5 @@
+package GamePlugins;
+
 public class Board{
 	private int rows;
 	private int columns;
@@ -23,5 +25,11 @@ public class Board{
 	
 	public int getColumns(){
 		return columns;
+	}
+	
+	//new method to help retrieve tiles on the board
+	public Tile getTile(int row, int column)
+	{
+		return board[row][column];
 	}
 }
