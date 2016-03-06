@@ -1,9 +1,11 @@
 package GamePlugins;
 
 public class Board{
+	
 	private int rows;
 	private int columns;
 	private Tile[][] board;
+	
 	
 	public Board(int rows, int columns){
 		board = new Tile[rows][columns];
@@ -27,9 +29,11 @@ public class Board{
 		return columns;
 	}
 	
-	//new method to help retrieve tiles on the board
-	public Tile getTile(int row, int column)
-	{
-		return board[row][column];
+	public Tile getTile(int row, int col){
+		return this.board[row][col];
+	}
+	
+	public void setTile(int row, int col, Tile t){
+		this.board[row][col] = t;
 	}
 }

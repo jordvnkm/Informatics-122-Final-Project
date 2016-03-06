@@ -3,14 +3,11 @@ package GamePlugins;
 public class Piece{
 	
 	private String shape;
-	
-	//altered datat type for RGB
-	private int[]  color;
-
-	//added data members
-	private String layer;
 	private char type;
-	
+	private String layer; 
+	//altered data type for RGB
+	private int[]  color;
+		
 	public Piece(int[] color, String shape, String layer, char type){
 		this.color = color;
 		this.shape = shape;
@@ -27,7 +24,7 @@ public class Piece{
 	public String getShape(){
 		return this.shape;
 	}
-	
+
 	public String getLayer()
 	{
 		return layer;
