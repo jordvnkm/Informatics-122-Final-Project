@@ -25,8 +25,12 @@ public class Main
                                           // virtual servers running on one machine
                                           // each with its own player/game list
 //        server.execute();
-    Plugin plugin = new Plugin("plugin");
 
+// This is a way to load plugins from jar files
+//    Plugin plugin = new Plugin("plugin");
+
+//    Profile profile = new Profile("Jason");
+//    profile.addWin("TicTacToe");
                 
     }
     
