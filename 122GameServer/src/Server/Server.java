@@ -6,6 +6,7 @@
 package Server;
 
 import java.awt.BorderLayout;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class Server extends JFrame
     private List<Player> players;
     private ServerSocket server;
     private int currentPlayer;
+    
     
     public Server(int port)
     {
@@ -100,5 +102,23 @@ public class Server extends JFrame
     public void addGame(Game game)
     {
         games.add(game);
+    }
+    
+    public List<String> getPluginNames()
+    {
+        File folder = new File("plugins");
+        File[] fileList = folder.listFiles();
+        List<String> fileNames = new ArrayList<>();
+        
+        for (File file : fileList)
+        {
+            if (file.isFile())
+            {
+                int i = file.getName().lastIndexOf('.');
+                if (file.getName().substring(i+1).equals("jar"));
+                    fileNames.add(file.getName());
+            }
+        }
+        return fileNames;
     }
 }

@@ -9,7 +9,7 @@ package Server;
  *
  * @author malar
  */
-public class Tile
+public interface IPlugin
 {
-    
+    public boolean move(int dir);
 }

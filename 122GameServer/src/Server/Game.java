@@ -20,6 +20,7 @@ public class Game
     int maxPlayers = 2;  // This is so we can have games with more players later
     List<Player> players;
     Board board;
+    Plugin logic;
     
     public Game(Player player, String plugin)
     {

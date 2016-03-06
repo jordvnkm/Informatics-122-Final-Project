@@ -35,5 +35,9 @@ public class Board{
 	
 	public void setTile(int row, int col, Tile t){
 		this.board[row][col] = t;
+	//new method to help retrieve tiles on the board
+	public Tile getTile(int row, int column)
+	{
+		return board[row][column];
 	}
 }
