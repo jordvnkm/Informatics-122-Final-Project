@@ -1,3 +1,5 @@
+package GamePlugins;
+
 public class OthelloPiece extends Piece{
 	
 	private String color;
