@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author malar
  */
-public class Plugin implements IPlugin
+public class Plugin 
 {
  
     private final String pluginsDir = "plugins";
@@ -26,6 +26,9 @@ public class Plugin implements IPlugin
     URLClassLoader cl;
     Class pluginClass;
     Object instance;
+    
+    
+    //non-default constructor that finds the correct plugin to load 
     public Plugin (String fileName)
     {
         try
@@ -42,7 +45,28 @@ public class Plugin implements IPlugin
 
     }
 
-    @Override
+    /*
+     * Since we are unable to implement concrete classes with URLClassLoader (could use CGLib), we must not
+     * make Plugin abstract. To ensure all game plugins have the correct methods implemented we will check
+     * here to make sure they exist. We are essentially simulating a abstract class with this. 
+     */
+    private boolean validPlugin()
+    {
+    	return true;
+    }
+    
+    //**************************
+    //plugin interaction methods
+    //**************************
+    
+    public void initializeGame(String player1, String player2)
+    {
+    	
+    }
+
+    
+    
+    
     public boolean move(int dir)
     {
         try
@@ -57,4 +81,5 @@ public class Plugin implements IPlugin
         }
         return false;
     }
+    
 }
