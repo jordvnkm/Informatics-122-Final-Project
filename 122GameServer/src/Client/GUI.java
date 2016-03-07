@@ -12,6 +12,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -23,7 +24,7 @@ public class GUI extends Application{
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("INF 122 Game Client");
-        Scene scene = new Scene(new VBox(), 800, 720);
+        Scene scene = new Scene(new BorderPane(), 800, 720);
         
         //Menus
         MenuBar mb = new MenuBar();
@@ -54,10 +55,26 @@ public class GUI extends Application{
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, 500, 500);
         
+        
+
         //text area
         TextArea TAlog = new TextArea();
         
-        ((VBox) scene.getRoot()).getChildren().addAll(mb,gameboard,TAlog);
+        //Button
+        Button actionButton = new Button("Button");
+        actionButton.setMinSize(100,100);
+        
+        //construct bottom
+        BorderPane bottom = new BorderPane();
+        bottom.setCenter(TAlog);
+        BorderPane bottomright = new BorderPane();
+        bottomright.setCenter(actionButton);
+        bottom.setRight(bottomright);
+        
+        
+        ((BorderPane) scene.getRoot()).setTop(mb);
+        ((BorderPane) scene.getRoot()).setCenter(gameboard);
+        ((BorderPane) scene.getRoot()).setBottom(bottom);
 
         primaryStage.setScene(scene);
         primaryStage.show();
