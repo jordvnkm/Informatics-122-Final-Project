@@ -2,7 +2,6 @@ package Client;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,14 +12,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class GUI extends Application{
-
-    
+	//turns on debug messages in the console.
+	private boolean Debug = true;
+	//text area logger.
+	private TextArea TAlog;
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("INF 122 Game Client");
@@ -58,11 +57,14 @@ public class GUI extends Application{
         
 
         //text area
-        TextArea TAlog = new TextArea();
-        
+        TAlog = new TextArea();
+
         //Button
         Button actionButton = new Button("Button");
         actionButton.setMinSize(100,100);
+        actionButton.setOnAction((ActionEvent e) -> {
+        	logger("Button Pressed!",true);
+        });
         
         //construct bottom
         BorderPane bottom = new BorderPane();
@@ -79,7 +81,17 @@ public class GUI extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+	//Add a string to the logger. Set debug to true if its a debugger line.
+	//Debugger lines should be lines not shown to the player.
+	public void logger(String s, boolean debuggerline){
+		if(Debug || (!Debug && !debuggerline))
+			TAlog.appendText("\n" + s);
+	}
+	public void setDebug(boolean input){
+		Debug = input;
+	}
     public static void main(String[] args) {
-        launch(args);
+    	GUI g = new GUI();
+    	g.launch(args);
     }
 }
