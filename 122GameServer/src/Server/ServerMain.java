@@ -11,10 +11,10 @@ import java.net.ServerSocket;
  *
  * @author malar
  */
-public class Main
+public class ServerMain
 {
 
-    private static final int PORT = 8080;
+    private static final int PORT = 8000;
     /**
      * @param args the command line arguments
      * @throws java.io.IOException

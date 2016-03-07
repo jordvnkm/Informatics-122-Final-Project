@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -28,6 +29,7 @@ public class Server extends JFrame
     private int currentPlayer;
     
     
+    //non-default constructor
     public Server(int port)
     {
         super( "Server" );
@@ -42,18 +44,30 @@ public class Server extends JFrame
             System.exit(-1);
         }
         
+
+        //GUI setup/initialization
         output = new JTextArea();
         getContentPane().add(output, BorderLayout.CENTER);
         output.setText( "Waiting for connections...\n");
         setSize( 300, 300);
         setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        
+        //initializing games and players arrays
         games = new ArrayList<>();
         players = new ArrayList<>();
     }
     
-    /**
-     * Wait for two connections, then we can hand off control to Game(?)
-     */
+    
+    
+    /*****************************************************************************
+     *   public void execute()
+     *   
+     *   Begins listening for client connections. When connection is accepted,
+     *   		that connection is stored within a instance of type Player. 
+     *   		This player is then added to a list of other Player instances and
+     *   		then the thread is started. 
+     *****************************************************************************/
     public void execute()
     {
         while (true)
