@@ -4,10 +4,7 @@ import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -16,10 +13,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class GUI extends Application{
@@ -57,11 +50,8 @@ public class GUI extends Application{
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         
         //canvas to draw on
-        /*Canvas gameboard = new Canvas (500,500);
-        GraphicsContext gc = gameboard.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, 500, 500);*/
         Board gameboard = new Board(3,3);
+        //set up listeners (todo by client class, not GUI)
         for(int i=0;i<3;i++)
         	for(int j=0;j<3;j++){
         		gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
@@ -73,29 +63,6 @@ public class GUI extends Application{
                 	
                 });
         	}
-        /*gameboard.setMinSize(166*3,166*3);
-        gameboard.setPrefSize(166*3, 166*3);
-        gameboard.setMaxSize(166*3, 166*3);
-        tiles = new ArrayList<ArrayList<Tile>>();
-        for(int i=0;i<3;i++){
-        	tiles.add(new ArrayList<Tile>());
-        	for(int j=0;j<3;j++)
-        	{
-        		tiles.get(i).add(new Tile(166,166,i,j));
-        		Tile x = tiles.get(i).get(j);
-        		x.setBackgroundColor(255, 255, 255);
-        		x.setForegroundColor(0, 0, 0);
-        		x.setText("");
-                x.setOnMouseClicked((MouseEvent e) -> {
-                	int xloc=((Tile)(e.getSource())).getXlocation();
-                	int yloc=((Tile)(e.getSource())).getYlocation();
-                	logger("Mouse clicked: "+xloc+","+yloc, true);
-                	x.setText("X");
-                });
-        		gameboard.add(x, i,j);
-        	}
-        }
-		System.out.println(gameboard.getWidth());*/
         //text area
         TAlog = new TextArea();
 
