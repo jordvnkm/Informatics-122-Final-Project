@@ -1,7 +1,5 @@
 package GamePlugins;
-
 import java.util.ArrayList;
-
 public class Tile{
 	
 	private ArrayList<Piece> pieces;	
@@ -11,6 +9,8 @@ public class Tile{
 	
 	public Tile(){
 		pieces = new ArrayList<Piece>();
+		int[] defaultArray = {1,1,1};
+		pieces.add(new Piece(defaultArray, "empty", "empty",'E'));
 		backgroundColor = new int[3];
 	}
 	
@@ -25,13 +25,25 @@ public class Tile{
 	
 	public void clearTile(){
 		pieces.clear();
+		int[] defaultArray = {1,1,1};
+		pieces.add(new Piece(defaultArray, "empty", "empty",'E'));
 	}
 	
 	public void removePiece(Piece piece){
+		if(pieces.get(0).getShape() == "empty"){
+			throw new NullPointerException("Tile is already empty!!!");
+		}
 		pieces.remove(piece);
+		if(pieces.isEmpty()){
+			int[] defaultArray = {1,1,1};
+			pieces.add(new Piece(defaultArray, "empty", "empty",'E'));
+		}
 	}
 	
 	public void addPiece(Piece piece){
+		if(pieces.get(0).getShape() == "empty"){
+			pieces.remove(0);
+		}
 		pieces.add(piece);
 	}
 	
@@ -40,7 +52,7 @@ public class Tile{
 	}
 	
 	public boolean hasPieces(){
-		if(pieces.isEmpty()){
+		if(pieces.get(0).getShape() == "empty"){
 			return false;
 		}
 		return true;
@@ -51,9 +63,8 @@ public class Tile{
 	}
 	
 	public Piece getFirstPiece(){
-		if(this.pieces.size() > 0)
-			return this.pieces.get(0);
-		return null;
+		return this.pieces.get(0);
+
 	}
 
 	//new methods to set and get background color

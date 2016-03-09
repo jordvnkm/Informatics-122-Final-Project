@@ -1,13 +1,10 @@
 package GamePlugins;
+import Server.Player;
 
 import java.util.List;
 
-import Server.Player;
-
-
 
 public abstract class GameState {
-
 	protected Board board;
 	protected int turn;
 	protected List<Player> players;
@@ -16,7 +13,7 @@ public abstract class GameState {
 	protected boolean isRunning;
 	
 	
-	public GameState(int row, int col, List<Player> players){
+	public GameState(List<Player> players){
 		this.players = players;
 		this.isRunning = true;
 		this.turn = 0;
