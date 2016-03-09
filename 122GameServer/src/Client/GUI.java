@@ -1,5 +1,7 @@
 package Client;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
@@ -11,8 +13,12 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class GUI extends Application{
@@ -49,10 +55,36 @@ public class GUI extends Application{
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         
         //canvas to draw on
-        Canvas gameboard = new Canvas (500,500);
+        /*Canvas gameboard = new Canvas (500,500);
         GraphicsContext gc = gameboard.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, 500, 500);
+        gc.fillRect(0, 0, 500, 500);*/
+        Board gameboard = new Board();
+        gameboard.setMinSize(500,500);
+        gameboard.setPrefSize(500, 500);
+        gameboard.setMaxSize(500, 500);
+        ArrayList <ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
+        for(int i=0;i<3;i++){
+        	tiles.add(new ArrayList<Tile>());
+        	for(int j=0;j<3;j++)
+        	{
+        		tiles.get(i).add(new Tile(500/3,500/3));
+        		Tile x = tiles.get(i).get(j);
+                GraphicsContext gc = x.getGraphicsContext2D();
+                gc.setFill(Color.WHITE);
+        		gc.fillRect(0,0,x.getWidth(),x.getHeight());
+        		gc.setFill(Color.BLACK);
+        		gc.fillText(i+","+j, 10, 10);
+        		gameboard.add(x, i,j);
+        	}
+        }
+        //gameboard.getColumnConstraints().add(new ColumnConstraints(500/3));
+        //gameboard.getRowConstraints().add(new RowConstraints(500/3));
+		System.out.println(gameboard.getWidth());
+        gameboard.setOnMouseClicked((MouseEvent e) -> {
+        	logger("mouse pressed",true);
+        	System.out.println(gameboard.getHeight()+" "+gameboard.getWidth());
+        });
         
         
 
