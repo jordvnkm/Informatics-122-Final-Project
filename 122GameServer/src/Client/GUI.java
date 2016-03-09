@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,6 +27,7 @@ public class GUI extends Application{
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
+	private ArrayList <ArrayList<Tile>> tiles;
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("INF 122 Game Client");
@@ -59,11 +61,22 @@ public class GUI extends Application{
         GraphicsContext gc = gameboard.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, 500, 500);*/
-        Board gameboard = new Board();
-        gameboard.setMinSize(166*3,166*3);
+        Board gameboard = new Board(3,3);
+        for(int i=0;i<3;i++)
+        	for(int j=0;j<3;j++){
+        		gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
+        			Tile t = (Tile)e.getSource();
+                	int xloc= t.getXlocation();
+                	int yloc= t.getYlocation();
+                	logger("Mouse clicked: "+xloc+","+yloc,true);
+                	t.setText("X");
+                	
+                });
+        	}
+        /*gameboard.setMinSize(166*3,166*3);
         gameboard.setPrefSize(166*3, 166*3);
         gameboard.setMaxSize(166*3, 166*3);
-        ArrayList <ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
+        tiles = new ArrayList<ArrayList<Tile>>();
         for(int i=0;i<3;i++){
         	tiles.add(new ArrayList<Tile>());
         	for(int j=0;j<3;j++)
@@ -82,9 +95,7 @@ public class GUI extends Application{
         		gameboard.add(x, i,j);
         	}
         }
-		System.out.println(gameboard.getWidth());
-
-
+		System.out.println(gameboard.getWidth());*/
         //text area
         TAlog = new TextArea();
 
@@ -118,6 +129,9 @@ public class GUI extends Application{
 	}
 	public void setDebug(boolean input){
 		Debug = input;
+	}
+	public ArrayList <ArrayList<Tile>> getTiles(){
+		return tiles;
 	}
     public static void main(String[] args) {
     	GUI g = new GUI();
