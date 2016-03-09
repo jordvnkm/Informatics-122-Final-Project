@@ -60,33 +60,30 @@ public class GUI extends Application{
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, 500, 500);*/
         Board gameboard = new Board();
-        gameboard.setMinSize(500,500);
-        gameboard.setPrefSize(500, 500);
-        gameboard.setMaxSize(500, 500);
+        gameboard.setMinSize(166*3,166*3);
+        gameboard.setPrefSize(166*3, 166*3);
+        gameboard.setMaxSize(166*3, 166*3);
         ArrayList <ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
         for(int i=0;i<3;i++){
         	tiles.add(new ArrayList<Tile>());
         	for(int j=0;j<3;j++)
         	{
-        		tiles.get(i).add(new Tile(500/3,500/3));
+        		tiles.get(i).add(new Tile(166,166,i,j));
         		Tile x = tiles.get(i).get(j);
-                GraphicsContext gc = x.getGraphicsContext2D();
-                gc.setFill(Color.WHITE);
-        		gc.fillRect(0,0,x.getWidth(),x.getHeight());
-        		gc.setFill(Color.BLACK);
-        		gc.fillText(i+","+j, 10, 10);
+        		x.setBackgroundColor(255, 255, 255);
+        		x.setForegroundColor(0, 0, 0);
+        		x.setText("");
+                x.setOnMouseClicked((MouseEvent e) -> {
+                	int xloc=((Tile)(e.getSource())).getXlocation();
+                	int yloc=((Tile)(e.getSource())).getYlocation();
+                	logger("Mouse clicked: "+xloc+","+yloc, true);
+                	x.setText("X");
+                });
         		gameboard.add(x, i,j);
         	}
         }
-        //gameboard.getColumnConstraints().add(new ColumnConstraints(500/3));
-        //gameboard.getRowConstraints().add(new RowConstraints(500/3));
 		System.out.println(gameboard.getWidth());
-        gameboard.setOnMouseClicked((MouseEvent e) -> {
-        	logger("mouse pressed",true);
-        	System.out.println(gameboard.getHeight()+" "+gameboard.getWidth());
-        });
-        
-        
+
 
         //text area
         TAlog = new TextArea();
