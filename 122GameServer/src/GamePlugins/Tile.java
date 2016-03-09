@@ -9,13 +9,13 @@ public class Tile{
 	
 	public Tile(){
 		pieces = new ArrayList<Piece>();
-		int[] defaultArray = {1,1,1};
-		pieces.add(new Piece(defaultArray, "empty", "empty",'E'));
-		backgroundColor = new int[3];
+		pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
+		backgroundColor = new int[]{255, 255, 255}; // default white background
 	}
 	
 	public Tile(int[] color){
 		pieces = new ArrayList<Piece>();
+		pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
 		backgroundColor = color;
 	}
 	
@@ -25,8 +25,7 @@ public class Tile{
 	
 	public void clearTile(){
 		pieces.clear();
-		int[] defaultArray = {1,1,1};
-		pieces.add(new Piece(defaultArray, "empty", "empty",'E'));
+		pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
 	}
 	
 	public void removePiece(Piece piece){
@@ -35,8 +34,7 @@ public class Tile{
 		}
 		pieces.remove(piece);
 		if(pieces.isEmpty()){
-			int[] defaultArray = {1,1,1};
-			pieces.add(new Piece(defaultArray, "empty", "empty",'E'));
+			pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
 		}
 	}
 	

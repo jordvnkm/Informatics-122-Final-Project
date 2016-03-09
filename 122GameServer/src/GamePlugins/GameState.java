@@ -18,7 +18,7 @@ public abstract class GameState {
 		this.isRunning = true;
 		this.turn = 0;
 		this.currentTurn = players.get(0).getName();
-		this.winner = "tie";
+		this.winner = "TIE";
 	}
 	
 	
