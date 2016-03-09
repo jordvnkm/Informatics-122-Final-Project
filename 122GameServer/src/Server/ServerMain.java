@@ -6,32 +6,19 @@
 package Server;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.util.ArrayList;
 /**
  *
  * @author malar
  */
 public class ServerMain
 {
-
-    private static final int PORT = 8000;
-    /**
-     * @param args the command line arguments
-     * @throws java.io.IOException
-     */
     public static void main(String[] args) throws IOException
     {
-        Server server = new Server(PORT); // This theoretically will us to have multiple
+    	ArrayList<Server> serverList = new ArrayList<Server>();
+    	
+        serverList.add(new Server()); // This theoretically will us to have multiple
                                           // virtual servers running on one machine
                                           // each with its own player/game list
-//        server.execute();
-
-// This is a way to load plugins from jar files
-//    Plugin plugin = new Plugin("plugin");
-
-//    Profile profile = new Profile("Jason");
-//    profile.addWin("TicTacToe");
-                
     }
-    
 }
