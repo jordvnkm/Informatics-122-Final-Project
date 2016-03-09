@@ -26,7 +26,7 @@ public abstract class GameState {
 		
 	public abstract boolean checkForGameOver();
 	
-	public abstract boolean playMove(int x, int y);
+	public abstract boolean playMove(int x, int y, String name);
 	
 	public abstract boolean checkValidMove(int x, int y);
 	

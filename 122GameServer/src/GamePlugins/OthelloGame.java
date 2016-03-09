@@ -55,7 +55,11 @@ public class OthelloGame extends GameState{
 	}
 	
 	@Override
-	public boolean playMove(int x, int y){
+	public boolean playMove(int x, int y, String name){
+		if(!currentTurn.equals(name)){
+			return false;
+		}
+		
 		if (checkValidMove(x, y)){
 			board.addPiece(x,y, playerToPiece.get(currentTurn));
 			changeTurn();
