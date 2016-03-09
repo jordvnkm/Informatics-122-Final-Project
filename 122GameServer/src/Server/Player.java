@@ -15,6 +15,8 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 
 
 /**
@@ -26,54 +28,95 @@ public class Player extends Thread
     private final Socket connection;
     private BufferedReader input;
     private DataOutputStream output;
-    private final Server controller;
-    private char mark;
-    private Game game;
+    
+    private final Lobby lobby;
+    private Profile profile;
+    
     protected boolean threadSuspended = true;
     
-    public Player(Socket socket, Server server, String name)
+    private char mark;
+
+    public Player(Socket connection, Lobby lobby)
     {
-        this.connection = socket;
-        this.controller = server;
-        setName(name);
+        this.connection = connection;
+        this.lobby = lobby;
         
-        try {
+        //initializing input and output streams
+        try 
+        {
             input = new BufferedReader( new InputStreamReader(connection.getInputStream()));
             output = new DataOutputStream(connection.getOutputStream());
         }
         catch (IOException ex)
         {
-            System.exit( -1 );
-        }
-        
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+
+        	JOptionPane.showMessageDialog(new JOptionPane(),
+				    "Network Connection Error",
+				    "Fatal Error",
+				    JOptionPane.ERROR_MESSAGE);
+        	
+        	System.exit(-1);
+        }  
     }
     
+    
+    /*
+     * This is the method that will be called when the thread is started
+     */
     @Override
     public void run()
     {
-        try
-        {
-            String playerList = new String();
-            playerList = controller.getAllPlayers().stream().map((player) -> "\n" + player.getName()).reduce(playerList, String::concat);
-            
-            output.writeUTF(playerList);
-        } 
-        catch (IOException ex)
-        {
+    	//tells the server it is ready for login information
+    	try 
+    	{
+			output.writeChars("ready");
+			input.readLine();
+			
+			//loops until login in reached for this player
+			
+				//read input and check to see if its a login or new acct creation
+				//calls loginPlayer() if logging in
+				//calls new acct creation if acct creation
+			
+			//sends player to select game method
+		} 
+    	
+    	catch (IOException e) 
+    	{
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        	JOptionPane.showMessageDialog(new JOptionPane(),
+				    "Network Connection Error",
+				    "Fatal Error",
+				    JOptionPane.ERROR_MESSAGE);
+        	
+        	System.exit(-1);
+		}
     }
     
-    public Game getGame()
+    private Profile loginPlayer()
     {
-        return game;
+    	//read login name
+    	
+    	//check profile to see if valid
+    	
+    	//return result
+    	return null;
     }
     
-    public void createGame(String plugin)
+    private Profile addNewPlayer()
     {
-        if (game == null)
-        {
-            game = new Game(this, plugin);
-        }
+    	//check to see if name is valid
+    	
+    	//create profile
+    	
+    	//return profile
+    	return null;
+    }
+    
+    private void selectGame()
+    {
+    	
     }
 }

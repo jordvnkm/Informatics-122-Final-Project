@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -27,11 +28,15 @@ public class Server implements Runnable
     private ServerSocket server;
     private ServerGUI gui;
     private boolean runServer;
+    private Lobby lobby;
         
     
     //non-default constructor
     public Server()
     {      
+    	//instantiates our lobby for the connections
+    	lobby = new Lobby();
+    	
     	//instantiates the ServerGUI instance
     	gui = new ServerGUI();
     	
@@ -92,11 +97,10 @@ public class Server implements Runnable
             
             while (runServer)
             {
-            	server.accept();
-//                   Player player = new Player(server.accept(), this, "Test");
-//                   output.append("Player " + player.getName() + " has connected\n");
-//                   players.add(player);
-             
+            	Socket tmpSocket = server.accept();
+            	lobby.addNewConnection(tmpSocket);
+            	gui.statusTextArea.append("Connection from IP: " + tmpSocket.getRemoteSocketAddress() + " wiith the PORT: " + tmpSocket.getPort() + "\n");
+
             }
 
         }

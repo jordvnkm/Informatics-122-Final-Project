@@ -1,17 +1,25 @@
 package Server;
 
 import java.io.File;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Lobby {
+public class Lobby 
+{
     private List<Player> players;
     private List<Game> games;
 
     
+    public Lobby()
+    {
+    	
+    }
     
-    
-    
+    public void addNewConnection(Socket socket)
+    {
+     	//Player player = new Player(server.accept(), this, "Test");
+    }
     
     
     
