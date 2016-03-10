@@ -10,9 +10,6 @@ public class Lobby
     private List<Player> players;
     private List<Game> games;
     
-    private List<Player> waitingForTicTacToe;
-
-    
     public Lobby()
     {
     	players = new ArrayList<Player>();
@@ -28,19 +25,30 @@ public class Lobby
     
     
     /*
-     * 
-     * 
+     * This won't work for the non-demo, player is on a totally separate thread
+     * And just calling selectGame and passing the player doesn't enable us to
+     * do anything with the listener, the listener has to handle EVERYTHING
+     * WITHIN PLAYER and then call functions based on what it receives.
      */
-    public void selectGame(Player p)
+    public Game selectGame(Player p)
     {
+        Game game;
     	//***FOr the demo they will only play tic-tac-toe
-    	
-    	if(waitingForTicTacToe.isEmpty())
-    		waitingForTicTacToe.add(p);
+    	if (games.isEmpty())
+        {
+            game = new Game(p, "TicTacToe");
+            games.add(game);
+        }
+        else
+        {
+            game = games.get(0);
+            game.addPlayer(p);
+        }
+        
 //    	else
 //    		games.add(new Game(waitingForTicTacToe.get(0), p));
     	
-    		
+    	return game;
     }
     
     

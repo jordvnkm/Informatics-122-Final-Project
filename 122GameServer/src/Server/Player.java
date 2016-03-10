@@ -36,7 +36,7 @@ public class Player extends Thread
     private Profile profile;
     
     private boolean loggedIn;
-    
+    private Game game;
 
     public Player(Socket connection, Lobby lobby)
     {
@@ -78,9 +78,17 @@ public class Player extends Thread
     	
 		sendMessage(initialHandshake());
 		profile = new Profile("Jason");
-		
 		goToLobby();
 
+                // This is necessary to continuously receive messages from the
+                // client, it has to be in a loop
+                while (true)
+                {
+                    String stringToParse = receiveMessage();
+                    // convert stringToParse to json, parse it, 
+                    // and then call the correct game method
+                    // ie game.move(x, y, playerName)
+                }
     	
 		//***The code below needs to be uncommented out. This is good code
 
@@ -160,14 +168,16 @@ public class Player extends Thread
     
     private void goToLobby()
     {
-    	//needs to push this player thread into the lobby
+    	//needs to push this player thread into the lobby. Just cuz the lobby
+        // has a list of players, doesn't mean the thread is running in lobby
+        // it's still running in Player and can only run in player.
     	lobby.selectGame(this);
     }
     
 	/********************************************************************
 	 * 	public void sendMessage()
 	 * 
-	 * 	This message sends all of it's string paramater's contents (we
+	 * 	This message sends all of it's string parameter's contents (we
 	 * 		assume that this is a JSON message) to the client GUI
 	 * 
 	 ********************************************************************/
@@ -196,8 +206,8 @@ public class Player extends Thread
     public String receiveMessage()
     {
     	try {
-			return input.readUTF();
-		} catch (IOException e) {
+            return input.readUTF();
+        } catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
