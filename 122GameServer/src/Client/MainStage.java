@@ -1,8 +1,4 @@
 package Client;
-
-import java.util.ArrayList;
-
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,17 +11,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class GUI extends Application{
+public class MainStage extends Stage{
 	//turns on debug messages in the console.
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-	private ArrayList <ArrayList<Tile>> tiles;
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("INF 122 Game Client");
+
+	
+	public MainStage(){
+		super();
+		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane(), 800, 720);
-        
         //Menus
         MenuBar mb = new MenuBar();
         Menu servermenu = new Menu("Server");
@@ -48,8 +44,7 @@ public class GUI extends Application{
         helpmenu.getItems().addAll(MIabout);
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
-        
-        //canvas to draw on
+        //Board
         Board gameboard = new Board(3,3);
         //set up listeners (todo by client class, not GUI)
         for(int i=0;i<3;i++)
@@ -84,10 +79,10 @@ public class GUI extends Application{
         ((BorderPane) scene.getRoot()).setTop(mb);
         ((BorderPane) scene.getRoot()).setCenter(gameboard);
         ((BorderPane) scene.getRoot()).setBottom(bottom);
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+        setScene(scene);
+        show();
+		
+	}
 	//Add a string to the logger. Set debug to true if its a debugger line.
 	//Debugger lines should be lines not shown to the player.
 	public void logger(String s, boolean debuggerline){
@@ -97,11 +92,4 @@ public class GUI extends Application{
 	public void setDebug(boolean input){
 		Debug = input;
 	}
-	public ArrayList <ArrayList<Tile>> getTiles(){
-		return tiles;
-	}
-    public static void main(String[] args) {
-    	GUI g = new GUI();
-    	g.launch(args);
-    }
 }

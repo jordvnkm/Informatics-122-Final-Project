@@ -11,20 +11,21 @@ public class Client {
 	public String serverIP;
 	public int port;
 	public Socket socket;
-	
+	private MainStage gui;
 	///////////////////////////////////////////
 	//// client constructor
-	public Client(String serverip, int portnum)
+	public Client(String serverip, int portnum,MainStage inputgui)
 	{
 		serverIP = serverip;
 		port = portnum;
-		try{
+		gui = inputgui;
+		/*try{
 			socket = new Socket(serverIP, portnum);
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}	
+		}	*/
 	}
 	
 	
