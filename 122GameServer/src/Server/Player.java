@@ -79,20 +79,9 @@ public class Player extends Thread
         while (true)
         {
             String stringToParse = receiveMessage();
-            // convert stringToParse to json, parse it, 
-            // and then call the correct game method
-            
             // If parsed JSON shows the client wanted to make a move
 //            {
 //                game.makeMove(xCoord, yCoord, profile.getName());
-//                String gameState = game.getBoard();
-                // Parse board gamestate string and turn it into JSON string
-//                sendMessage(gameState);
-//                if (game.checkForGameOver())
-//                {
-                    //In announceWinners we send the winner to both players.
-//                   game.announceWinners();
-//                }
 //            }
         }
 
