@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+import org.json.simple.*;
 
 
 
@@ -74,7 +75,7 @@ public class Player extends Thread
     	//tells the server it is ready for login information
     	try 
     	{
-			output.writeChars("This is the INF 122 Game server");
+			output.writeChars(initialHandshake());
 			
 			//loops until login in reached for this player
 			while(!loggedIn)
@@ -127,4 +128,28 @@ public class Player extends Thread
     {
     	
     }
+    
+	/********************************************************************
+	 * 	public static String initialHandshake()
+	 * 
+	 * 	The structure of the message is as follows:
+	 * 
+	 *  <gameServer>
+	 *  	<Welcome>
+	 *  		"Please send the login info"
+	 * 
+	 * ------------------------------------------------------------------
+	 * 
+	 * The intention of this method is to create a JSON message to be used
+	 * 		in the intial handshake for when the client first connects to
+	 * 		the server.
+	 * 
+	 ********************************************************************/
+	private String initialHandshake()
+	{
+		JSONObject gameServer = new JSONObject();
+		gameServer.put("Welcome", "Please send the login info");
+		
+		return gameServer.toJSONString();
+	}
 }
