@@ -1,7 +1,4 @@
 package GamePlugins;
-import Server.Player;
-
-import java.util.List;
 
 
 public abstract class GameState {
@@ -42,10 +39,6 @@ public abstract class GameState {
 		return this.winner;
 	}
 	
-	public void setWinner(String name){
-		this.winner = name;
-	}
-	
 	public int getTurn(){
 		return this.turn;
 	}
@@ -56,5 +49,10 @@ public abstract class GameState {
 	
 	public Board getBoard(){
 		return this.board;
+	}
+	
+	public String getGameState(){
+		String jsonString = GameStateToJSON.gameStateToJSON(this.board, this.currentTurn, this.winner, this.isRunning);
+		return jsonString;
 	}
 }
