@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 
 
@@ -75,23 +77,43 @@ public class Player extends Thread
     	//tells the server it is ready for login information
     	try 
     	{
-			output.writeChars(initialHandshake());
+			sendMessage(initialHandshake());
 			
 			//loops until login in reached for this player
 			while(!loggedIn)
 			{
-				String loginName = input.readLine();
+				JSONParser parser = new JSONParser();
 
+				//gets the message from the client
+				String loginInfo = receiveMessage();
+
+				Object obj = parser.parse(loginInfo);
+				JSONObject jsonObject = (JSONObject) obj;
+				
 				//read input and check to see if its a login or new acct creation
-				//calls loginPlayer() if logging in
-				//calls new acct creation if acct creation
+				String type = (String) jsonObject.get("type");
+
+				if(type.equals("login"))
+					loginPlayer(jsonObject);
+				else if(type.equals("setup"))
+					addNewPlayer(jsonObject);
+				
+				if(!loggedIn)
+					sendMessage(badLogin());
+
 			}
 
 			
 			//sends player to select game method
+			selectGame();
 		} 
     	
-    	catch (IOException e) 
+    	catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	catch (Exception e) 
     	{
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, e);
 
@@ -101,20 +123,21 @@ public class Player extends Thread
 				    JOptionPane.ERROR_MESSAGE);
         	
         	System.exit(-1);
-		}
+		} 
     }
     
-    private Profile loginPlayer(String username)
+    private Profile loginPlayer(JSONObject json)
     {
     	//read login name
     	
     	//check profile to see if valid
     	
-    	//return result
+    	
+    	
     	return null;
     }
     
-    private Profile addNewPlayer()
+    private Profile addNewPlayer(JSONObject json)
     {
     	//check to see if name is valid
     	
@@ -126,7 +149,41 @@ public class Player extends Thread
     
     private void selectGame()
     {
-    	
+    	//needs to push this player thread into the lobby
+    }
+    
+	/********************************************************************
+	 * 	public void sendMessage()
+	 * 
+	 * 	This message sends all of it's string paramater's contents (we
+	 * 		assume that this is a JSON message) to the client GUI
+	 * 
+	 ********************************************************************/
+    public void sendMessage(String message)
+    {
+    	try {
+			output.writeChars(message);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+        	JOptionPane.showMessageDialog(new JOptionPane(),
+				    "Network Connection Error (within Player.sendMessage())",
+				    "Fatal Error",
+				    JOptionPane.ERROR_MESSAGE);
+		}
+    }
+    
+	/********************************************************************
+	 * 	public String receiveMessage()
+	 * 
+	 * 	This method receives the entire JSON string message from a player's
+	 * 		client GUI
+	 * 
+	 ********************************************************************/
+    public String receiveMessage()
+    {
+    	return "";
     }
     
 	/********************************************************************
@@ -134,7 +191,6 @@ public class Player extends Thread
 	 * 
 	 * 	The structure of the message is as follows:
 	 * 
-	 *  <gameServer>
 	 *  	<Welcome>
 	 *  		"Please send the login info"
 	 * 
@@ -147,9 +203,33 @@ public class Player extends Thread
 	 ********************************************************************/
 	private String initialHandshake()
 	{
-		JSONObject gameServer = new JSONObject();
-		gameServer.put("Welcome", "Please send the login info");
+		JSONObject message = new JSONObject();
+		message.put("Welcome", "Please send the login info");
 		
-		return gameServer.toJSONString();
+		return message.toJSONString();
 	}
+	
+	/********************************************************************
+	 * 	public static String badLogin()
+	 * 
+	 * 	The structure of the message is as follows:
+	 * 
+	 *  <gameServer>
+	 *  	<Welcome>
+	 *  		"Please send the login info"
+	 * 
+	 * ------------------------------------------------------------------
+	 * 
+	 * The intention of this method is to create a JSON message to be used
+	 * 		to inform that the username entered is invalid
+	 * 
+	 ********************************************************************/
+	private String badLogin()
+	{
+		JSONObject message = new JSONObject();
+		message.put("error", "username not valid");
+		
+		return message.toJSONString();
+	}
+	
 }
