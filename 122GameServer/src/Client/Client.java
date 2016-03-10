@@ -10,7 +10,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.io.*;
 
-public class Client {
+public class Client implements Runnable{
 	public String serverIP;
 	public int port;
 	public Socket socket;
@@ -32,8 +32,14 @@ public class Client {
 		{
 			e.printStackTrace();
 		}	*/
+		//setupBoard();
+		//setupMouseListeners();
+		(new Thread(this)).start();
 	}
 	
+	public void setupBoard(){
+		
+	}
 	
 	////////////////////////////////////////////////////
 	/// adds the gui to the client
@@ -48,8 +54,8 @@ public class Client {
 	///sets up mouse listener on gui
 	public void setupMouseListeners()
 	{
-		for(int i=0;i<4;i++)
-        	for(int j=0;j<4;j++){
+		for(int i=0;i<3;i++)
+        	for(int j=0;j<3;j++){
         		gui.gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
         			Tile t = (Tile)e.getSource();
                 	int xloc= t.getXlocation();
@@ -75,6 +81,7 @@ public class Client {
 		move.add(yDest);
 		
 		System.out.println(move);
+		//sendMove(move);
 	}
 	
 	
@@ -95,6 +102,7 @@ public class Client {
 		{
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		    out.write(obj.toJSONString());
+		    out.flush();
 		    out.close();
 		}
 		catch (IOException e)
@@ -115,6 +123,7 @@ public class Client {
 		{
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		    out.write(obj.toJSONString());
+		    out.flush();
 		    out.close();
 		}
 		catch (IOException e)
@@ -136,6 +145,7 @@ public class Client {
 		{
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		    out.write(obj.toJSONString());
+		    out.flush();
 		    out.close();
 		}
 		catch (IOException e)
@@ -158,6 +168,7 @@ public class Client {
 		{
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		    out.write(obj.toJSONString());
+		    out.flush();
 		    out.close();
 		}
 		catch (IOException e)
@@ -178,6 +189,7 @@ public class Client {
 		{
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		    out.write(obj.toJSONString());
+		    out.flush();
 		    out.close();
 		}
 		catch (IOException e)
@@ -201,6 +213,7 @@ public class Client {
 		{
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		    out.write(obj.toJSONString());
+		    out.flush();
 		    out.close();
 		}
 		catch (IOException e)
@@ -213,20 +226,22 @@ public class Client {
 	
 	////////////////////////////////////////////////
 	/// sends the location that the piece is supposed to move 
-	public void sendMovePiece(int xOrigin, int yOrigin, int xDest, int yDest)
+	public void sendMove(ArrayList<Integer> move)
 	{
+		
 		JSONObject obj = new JSONObject();
 		obj.put("type", "movePiece");
-		obj.put("xOrigin", xOrigin);
-		obj.put("yOrigin", yOrigin);
-		obj.put("xDest", xDest);
-		obj.put("yDest", yDest);
+		obj.put("xOrigin", move.get(0)); // xOrigin
+		obj.put("yOrigin", move.get(1)); // yOrigin
+		obj.put("xDest", move.get(2));   // xDest
+		obj.put("yDest", move.get(3));   // yDest
 		
 		
 		try 
 		{
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
 		    out.write(obj.toJSONString());
+		    out.flush();
 		    out.close();
 		}
 		catch (IOException e)
@@ -242,12 +257,11 @@ public class Client {
 	
 	/////////////////////////////////////////////////////////////////
 	/// parses board size
-	public void parseBoardSize() throws IOException
+	public void parseBoardSize()
 	{
-	    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
 	    String input;
 	    try {
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			while ((input = br.readLine()) != null) {
 
 				// parse board
@@ -257,6 +271,35 @@ public class Client {
 			e.printStackTrace();
 		}
 
+	}
+
+
+
+
+	@Override
+	public void run() {
+		try{
+			socket = new Socket(InetAddress.getByName(serverIP), port);
+			System.out.println("Successful connection.");
+		}
+		catch (IOException e)
+		{
+			System.out.println("failed to connect");
+			e.printStackTrace();
+		}
+		
+		/*while(true){
+		for(int i=0;i<3;i++)
+			for(int j=0;j<3;j++){
+					gui.getBoard().getTile(i, j).setBackgroundColor(255, 0, 127);
+					try{Thread.sleep(100);}catch(InterruptedException e){}
+			}
+		for(int i=0;i<3;i++)
+			for(int j=0;j<3;j++){
+					gui.getBoard().getTile(j, i).setBackgroundColor(127, 0, 255);
+					try{Thread.sleep(100);}catch(InterruptedException e){}
+			}
+		}*/
 	}
 
 }

@@ -101,5 +101,7 @@ public class MainStage extends Stage{
 		Debug = input;
 	}
 	
-
+	public Board getBoard(){
+		return gameboard;
+	}
 }
