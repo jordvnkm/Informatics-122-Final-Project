@@ -1,30 +1,43 @@
 package Client;
 
-import javafx.application.Application;
+import java.util.*;
+
+import java.util.concurrent.*;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class GUI extends Application{
+public class MainStage extends Stage{
 	//turns on debug messages in the console.
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("INF 122 Game Client");
+	public ArrayList<Integer> move;
+	Thread thread;
+	private boolean madeMove;
+	public Board gameboard;
+	
+	
+	
+	public MainStage(){
+		super();
+		move = new ArrayList<Integer>();
+		for (int i = 0; i < 4; i ++)
+		{
+			move.add(-1);
+		}
+		
+		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane(), 800, 720);
-        
         //Menus
         MenuBar mb = new MenuBar();
         Menu servermenu = new Menu("Server");
@@ -47,14 +60,8 @@ public class GUI extends Application{
         helpmenu.getItems().addAll(MIabout);
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
-        
-        //canvas to draw on
-        Canvas gameboard = new Canvas (500,500);
-        GraphicsContext gc = gameboard.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, 500, 500);
-        
-        
+        //Board
+        gameboard = new Board(3,3);
 
         //text area
         TAlog = new TextArea();
@@ -77,10 +84,13 @@ public class GUI extends Application{
         ((BorderPane) scene.getRoot()).setTop(mb);
         ((BorderPane) scene.getRoot()).setCenter(gameboard);
         ((BorderPane) scene.getRoot()).setBottom(bottom);
+        setScene(scene);
+        show();
+		
+	}
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+
+	
 	//Add a string to the logger. Set debug to true if its a debugger line.
 	//Debugger lines should be lines not shown to the player.
 	public void logger(String s, boolean debuggerline){
@@ -90,8 +100,8 @@ public class GUI extends Application{
 	public void setDebug(boolean input){
 		Debug = input;
 	}
-    public static void main(String[] args) {
-    	GUI g = new GUI();
-    	g.launch(args);
-    }
+	
+	public Board getBoard(){
+		return gameboard;
+	}
 }
