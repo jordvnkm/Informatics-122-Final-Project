@@ -20,22 +20,43 @@ public class Game
     Player currentPlayer;
     int maxPlayers = 2;  // This is so we can have games with more players later
     List<Player> players;
-    Board board;
     Plugin logic;
+    String pluginName;
     
     public Game(Player player, String plugin)
     {
         players = new LinkedList<>();
         addPlayer(player);
+        pluginName = plugin;
     }
-    public synchronized boolean legalMove(int x, int y, Player player) {
-    /*    if (player == currentPlayer && board[location] == null) {
-            board[location] = currentPlayer;
-            currentPlayer = currentPlayer.opponent;
-            currentPlayer.otherPlayerMoved(location);
-            return true;
-        } */
-        return true;
+    
+    public synchronized boolean makeMove(int x, int y, String player) {
+        String winner = "";
+        boolean goodMove = false;
+        if ((goodMove = logic.makeMove(x, y, player)) == true)
+        {
+            if (logic.checkForGameOver())
+            {
+                winner = logic.getWinner();
+            }
+            
+        }
+        return goodMove;
+    }
+    
+    public synchronized boolean checkForGameOver()
+    {
+        return logic.checkForGameOver();
+    }
+    
+    public synchronized String getBoard()
+    {
+        return logic.getBoard();
+    }
+    
+    public synchronized String getWinner()
+    {
+        return logic.getWinner();
     }
     
     public int getCurrentNumPlayers()
@@ -51,10 +72,10 @@ public class Game
     public final void addPlayer(Player player)
     {
         players.add(player);
-    }
-    
-    public boolean move()
-    {
-        return false;
+        if (players.size() == maxPlayers)
+        {
+            // Todo: We need to start the game here
+            logic = new Plugin(pluginName);
+        }
     }
 }
