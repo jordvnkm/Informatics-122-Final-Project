@@ -20,7 +20,12 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jason white
+ * needed methods
+ * 
+ * 	-profileExists()
+ *  -createNewProfile() 
+ *  - just a normal constructor with no parameters
+ *  -
  */
 public class Profile {
     private final String userName;  // The user whose file will be accessed
@@ -28,21 +33,42 @@ public class Profile {
     private final String profileFile; // Filename to access
     private Map<String, Score> scores; // A collection of the users wins/losses
    
-    /**
-     * Constructor: Creates an Profile object for the user 
-     * @param name name of the user to create the object for.
-     */
-    public Profile(String name)
+    
+    
+    //***this is a demo constructor and needs to be deleted
+    public Profile(String userName)
     {
-        this.userName = name;
-        this.profileFile = "Profiles/" + this.userName + ".profile";
-        scores = new HashMap<>();
+    	this.userName = userName;
+    	profileFile = "";
+    }
+    
+    
+//    /**
+//     * Constructor: Creates an Profile object for the user 
+//     * @param name name of the user to create the object for.
+//     */
+//    public Profile(String name)
+//    {
+//        this.userName = name;
+//        this.profileFile = "Profiles/" + this.userName + ".profile";
+//        scores = new HashMap<>();
+//        
+//        // Check to see if the file exists, if not, initialize it
+//        initFile();
+//        
+//        // Load the file
+//        loadFile();
+//    }
+    
+    public boolean profileExists(String name)
+    {
+        File file = new File(profileFile);
         
-        // Check to see if the file exists, if not, initialize it
-        initFile();
+        // If the file doesn't exist, we'll create it with some initial values
+        if (file.exists())
+        	return true;
         
-        // Load the file
-        loadFile();
+        return false;
     }
     
     /**

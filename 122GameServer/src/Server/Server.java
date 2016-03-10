@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -27,11 +28,15 @@ public class Server implements Runnable
     private ServerSocket server;
     private ServerGUI gui;
     private boolean runServer;
+    private Lobby lobby;
         
     
     //non-default constructor
     public Server()
     {      
+    	//instantiates our lobby for the connections
+    	lobby = new Lobby();
+    	
     	//instantiates the ServerGUI instance
     	gui = new ServerGUI();
     	
@@ -76,6 +81,7 @@ public class Server implements Runnable
         try 
         { 	
 			String portNum = gui.portTextField.getText();
+			System.out.println("This is the port num: " + portNum);
 			
 			if(Integer.valueOf(portNum) < 1 || Integer.valueOf(portNum) > 49151 || Integer.valueOf(portNum) == 0)
 				throw new Exception();
@@ -90,13 +96,13 @@ public class Server implements Runnable
 			gui.stopButton.setEnabled(true);
 			gui.portTextField.setEnabled(false);
             
-            while (runServer)
-            {
-            	server.accept();
-//                   Player player = new Player(server.accept(), this, "Test");
-//                   output.append("Player " + player.getName() + " has connected\n");
-//                   players.add(player);
-             
+//			while (runServer)
+for(int i = 0; i < 2; i++)
+			{
+            	Socket tmpSocket = server.accept();
+            	gui.statusTextArea.append("Connection from IP: " + tmpSocket.getRemoteSocketAddress().toString() + " wiith the PORT: " + tmpSocket.getPort() + "\n");
+            	lobby.addNewConnection(tmpSocket);
+
             }
 
         }
@@ -110,10 +116,13 @@ public class Server implements Runnable
         
 		catch(Exception exception)
 		{
+			System.out.println("This is the ex: " + exception.getStackTrace().toString());
+			exception.printStackTrace();
 			JOptionPane.showMessageDialog(gui,
 				    "Please enter a port number between 1 and 49151",
 				    "Invalid Port Number",
 				    JOptionPane.ERROR_MESSAGE);
+			
 		}
     }
     
