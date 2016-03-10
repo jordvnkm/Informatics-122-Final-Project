@@ -7,10 +7,8 @@ package Server;
 
 import java.io.IOException;
 import java.util.ArrayList;
-/**
- *
- * @author malar
- */
+
+
 public class ServerMain
 {
     public static void main(String[] args) throws IOException

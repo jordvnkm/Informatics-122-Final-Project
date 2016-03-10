@@ -81,6 +81,7 @@ public class Server implements Runnable
         try 
         { 	
 			String portNum = gui.portTextField.getText();
+			System.out.println("This is the port num: " + portNum);
 			
 			if(Integer.valueOf(portNum) < 1 || Integer.valueOf(portNum) > 49151 || Integer.valueOf(portNum) == 0)
 				throw new Exception();
@@ -95,11 +96,12 @@ public class Server implements Runnable
 			gui.stopButton.setEnabled(true);
 			gui.portTextField.setEnabled(false);
             
-            while (runServer)
-            {
+//			while (runServer)
+for(int i = 0; i < 2; i++)
+			{
             	Socket tmpSocket = server.accept();
+            	gui.statusTextArea.append("Connection from IP: " + tmpSocket.getRemoteSocketAddress().toString() + " wiith the PORT: " + tmpSocket.getPort() + "\n");
             	lobby.addNewConnection(tmpSocket);
-            	gui.statusTextArea.append("Connection from IP: " + tmpSocket.getRemoteSocketAddress() + " wiith the PORT: " + tmpSocket.getPort() + "\n");
 
             }
 
@@ -114,10 +116,13 @@ public class Server implements Runnable
         
 		catch(Exception exception)
 		{
+			System.out.println("This is the ex: " + exception.getStackTrace().toString());
+			exception.printStackTrace();
 			JOptionPane.showMessageDialog(gui,
 				    "Please enter a port number between 1 and 49151",
 				    "Invalid Port Number",
 				    JOptionPane.ERROR_MESSAGE);
+			
 		}
     }
     

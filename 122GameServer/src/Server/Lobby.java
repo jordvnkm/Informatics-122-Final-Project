@@ -9,20 +9,39 @@ public class Lobby
 {
     private List<Player> players;
     private List<Game> games;
+    
+    private List<Player> waitingForTicTacToe;
 
     
     public Lobby()
     {
-    	
+    	players = new ArrayList<Player>();
+    	games = new ArrayList<Game>();
     }
     
     public void addNewConnection(Socket socket)
     {
-     	//Player player = new Player(server.accept(), this, "Test");
+    	Player tmp = new Player(socket, this);
+    	tmp.start();
+     	players.add(tmp);
     }
     
     
-    
+    /*
+     * 
+     * 
+     */
+    public void selectGame(Player p)
+    {
+    	//***FOr the demo they will only play tic-tac-toe
+    	
+    	if(waitingForTicTacToe.isEmpty())
+    		waitingForTicTacToe.add(p);
+//    	else
+//    		games.add(new Game(waitingForTicTacToe.get(0), p));
+    	
+    		
+    }
     
     
     

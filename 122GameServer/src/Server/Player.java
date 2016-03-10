@@ -5,7 +5,7 @@
  */
 package Server;
 
-import java.io.BufferedReader;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -29,16 +29,14 @@ import org.json.simple.parser.ParseException;
 public class Player extends Thread
 {
     private final Socket connection;
-    private BufferedReader input;
+    private DataInputStream input;
     private DataOutputStream output;
     
     private final Lobby lobby;
     private Profile profile;
     
     private boolean loggedIn;
-    protected boolean threadSuspended = true;
     
-    private char mark;
 
     public Player(Socket connection, Lobby lobby)
     {
@@ -51,7 +49,7 @@ public class Player extends Thread
         //initializing input and output streams
         try 
         {
-            input = new BufferedReader( new InputStreamReader(connection.getInputStream()));
+            input = new DataInputStream(connection.getInputStream());
             output = new DataOutputStream(connection.getOutputStream());
         }
         catch (IOException ex)
@@ -74,56 +72,69 @@ public class Player extends Thread
     @Override
     public void run()
     {
-    	//tells the server it is ready for login information
-    	try 
-    	{
-			sendMessage(initialHandshake());
-			
-			//loops until login in reached for this player
-			while(!loggedIn)
-			{
-				JSONParser parser = new JSONParser();
-
-				//gets the message from the client
-				String loginInfo = receiveMessage();
-
-				Object obj = parser.parse(loginInfo);
-				JSONObject jsonObject = (JSONObject) obj;
-				
-				//read input and check to see if its a login or new acct creation
-				String type = (String) jsonObject.get("type");
-
-				if(type.equals("login"))
-					loginPlayer(jsonObject);
-				else if(type.equals("setup"))
-					addNewPlayer(jsonObject);
-				
-				if(!loggedIn)
-					sendMessage(badLogin());
-
-			}
-
-			
-			//sends player to select game method
-			selectGame();
-		} 
     	
-    	catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    
+		//***This is for demo only. This code needs to be deleted
     	
-    	catch (Exception e) 
-    	{
-            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, e);
+		sendMessage(initialHandshake());
+		profile = new Profile("Jason");
+		
+		goToLobby();
 
-        	JOptionPane.showMessageDialog(new JOptionPane(),
-				    "Network Connection Error (within Player.run())",
-				    "Fatal Error",
-				    JOptionPane.ERROR_MESSAGE);
-        	
-        	System.exit(-1);
-		} 
+    	
+		//***The code below needs to be uncommented out. This is good code
+
+    	
+//    	//tells the server it is ready for login information
+//    	try 
+//    	{
+//			sendMessage(initialHandshake());
+//			
+//			//loops until login in reached for this player
+//			while(!loggedIn)
+//			{
+//				JSONParser parser = new JSONParser();
+//
+//				//gets the message from the client
+//				String loginInfo = receiveMessage();
+//
+//				Object obj = parser.parse(loginInfo);
+//				JSONObject jsonObject = (JSONObject) obj;
+//				
+//				//read input and check to see if its a login or new acct creation
+//				String type = (String) jsonObject.get("type");
+//
+//				if(type.equals("login"))
+//					loginPlayer(jsonObject);
+//				else if(type.equals("setup"))
+//					addNewPlayer(jsonObject);
+//				
+//				if(!loggedIn)
+//					sendMessage(badLogin());
+//
+//			}
+//
+//			
+//			//sends player to select game method
+//			selectGame();
+//		} 
+//    	
+//    	catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//    	
+//    	catch (Exception e) 
+//    	{
+//            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, e);
+//
+//        	JOptionPane.showMessageDialog(new JOptionPane(),
+//				    "Network Connection Error (within Player.run())",
+//				    "Fatal Error",
+//				    JOptionPane.ERROR_MESSAGE);
+//        	
+//        	System.exit(-1);
+//		} 
     }
     
     private Profile loginPlayer(JSONObject json)
@@ -147,9 +158,10 @@ public class Player extends Thread
     	return null;
     }
     
-    private void selectGame()
+    private void goToLobby()
     {
     	//needs to push this player thread into the lobby
+    	lobby.selectGame(this);
     }
     
 	/********************************************************************
@@ -162,7 +174,7 @@ public class Player extends Thread
     public void sendMessage(String message)
     {
     	try {
-			output.writeChars(message);
+			output.writeUTF(message);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -183,6 +195,19 @@ public class Player extends Thread
 	 ********************************************************************/
     public String receiveMessage()
     {
+    	try {
+			return input.readUTF();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+        	JOptionPane.showMessageDialog(new JOptionPane(),
+				    "Network Connection Error (within Player.sendMessage())",
+				    "Fatal Error",
+				    JOptionPane.ERROR_MESSAGE);
+        	System.exit(-1);
+		}
+    	
     	return "";
     }
     
@@ -204,8 +229,7 @@ public class Player extends Thread
 	private String initialHandshake()
 	{
 		JSONObject message = new JSONObject();
-		message.put("Welcome", "Please send the login info");
-		
+		message.put("Welcome", "Please send the login info");		
 		return message.toJSONString();
 	}
 	

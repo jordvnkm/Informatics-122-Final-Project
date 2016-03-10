@@ -33,22 +33,32 @@ public class Profile {
     private final String profileFile; // Filename to access
     private Map<String, Score> scores; // A collection of the users wins/losses
    
-    /**
-     * Constructor: Creates an Profile object for the user 
-     * @param name name of the user to create the object for.
-     */
-    public Profile(String name)
+    
+    
+    //***this is a demo constructor and needs to be deleted
+    public Profile(String userName)
     {
-        this.userName = name;
-        this.profileFile = "Profiles/" + this.userName + ".profile";
-        scores = new HashMap<>();
-        
-        // Check to see if the file exists, if not, initialize it
-        initFile();
-        
-        // Load the file
-        loadFile();
+    	this.userName = userName;
+    	profileFile = "";
     }
+    
+    
+//    /**
+//     * Constructor: Creates an Profile object for the user 
+//     * @param name name of the user to create the object for.
+//     */
+//    public Profile(String name)
+//    {
+//        this.userName = name;
+//        this.profileFile = "Profiles/" + this.userName + ".profile";
+//        scores = new HashMap<>();
+//        
+//        // Check to see if the file exists, if not, initialize it
+//        initFile();
+//        
+//        // Load the file
+//        loadFile();
+//    }
     
     public boolean profileExists(String name)
     {
