@@ -62,18 +62,7 @@ public class MainStage extends Stage{
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
         gameboard = new Board(3,3);
-        //set up listeners (todo by client class, not GUI)
-        for(int i=0;i<3;i++)
-        	for(int j=0;j<3;j++){
-        		gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
-        			Tile t = (Tile)e.getSource();
-                	int xloc= t.getXlocation();
-                	int yloc= t.getYlocation();
-                	logger("Mouse clicked: "+xloc+","+yloc,true);
-                	t.setText("X");
-                	
-                });
-        	}
+
         //text area
         TAlog = new TextArea();
 

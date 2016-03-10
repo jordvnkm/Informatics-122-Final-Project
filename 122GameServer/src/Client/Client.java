@@ -22,15 +22,19 @@ public class Client implements Runnable{
 		serverIP = serverip;
 		port = portnum;
 		gui = inputgui;
-
+		setupBoard();
+		setupMouseListeners();
 		(new Thread(this)).start();
 	}
 	
+	public void setupBoard(){
+		
+	}
 	
 	public void setupMouseListeners()
 	{
-		for(int i=0;i<4;i++)
-        	for(int j=0;j<4;j++){
+		for(int i=0;i<3;i++)
+        	for(int j=0;j<3;j++){
         		gui.gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
         			Tile t = (Tile)e.getSource();
                 	int xloc= t.getXlocation();
