@@ -6,6 +6,7 @@
 package Server;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -25,7 +26,7 @@ public class Plugin
     private final String pluginsDir = "plugins";
 
     URLClassLoader cl;
-    Class pluginClass;
+    Class<?> pluginClass;
     Object instance;
     
     
@@ -38,8 +39,9 @@ public class Plugin
             URL url = file.toURI().toURL();
             cl = new URLClassLoader(new URL[] { url });
             pluginClass = cl.loadClass("plugin.Plugin");
-            instance = pluginClass.newInstance();
-        } catch (MalformedURLException | ClassNotFoundException | InstantiationException | IllegalAccessException ex)
+            Constructor<?> ctor=pluginClass.getConstructor(String[].class);
+            instance = ctor.newInstance((Object) new String[]{"test1", "test2"});
+        } catch (MalformedURLException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex)
         {
             Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -112,8 +114,36 @@ public class Plugin
         }
         return "";
     }
-
     
+    public String currentPlayer()
+    {
+        try
+        { 
+            Method m = pluginClass.getMethod("currentPlayer", new Class[] { }  );
+            if (m != null)
+                return (String)m.invoke(instance, new Object[] { });
+        }
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+        {
+            Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }    
+
+    public String setUpBoard()
+    {
+        try
+        { 
+            Method m = pluginClass.getMethod("setUpBoard", new Class[] { }  );
+            if (m != null)
+                return (String)m.invoke(instance, new Object[] { });
+        }
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+        {
+            Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }    
     public String getBoard()
     {
         throw new UnsupportedOperationException();
