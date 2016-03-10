@@ -23,6 +23,35 @@ public class Game
     Plugin logic;
     String pluginName;
     
+    public Game(String plugin)
+    {
+        logic = new Plugin("TicTacToe");
+        logic.initializeGame(null);
+
+        System.out.println(logic.currentPlayer() + " moved to 0,1");
+        logic.makeMove(0, 1, "test1");
+        System.out.println(logic.currentPlayer() + " moved to 0,0");
+        logic.makeMove(0, 0, "test2");
+        System.out.println(logic.currentPlayer() + " moved to 1,0");
+        logic.makeMove(1, 0, "test1");
+        System.out.println(logic.currentPlayer() + " moved to 0,2");
+        logic.makeMove(0, 2, "test2");
+        System.out.println(logic.currentPlayer() + " moved to 1,1");
+        logic.makeMove(1, 1, "test1");
+        System.out.println(logic.currentPlayer() + " moved to 1,2");
+        logic.makeMove(1, 2, "test2");
+        System.out.println(logic.currentPlayer() + " moved to 2,0");
+        logic.makeMove(2, 0, "test1");
+        System.out.println(logic.currentPlayer() + " moved to 2,1");
+        logic.makeMove(2, 1, "test2");
+        System.out.println(logic.currentPlayer() + " moved to 2,2");
+        logic.makeMove(2, 2, "test1");
+        if (logic.checkForGameOver() == true)
+        {
+            System.out.println("Game over: " + logic.getWinner());
+        }
+    }
+    
     public Game(Player player, String plugin)
     {
         players = new LinkedList<>();
@@ -69,13 +98,24 @@ public class Game
         return maxPlayers;
     }
     
-    public final void addPlayer(Player player)
+    public final synchronized void addPlayer(Player player)
     {
         players.add(player);
         if (players.size() == maxPlayers)
         {
             // Todo: We need to start the game here
             logic = new Plugin(pluginName);
+            startGame();
         }
+    }
+    
+    public final synchronized void startGame()
+    {
+        // TODO: get game state, send gamestate to everyone in the 'players' list
+    }
+    
+    private void getGameState()
+    {
+        
     }
 }
