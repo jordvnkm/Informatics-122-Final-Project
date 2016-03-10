@@ -1,4 +1,9 @@
 package Client;
+
+import java.util.*;
+
+import java.util.concurrent.*;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,10 +21,21 @@ public class MainStage extends Stage{
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-
+	public ArrayList<Integer> move;
+	Thread thread;
+	private boolean madeMove;
+	public Board gameboard;
 	
-	public MainStage(){
+	
+	
+	public MainStage(int rows, int columns){
 		super();
+		move = new ArrayList<Integer>();
+		for (int i = 0; i < 4; i ++)
+		{
+			move.add(-1);
+		}
+		
 		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane(), 800, 720);
         //Menus
@@ -45,19 +61,8 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
-        Board gameboard = new Board(3,3);
-        //set up listeners (todo by client class, not GUI)
-        for(int i=0;i<3;i++)
-        	for(int j=0;j<3;j++){
-        		gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
-        			Tile t = (Tile)e.getSource();
-                	int xloc= t.getXlocation();
-                	int yloc= t.getYlocation();
-                	logger("Mouse clicked: "+xloc+","+yloc,true);
-                	t.setText("X");
-                	
-                });
-        	}
+        gameboard = new Board(rows, columns);
+
         //text area
         TAlog = new TextArea();
 
@@ -83,6 +88,9 @@ public class MainStage extends Stage{
         show();
 		
 	}
+
+
+	
 	//Add a string to the logger. Set debug to true if its a debugger line.
 	//Debugger lines should be lines not shown to the player.
 	public void logger(String s, boolean debuggerline){
@@ -92,4 +100,6 @@ public class MainStage extends Stage{
 	public void setDebug(boolean input){
 		Debug = input;
 	}
+	
+
 }
