@@ -1,4 +1,3 @@
-
 package Server;
 
 //***
@@ -10,22 +9,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *  This class will initialize a game for players
- * The player who creates the game will determine
- * which game it actually is.
+ * This class will initialize a game for players The player who creates the game
+ * will determine which game it actually is.
  *
  */
 public class Game
 {
+
     Player currentPlayer;
     int maxPlayers = 2;  // This is so we can have games with more players later
     List<Player> players;
     Plugin logic;
     String pluginName;
-    
+
     /**
      * This is just a temporary constructor
-     * @param plugin 
+     *
+     * @param plugin
      */
     public Game(String plugin)
     {
@@ -55,53 +55,67 @@ public class Game
             System.out.println("Game over: " + logic.getWinner());
         }
     }
-    
+
     public Game(Player player, String plugin)
     {
         players = new LinkedList<>();
         addPlayer(player);
         pluginName = plugin;
     }
-    
-    public synchronized boolean makeMove(int x, int y, String player) {
+
+    public synchronized boolean makeMove(int x, int y, String player)
+    {
         String winner = "";
         boolean goodMove;
-        
+
         if ((goodMove = logic.makeMove(x, y, player)) == true)
         {
+            for (Player p : players)
+            {
+                // The move was good so we need to update all of the players with
+                // a new board, generate a new board via JSON and then send it
+                // via p.sendMessage
+//                p.sendMessage(JSON);
+            }
             if (logic.checkForGameOver())
             {
                 winner = logic.getWinner();
+                for (Player p : players)
+                {
+                    // The game is over and we have a winner (or tie), so we need
+                    // to update all of the players with the results
+//                p.sendMessage(WinningJSON);
+                }
             }
         }
         return goodMove;
     }
-    
+
     public synchronized boolean checkForGameOver()
     {
         return logic.checkForGameOver();
     }
-    
+
     public synchronized String getBoard()
     {
         return logic.getBoard();
     }
-    
+
     public synchronized String getWinner()
     {
         return logic.getWinner();
     }
-    
+
     public int getCurrentNumPlayers()
     {
         return players.size();
     }
-    
+
     public int getMaxPlayers()
     {
         return maxPlayers;
     }
-    
+
     public final synchronized void addPlayer(Player player)
     {
         players.add(player);
@@ -112,7 +126,7 @@ public class Game
             startGame();
         }
     }
-    
+
     public final synchronized void announceWinners()
     {
         for (Player player : players)
@@ -121,7 +135,7 @@ public class Game
         }
         // Possibly handle logic for leaving games here.
     }
-    
+
     public final synchronized void startGame()
     {
         // TODO: get game state via getBoard, send gamestate to everyone in the 'players' list
