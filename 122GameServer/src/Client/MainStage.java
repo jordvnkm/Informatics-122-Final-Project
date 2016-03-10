@@ -1,4 +1,9 @@
 package Client;
+
+import java.util.*;
+
+import java.util.concurrent.*;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,10 +21,21 @@ public class MainStage extends Stage{
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-	private Board gameboard;
+	public ArrayList<Integer> move;
+	Thread thread;
+	private boolean madeMove;
+	public Board gameboard;
+	
+	
 	
 	public MainStage(){
 		super();
+		move = new ArrayList<Integer>();
+		for (int i = 0; i < 4; i ++)
+		{
+			move.add(-1);
+		}
+		
 		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane(), 800, 720);
         //Menus
@@ -83,6 +99,9 @@ public class MainStage extends Stage{
         show();
 		
 	}
+
+
+	
 	//Add a string to the logger. Set debug to true if its a debugger line.
 	//Debugger lines should be lines not shown to the player.
 	public void logger(String s, boolean debuggerline){

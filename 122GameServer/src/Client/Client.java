@@ -1,8 +1,11 @@
 package Client;
 
-
+import java.util.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import javafx.scene.input.MouseEvent;
+
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.io.*;
@@ -14,7 +17,7 @@ public class Client implements Runnable{
 	private MainStage gui;
 	///////////////////////////////////////////
 	//// client constructor
-	public Client(String serverip, int portnum,MainStage inputgui)
+	public Client(String serverip, int portnum, MainStage inputgui)
 	{
 		serverIP = serverip;
 		port = portnum;
@@ -24,6 +27,35 @@ public class Client implements Runnable{
 	}
 	
 	
+	public void setupMouseListeners()
+	{
+		for(int i=0;i<4;i++)
+        	for(int j=0;j<4;j++){
+        		gui.gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
+        			Tile t = (Tile)e.getSource();
+                	int xloc= t.getXlocation();
+                	int yloc= t.getYlocation();
+                	gui.logger("Mouse clicked: "+xloc+","+yloc,true);
+                	t.setText("X");
+                	setMove(-1, -1, xloc, yloc);
+                	
+                });
+        	}
+	}
+	
+	
+	
+	
+	public void setMove(int xOrigin, int yOrigin, int xDest, int yDest)
+	{
+		ArrayList<Integer> move = new ArrayList<Integer>();
+		move.add(xOrigin);
+		move.add(yOrigin);
+		move.add(xDest);
+		move.add(yDest);
+		
+		System.out.println(move);
+	}
 	
 	
 	/////////////////////////////////////////////////////////////////
