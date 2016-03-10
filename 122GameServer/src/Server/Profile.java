@@ -202,4 +202,9 @@ public class Profile {
         scores.put(game, score);
         saveFile();
     }
+    
+    public final String getName()
+    {
+        return this.userName;
+    }
 }

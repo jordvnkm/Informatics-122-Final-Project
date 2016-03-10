@@ -43,10 +43,8 @@ public class Lobby
         {
             game = games.get(0);
             game.addPlayer(p);
+            game.startGame();
         }
-        
-//    	else
-//    		games.add(new Game(waitingForTicTacToe.get(0), p));
     	
     	return game;
     }

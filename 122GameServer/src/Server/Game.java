@@ -23,6 +23,10 @@ public class Game
     Plugin logic;
     String pluginName;
     
+    /**
+     * This is just a temporary constructor
+     * @param plugin 
+     */
     public Game(String plugin)
     {
         logic = new Plugin("TicTacToe");
@@ -61,14 +65,14 @@ public class Game
     
     public synchronized boolean makeMove(int x, int y, String player) {
         String winner = "";
-        boolean goodMove = false;
+        boolean goodMove;
+        
         if ((goodMove = logic.makeMove(x, y, player)) == true)
         {
             if (logic.checkForGameOver())
             {
                 winner = logic.getWinner();
             }
-            
         }
         return goodMove;
     }
@@ -109,13 +113,17 @@ public class Game
         }
     }
     
-    public final synchronized void startGame()
+    public final synchronized void announceWinners()
     {
-        // TODO: get game state, send gamestate to everyone in the 'players' list
+        for (Player player : players)
+        {
+            player.sendMessage("PUT IN WINNER JSON HERE");
+        }
+        // Possibly handle logic for leaving games here.
     }
     
-    private void getGameState()
+    public final synchronized void startGame()
     {
-        
+        // TODO: get game state via getBoard, send gamestate to everyone in the 'players' list
     }
 }
