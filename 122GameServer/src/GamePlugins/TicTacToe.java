@@ -1,18 +1,17 @@
 package GamePlugins;
 
 import java.util.HashMap;
-import java.util.List;
-import Server.Player;
+import java.util.Scanner;
 
 public class TicTacToe extends GameState{
 
 	private HashMap<String, Piece> playerToPiece;
 	
-	public TicTacToe(List<Player> players){
+	public TicTacToe(String[] players){
 		super(players);
 		playerToPiece = new HashMap<String, Piece>();
-		playerToPiece.put(players.get(0).getName(), new Piece(new int[]{0, 0, 255}, "CROSS", "1", 'X'));
-		playerToPiece.put(players.get(1).getName(), new Piece(new int[]{255, 0, 0}, "CIRCLE", "1", 'O'));
+		playerToPiece.put(players[0], new Piece(new int[]{0, 0, 255}, "CROSS", "1", 'X'));
+		playerToPiece.put(players[1], new Piece(new int[]{255, 0, 0}, "CIRCLE", "1", 'O'));
 		setUpBoard();
 	}
 	
@@ -68,7 +67,7 @@ public class TicTacToe extends GameState{
 	@Override
 	public void changeTurn() {
 		turn += 1;
-		currentTurn = players.get(turn % players.size()).getName();
+		currentTurn = players[turn % players.length];
 	}
 	
 	
@@ -112,9 +111,7 @@ public class TicTacToe extends GameState{
 	// Testing PURPOSES ONLY
 	/*
 	public static void main(String[] args){
-		List<GamePlugins.Player> players = new ArrayList<GamePlugins.Player>();
-		players.add(new GamePlugins.Player("Adrian"));
-		players.add(new GamePlugins.Player("Alex"));
+		String[] players = new String[]{"Adrian", "Alex"};
 		
 		TicTacToe t = new TicTacToe(players);
 		Scanner scan = new Scanner(System.in);
@@ -126,7 +123,7 @@ public class TicTacToe extends GameState{
 			System.out.print("Enter [ROW][COL]: ");
 			row = scan.nextInt();
 			col = scan.nextInt();
-			t.playMove(row, col);
+			t.playMove(row, col, t.getCurrentTurn());
 		}
 		drawBoard(t.getBoard());
 		System.out.println("Winner: " + t.getWinner());

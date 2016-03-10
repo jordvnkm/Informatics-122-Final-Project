@@ -1,5 +1,4 @@
 package GamePlugins;
-import Server.Player;
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -12,14 +11,14 @@ public class OthelloGame extends GameState{
 	private int rows;
 	private int columns;
 	
-	public OthelloGame(List<Player> players){
+	public OthelloGame(String[] players){
 		super(players);
 		setUpBoard();
 		rows = board.getRows();
 		columns = board.getColumns();
 		playerToPiece = new HashMap<String, Piece>();
-		playerToPiece.put(players.get(0).getName(),  new Piece(black , "CIRCLE", "1", 'O'));
-		playerToPiece.put(players.get(1).getName(),  new Piece(white, "CIRCLE", "1", 'O'));
+		playerToPiece.put(players[0],  new Piece(black , "CIRCLE", "1", 'O'));
+		playerToPiece.put(players[1],  new Piece(white, "CIRCLE", "1", 'O'));
 	}
 	
 	@Override
@@ -90,9 +89,9 @@ public class OthelloGame extends GameState{
 			}	
 		}
 		if(p1>p2)
-			winner = players.get(0).getName();
+			winner = players[0];
 		else if(p2>p1)
-			winner = players.get(1).getName();
+			winner = players[1];
 		else
 			winner = "TIE";
 	}
@@ -115,7 +114,7 @@ public class OthelloGame extends GameState{
 	@Override
 	public void changeTurn(){
 		turn += 1;
-		currentTurn = players.get(turn % players.size()).getName();
+		currentTurn = players[turn % players.length];
 	}
 	
 	private boolean spaceTaken(int x, int y){
@@ -178,7 +177,7 @@ public class OthelloGame extends GameState{
 	}
 	
 	private int[] getOtherTurnColor(){
-		return playerToPiece.get(players.get((turn+1) % players.size()).getName()).getColor();
+		return playerToPiece.get(players[(turn+1) % players.length]).getColor();
 	}
 	
     private List<int[]> eightDirections(int row, int column){
