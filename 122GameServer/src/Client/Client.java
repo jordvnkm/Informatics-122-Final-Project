@@ -15,13 +15,16 @@ public class Client {
 	public int port;
 	public Socket socket;
 	private MainStage gui;
+	private GameData gameData;
+	
 	///////////////////////////////////////////
 	//// client constructor
-	public Client(String serverip, int portnum, MainStage inputgui)
+	public Client(String serverip, int portnum)
 	{
 		serverIP = serverip;
 		port = portnum;
-		gui = inputgui;
+		gameData = new GameData();
+		//gui = inputgui;
 		/*try{
 			socket = new Socket(serverIP, portnum);
 		}
@@ -32,6 +35,17 @@ public class Client {
 	}
 	
 	
+	////////////////////////////////////////////////////
+	/// adds the gui to the client
+	public void setGui(MainStage inputgui)
+	{
+		gui = inputgui;
+	}
+	
+	
+	
+	//////////////////////////////////////////////////////
+	///sets up mouse listener on gui
 	public void setupMouseListeners()
 	{
 		for(int i=0;i<4;i++)
@@ -50,7 +64,8 @@ public class Client {
 	
 	
 	
-	
+	///////////////////////////////////////////////////////////////////
+	////// function that is used by mouse listeners.
 	public void setMove(int xOrigin, int yOrigin, int xDest, int yDest)
 	{
 		ArrayList<Integer> move = new ArrayList<Integer>();
@@ -62,6 +77,10 @@ public class Client {
 		System.out.println(move);
 	}
 	
+	
+/////////////////////////////////////////////////////////////////////////////////////////////
+///////////functions that send information through the socket///////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
 	
 	/////////////////////////////////////////////////////////////////
 	/////sends a request that states which game the player wants to join
@@ -85,7 +104,24 @@ public class Client {
 	}
 	
 	
-	
+	/////////////////////////////////////////////////////////////////
+	//// requests the board size
+	public void requestBoardSize()
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("type", "requestBoardSize");
+
+		try 
+		{
+			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
+		    out.write(obj.toJSONString());
+		    out.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	
 	
 	
@@ -196,8 +232,31 @@ public class Client {
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		}	
+	}
+	
+	
+/////////////////////////////////////////////////////////////////////////////////////////////
+///////////functions that parse information from the socket///////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+	
+	/////////////////////////////////////////////////////////////////
+	/// parses board size
+	public void parseBoardSize() throws IOException
+	{
+	    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+	    String input;
+	    try {
+			while ((input = br.readLine()) != null) {
+
+				// parse board
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
+
 	}
 
 }
