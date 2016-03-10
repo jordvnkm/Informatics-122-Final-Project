@@ -32,6 +32,7 @@ public class Player extends Thread
     private final Lobby lobby;
     private Profile profile;
     
+    private boolean loggedIn;
     protected boolean threadSuspended = true;
     
     private char mark;
@@ -40,6 +41,9 @@ public class Player extends Thread
     {
         this.connection = connection;
         this.lobby = lobby;
+        
+        //at thread initialization the user is not logged in
+        loggedIn = false;
         
         //initializing input and output streams
         try 
@@ -70,24 +74,28 @@ public class Player extends Thread
     	//tells the server it is ready for login information
     	try 
     	{
-			output.writeChars("ready");
-			input.readLine();
+			output.writeChars("This is the INF 122 Game server");
 			
 			//loops until login in reached for this player
-			
+			while(!loggedIn)
+			{
+				String loginName = input.readLine();
+
 				//read input and check to see if its a login or new acct creation
 				//calls loginPlayer() if logging in
 				//calls new acct creation if acct creation
+			}
+
 			
 			//sends player to select game method
 		} 
     	
     	catch (IOException e) 
     	{
-            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, e);
 
         	JOptionPane.showMessageDialog(new JOptionPane(),
-				    "Network Connection Error",
+				    "Network Connection Error (within Player.run())",
 				    "Fatal Error",
 				    JOptionPane.ERROR_MESSAGE);
         	
@@ -95,7 +103,7 @@ public class Player extends Thread
 		}
     }
     
-    private Profile loginPlayer()
+    private Profile loginPlayer(String username)
     {
     	//read login name
     	

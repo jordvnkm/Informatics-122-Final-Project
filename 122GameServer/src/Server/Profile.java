@@ -20,7 +20,12 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jason white
+ * needed methods
+ * 
+ * 	-profileExists()
+ *  -createNewProfile() 
+ *  - just a normal constructor with no parameters
+ *  -
  */
 public class Profile {
     private final String userName;  // The user whose file will be accessed
@@ -43,6 +48,17 @@ public class Profile {
         
         // Load the file
         loadFile();
+    }
+    
+    public boolean profileExists(String name)
+    {
+        File file = new File(profileFile);
+        
+        // If the file doesn't exist, we'll create it with some initial values
+        if (file.exists())
+        	return true;
+        
+        return false;
     }
     
     /**
