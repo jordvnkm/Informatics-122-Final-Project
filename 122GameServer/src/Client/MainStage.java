@@ -16,7 +16,7 @@ public class MainStage extends Stage{
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-
+	private Board gameboard;
 	
 	public MainStage(){
 		super();
@@ -45,7 +45,7 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
-        Board gameboard = new Board(3,3);
+        gameboard = new Board(3,3);
         //set up listeners (todo by client class, not GUI)
         for(int i=0;i<3;i++)
         	for(int j=0;j<3;j++){
@@ -91,5 +91,9 @@ public class MainStage extends Stage{
 	}
 	public void setDebug(boolean input){
 		Debug = input;
+	}
+	
+	public Board getBoard(){
+		return gameboard;
 	}
 }

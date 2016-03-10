@@ -7,7 +7,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.io.*;
 
-public class Client {
+public class Client implements Runnable{
 	public String serverIP;
 	public int port;
 	public Socket socket;
@@ -19,13 +19,8 @@ public class Client {
 		serverIP = serverip;
 		port = portnum;
 		gui = inputgui;
-		/*try{
-			socket = new Socket(serverIP, portnum);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}	*/
+
+		(new Thread(this)).start();
 	}
 	
 	
@@ -166,6 +161,35 @@ public class Client {
 			e.printStackTrace();
 		}
 		
+	}
+
+
+
+
+	@Override
+	public void run() {
+		try{
+			socket = new Socket(InetAddress.getByName(serverIP), port);
+			System.out.println("Successful connection.");
+		}
+		catch (IOException e)
+		{
+			System.out.println("failed to connect");
+			e.printStackTrace();
+		}
+		
+		/*while(true){
+		for(int i=0;i<3;i++)
+			for(int j=0;j<3;j++){
+					gui.getBoard().getTile(i, j).setBackgroundColor(255, 0, 127);
+					try{Thread.sleep(100);}catch(InterruptedException e){}
+			}
+		for(int i=0;i<3;i++)
+			for(int j=0;j<3;j++){
+					gui.getBoard().getTile(j, i).setBackgroundColor(127, 0, 255);
+					try{Thread.sleep(100);}catch(InterruptedException e){}
+			}
+		}*/
 	}
 
 }
