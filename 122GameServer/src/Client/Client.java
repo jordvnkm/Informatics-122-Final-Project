@@ -367,7 +367,7 @@ public class Client implements Runnable{
 			gotInput = true;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return gotInput;
 		}
 	    	    
 		try {
@@ -408,6 +408,12 @@ public class Client implements Runnable{
 		try{
 			socket = new Socket(InetAddress.getByName(serverIP), port);
 			System.out.println("Successful connection.");
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			sendBoard();
 			while (true)
 			{

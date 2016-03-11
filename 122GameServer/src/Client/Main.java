@@ -11,7 +11,7 @@ public class Main extends Application{
     	//connect to server
         gui = new MainStage();
         primaryStage = gui;
-        Client c = new Client("127.0.0.1",8000, gui);
+        Client c = new Client("127.0.0.1",8001, gui);
         
         // set up the gui
         //c.requestBoardSize();
