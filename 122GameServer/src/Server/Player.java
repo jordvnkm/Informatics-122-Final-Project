@@ -70,15 +70,16 @@ public class Player extends Thread
     {
 
         //***This is for demo only. This code needs to be deleted
-        sendMessage(initialHandshake());
-        profile = new Profile("Jason");
-        goToLobby();
+//        sendMessage(initialHandshake());
+//        profile = new Profile("Jason");
+//        goToLobby();
 
         // This is necessary to continuously receive messages from the
         // client, it has to be in a loop
         while (true)
         {
             String stringToParse = receiveMessage();
+            lobby.passesMessage(this, stringToParse);
             // If parsed JSON shows the client wanted to make a move
 //            {
 //                game.makeMove(xCoord, yCoord, profile.getName());

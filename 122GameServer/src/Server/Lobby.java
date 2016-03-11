@@ -50,6 +50,17 @@ public class Lobby
     }
     
     
+    public void passesMessage(Player p, String s)
+    {
+    	for(Player player : players)
+    	{
+    		if(player != p && player != players.get(0))
+    		{
+    			player.sendMessage(s);
+    		}
+    	}
+    	
+    }
     
 //    public List<Player> getInactivePlayers()
 //    {
