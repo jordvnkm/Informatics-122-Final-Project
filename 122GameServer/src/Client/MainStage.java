@@ -61,7 +61,7 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
-        gameboard = new Board(3,3);
+        gameboard = new Board(3, 3);
 
         //text area
         TAlog = new TextArea();

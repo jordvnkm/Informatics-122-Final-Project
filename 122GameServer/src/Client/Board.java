@@ -11,7 +11,7 @@ public class Board extends GridPane{
 		super();
 	}
 	//main constructor
-	public Board(int rows,int columns){
+	public Board(long rows,long columns){
         this.setMinSize(166*3,166*3);
         this.setPrefSize(166*3, 166*3);
         this.setMaxSize(166*3, 166*3);
