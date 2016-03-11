@@ -49,9 +49,6 @@ public class GameStateToJSON
 	
 		//stores the information of the pieces that are located on the tiles
 		JSONObject jsonPieces = new JSONObject();
-	
-		//used multiple times throughout every iteration between BG and Piece
-		//JSONObject color = new JSONObject();
 		
 		//stores the JSON piece objects
 		JSONArray pieceList = new JSONArray();
@@ -65,17 +62,9 @@ public class GameStateToJSON
 			{
 				//gets and stores the current tile
 				Tile tile = board.getTile(row, column);
-
-				//gets and translates the background color
-				//color.put("red", tile.getBackgroundColor()[0]);
-				//color.put("green", tile.getBackgroundColor()[1]);
-				//color.put("blue", tile.getBackgroundColor()[2]);
 				
 				//pushes the color into the Tile JSONObject
 				jsonTile.put("backgroundColor", tile.getBackgroundColor());
-				
-				//clears the color object for reuse
-				//color.clear();
 				
 				//gets the 1 or more pieces and cycles through for each
 				ArrayList<Piece> pieces = tile.getPieces();
@@ -83,11 +72,6 @@ public class GameStateToJSON
 				{
 					//shape
 					jsonPieces.put("shape", p.getShape());
-					
-					//color
-					//color.put("red", p.getColor()[0]);
-					//color.put("green", p.getColor()[1]);
-					//color.put("blue", p.getColor()[2]);
 					
 					jsonPieces.put("color", p.getColor());
 
@@ -98,21 +82,17 @@ public class GameStateToJSON
 					jsonPieces.put("layer", p.getLayer());
 					
 					pieceList.add(jsonPieces);
-					//clearing the color out
-					//color.clear();
 				}
 				
 				//adds all of the pieces to the tile
 				jsonTile.put("pieces", pieceList);
 				
 				//adds the tile to the board
-				//jsonBoard.put("tile", jsonTile);
 				tileList.add(jsonTile);
 				
 				pieceList = new JSONArray();
 				jsonTile = new JSONObject();
 				jsonPieces = new JSONObject();
-				//jsonTile.clear();
 			}
 		}
 		jsonBoard.put("tiles", tileList);
