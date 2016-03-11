@@ -1,7 +1,5 @@
 package GamePlugins;
-
 import java.util.ArrayList;
-
 public class Tile{
 	
 	private ArrayList<Piece> pieces;	
@@ -11,11 +9,13 @@ public class Tile{
 	
 	public Tile(){
 		pieces = new ArrayList<Piece>();
-		backgroundColor = new int[3];
+		pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
+		backgroundColor = new int[]{255, 255, 255}; // default white background
 	}
 	
 	public Tile(int[] color){
 		pieces = new ArrayList<Piece>();
+		pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
 		backgroundColor = color;
 	}
 	
@@ -25,13 +25,23 @@ public class Tile{
 	
 	public void clearTile(){
 		pieces.clear();
+		pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
 	}
 	
 	public void removePiece(Piece piece){
+		if(pieces.get(0).getShape() == "empty"){
+			throw new NullPointerException("Tile is already empty!!!");
+		}
 		pieces.remove(piece);
+		if(pieces.isEmpty()){
+			pieces.add(new Piece(new int[]{1, 1, 1}, "empty", "empty",'E'));
+		}
 	}
 	
 	public void addPiece(Piece piece){
+		if(pieces.get(0).getShape() == "empty"){
+			pieces.remove(0);
+		}
 		pieces.add(piece);
 	}
 	
@@ -40,7 +50,7 @@ public class Tile{
 	}
 	
 	public boolean hasPieces(){
-		if(pieces.isEmpty()){
+		if(pieces.get(0).getShape() == "empty"){
 			return false;
 		}
 		return true;
@@ -51,9 +61,8 @@ public class Tile{
 	}
 	
 	public Piece getFirstPiece(){
-		if(this.pieces.size() > 0)
-			return this.pieces.get(0);
-		return null;
+		return this.pieces.get(0);
+
 	}
 
 	//new methods to set and get background color

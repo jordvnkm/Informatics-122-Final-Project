@@ -6,12 +6,16 @@
 package Server;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
@@ -19,120 +23,140 @@ import javax.swing.WindowConstants;
  *
  * @author malar
  */
-public class Server extends JFrame
+public class Server implements Runnable 
 {
-    private List<Game> games;
-    private boolean xMove;
-    private final JTextArea output;
-    private List<Player> players;
+
     private ServerSocket server;
-    private int currentPlayer;
-    
-    
+    private ServerGUI gui;
+    private boolean runServer;
+    private Lobby lobby;
+
     //non-default constructor
-    public Server(int port)
+    public Server()
     {
-        super( "Server" );
-        
-        try 
+        //instantiates our lobby for the connections
+        lobby = new Lobby();
+
+        //instantiates the ServerGUI instance
+        gui = new ServerGUI();
+
+        //sets the stopButton grayed out to start
+        gui.stopButton.setEnabled(false);
+
+        //listener for start button
+        gui.startButton.addActionListener(new ActionListener()
         {
-            server = new ServerSocket(port);
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                startServer();
+            }
+        });
+
+        //listener for stop button
+        gui.stopButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                stopServer();
+            }
+        });
+
+        //thread safe runnable and sets visible
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                gui.setVisible(true);
+            }
+        });
+    }
+
+    /**
+     * ***************************************************************************
+     * public void execute()
+     *
+     * Begins listening for client connections. When connection is accepted, the
+     * player socket is sent to the Lobby
+     ****************************************************************************
+     */
+    private void startServer()
+    {
+        try
+        {
+            String portNum = gui.portTextField.getText();
+            System.out.println("This is the port num: " + portNum);
+
+            if (Integer.valueOf(portNum) < 1 || Integer.valueOf(portNum) > 49151 || Integer.valueOf(portNum) == 0)
+            {
+                throw new Exception();
+            }
+
+            gui.statusTextArea.append("Starting server... (Port #" + portNum + ")\n");
+
+            server = new ServerSocket(Integer.valueOf(portNum));
+
+            runServer = true;
+            gui.startButton.setEnabled(false);
+            gui.stopButton.setEnabled(true);
+            gui.portTextField.setEnabled(false);
+
+//			while (runServer)
+            for (int i = 0; i < 2; i++)
+            {
+                Socket tmpSocket = server.accept();
+                gui.statusTextArea.append("Connection from IP: " + tmpSocket.getRemoteSocketAddress().toString() + " wiith the PORT: " + tmpSocket.getPort() + "\n");
+                lobby.addNewConnection(tmpSocket);
+            }
+
+        } catch (IOException e)
+        {
+            JOptionPane.showMessageDialog(gui,
+                    "Please try a different port number",
+                    "Port Number in Use",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception exception)
+        {
+            System.out.println("This is the ex: " + exception.getStackTrace().toString());
+            exception.printStackTrace();
+            JOptionPane.showMessageDialog(gui,
+                    "Please enter a port number between 1 and 49151",
+                    "Invalid Port Number",
+                    JOptionPane.ERROR_MESSAGE);
+
         }
-        catch(IOException e)
+    }
+
+    private void stopServer()
+    {
+        gui.statusTextArea.append("Stopping server...\n");
+        runServer = false;
+        gui.startButton.setEnabled(true);
+        gui.stopButton.setEnabled(false);
+        gui.portTextField.setEnabled(true);
+
+        try
         {
-            e.printStackTrace();
+            server.close();
+        } catch (IOException e)
+        {
+            JOptionPane.showMessageDialog(gui,
+                    "Could not stop the server",
+                    "Fatal Error",
+                    JOptionPane.ERROR_MESSAGE);
+
             System.exit(-1);
         }
-        
 
-        //GUI setup/initialization
-        output = new JTextArea();
-        getContentPane().add(output, BorderLayout.CENTER);
-        output.setText( "Waiting for connections...\n");
-        setSize( 300, 300);
-        setVisible(true);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        
-        //initializing games and players arrays
-        games = new ArrayList<>();
-        players = new ArrayList<>();
     }
-    
-    
-    
-    /*****************************************************************************
-     *   public void execute()
-     *   
-     *   Begins listening for client connections. When connection is accepted,
-     *   		that connection is stored within a instance of type Player. 
-     *   		This player is then added to a list of other Player instances and
-     *   		then the thread is started. 
-     *****************************************************************************/
-    public void execute()
+
+    @Override
+    public void run()
     {
-        while (true)
-        {
-            try
-            {
-               Player player = new Player(server.accept(), this, "Test");
-               output.append("Player " + player.getName() + " has connected\n");
-               players.add(player);
-               player.start();
-            }
-            catch( IOException e)
-            {
-                
-            }
-        }
+        // TODO Auto-generated method stub
+
     }
-    
-    public List<Player> getInactivePlayers()
-    {
-        List<Player> retList = new ArrayList<>();
-        players.stream().filter((player) -> (player.getGame() == null)).forEach((player) ->
-        {
-            retList.add(player);
-        });
-        
-        return retList;
-    }
-    
-    public List<Player> getAllPlayers()
-    {
-        return players;
-    }
-    
-    public List<Game> getOpenGames()
-    {
-        List<Game> retList = new ArrayList<>();
-        games.stream().filter((game) -> (game.getMaxPlayers() > game.getCurrentNumPlayers())).forEach((game) ->
-        {
-            retList.add(game);
-        });
-        
-        return retList;
-    }
-    
-    public void addGame(Game game)
-    {
-        games.add(game);
-    }
-    
-    public List<String> getPluginNames()
-    {
-        File folder = new File("plugins");
-        File[] fileList = folder.listFiles();
-        List<String> fileNames = new ArrayList<>();
-        
-        for (File file : fileList)
-        {
-            if (file.isFile())
-            {
-                int i = file.getName().lastIndexOf('.');
-                if (file.getName().substring(i+1).equals("jar"));
-                    fileNames.add(file.getName());
-            }
-        }
-        return fileNames;
-    }
+
 }

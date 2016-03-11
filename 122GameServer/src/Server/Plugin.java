@@ -6,11 +6,13 @@
 package Server;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +26,7 @@ public class Plugin
     private final String pluginsDir = "plugins";
 
     URLClassLoader cl;
-    Class pluginClass;
+    Class<?> pluginClass;
     Object instance;
     
     
@@ -37,8 +39,9 @@ public class Plugin
             URL url = file.toURI().toURL();
             cl = new URLClassLoader(new URL[] { url });
             pluginClass = cl.loadClass("plugin.Plugin");
-            instance = pluginClass.newInstance();
-        } catch (MalformedURLException | ClassNotFoundException | InstantiationException | IllegalAccessException ex)
+            Constructor<?> ctor=pluginClass.getConstructor(String[].class);
+            instance = ctor.newInstance((Object) new String[]{"test1", "test2"});
+        } catch (MalformedURLException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex)
         {
             Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -59,7 +62,7 @@ public class Plugin
     //plugin interaction methods
     //**************************
     
-    public void initializeGame(String player1, String player2)
+    public void initializeGame(List<Player> players)
     {
     	
     }
@@ -67,19 +70,84 @@ public class Plugin
     
     
     
-    public boolean move(int dir)
+    public boolean makeMove(int x, int y, String player)
     {
         try
         { 
-            Method m = pluginClass.getMethod("movez", new Class[] { int.class }  );
+            Method m = pluginClass.getMethod("playMove", new Class[] { int.class, int.class, String.class }  );
             if (m != null)
-                return (boolean)m.invoke(instance, new Object[] { dir });
+                return (boolean)m.invoke(instance, new Object[] { x, y, player });
         }
         catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
         {
             Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public boolean checkForGameOver()
+    {
+        try
+        { 
+            Method m = pluginClass.getMethod("checkForGameOver", new Class[] { }  );
+            if (m != null)
+                return (boolean)m.invoke(instance, new Object[] { });
+        }
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+        {
+            Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public String getWinner()
+    {
+        try
+        { 
+            Method m = pluginClass.getMethod("getWinner", new Class[] { }  );
+            if (m != null)
+                return (String)m.invoke(instance, new Object[] { });
+        }
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+        {
+            Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
+    
+    public String currentPlayer()
+    {
+        try
+        { 
+            Method m = pluginClass.getMethod("currentPlayer", new Class[] { }  );
+            if (m != null)
+                return (String)m.invoke(instance, new Object[] { });
+        }
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+        {
+            Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }    
+
+    public String setUpBoard()
+    {
+        try
+        { 
+            Method m = pluginClass.getMethod("setUpBoard", new Class[] { }  );
+            if (m != null)
+                return (String)m.invoke(instance, new Object[] { });
+        }
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+        {
+            Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }    
+    
+    public String getBoard()
+    {
+        throw new UnsupportedOperationException();
     }
     
 }

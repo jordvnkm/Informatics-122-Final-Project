@@ -1,11 +1,11 @@
-package Server;
+package GamePlugins;
 
 import java.util.ArrayList;
 
 import org.json.simple.*;
 import GamePlugins.*;
 
-public class JSONTranslator 
+public class JOSNExample 
 {
 	/********************************************************************
 	 * 	public static String gameStateToJSON()
@@ -108,4 +108,9 @@ public class JSONTranslator
 
 		return jsonGameState.toJSONString();
 	}
+	
+	
+
+	
+
 }

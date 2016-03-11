@@ -1,27 +1,21 @@
 package GamePlugins;
 
-import java.util.List;
-
-import Server.Player;
-
-
 
 public abstract class GameState {
-
 	protected Board board;
 	protected int turn;
-	protected List<Player> players;
+	protected String[] players;
 	protected String currentTurn;
 	protected String winner;
 	protected boolean isRunning;
 	
 	
-	public GameState(int row, int col, List<Player> players){
+	public GameState(String[] players){
 		this.players = players;
 		this.isRunning = true;
 		this.turn = 0;
-		this.currentTurn = players.get(0).getName();
-		this.winner = "tie";
+		this.currentTurn = players[0];
+		this.winner = "TIE";
 	}
 	
 	
@@ -29,7 +23,7 @@ public abstract class GameState {
 		
 	public abstract boolean checkForGameOver();
 	
-	public abstract boolean playMove(int x, int y);
+	public abstract boolean playMove(int x, int y, String name);
 	
 	public abstract boolean checkValidMove(int x, int y);
 	
@@ -45,10 +39,6 @@ public abstract class GameState {
 		return this.winner;
 	}
 	
-	public void setWinner(String name){
-		this.winner = name;
-	}
-	
 	public int getTurn(){
 		return this.turn;
 	}
@@ -59,5 +49,10 @@ public abstract class GameState {
 	
 	public Board getBoard(){
 		return this.board;
+	}
+	
+	public String getGameState(){
+		String jsonString = GameStateToJSON.gameStateToJSON(this.board, this.currentTurn, this.winner, this.isRunning);
+		return jsonString;
 	}
 }

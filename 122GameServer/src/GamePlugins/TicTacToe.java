@@ -1,24 +1,30 @@
 package GamePlugins;
 
 import java.util.HashMap;
-import java.util.List;
-import Server.Player;
+import java.util.Scanner;
 
 public class TicTacToe extends GameState{
 
 	private HashMap<String, Piece> playerToPiece;
 	
-	public TicTacToe(int x, int y, List<Player> players){
-		super(x, y, players);
+	public TicTacToe(String[] players){
+		super(players);
 		playerToPiece = new HashMap<String, Piece>();
-		playerToPiece.put(players.get(0).getName(), new Piece(null, "Black", "Cross", 'X'));
-		playerToPiece.put(players.get(1).getName(), new Piece(null, "Red", "Circle", 'O'));
+		playerToPiece.put(players[0], new Piece(new int[]{0, 0, 255}, "CROSS", "1", 'X'));
+		playerToPiece.put(players[1], new Piece(new int[]{255, 0, 0}, "CIRCLE", "1", 'O'));
 		setUpBoard();
 	}
 	
 	@Override
 	public void setUpBoard() {
 		this.board = new Board(3, 3);
+		int rows = this.board.getRows();
+		int cols = this.board.getColumns();
+		for(int i = 0; i < rows; i++){
+			for(int j = 0; j < cols; j++){
+				this.board.setTile(i, j, new Tile(new int[]{255, 255, 255}));
+			}
+		}
 	}
 
 	@Override
@@ -28,13 +34,20 @@ public class TicTacToe extends GameState{
 			return true;
 		}
 		
-		return this.turn >= 9;
+		return this.turn >= 8;
 	}
 
 	@Override
-	public boolean playMove(int x, int y) {
+	public boolean playMove(int x, int y, String name) {
+		if(!currentTurn.equals(name)){
+			return false;
+		}
+		
 		if(checkValidMove(x, y)){
 			board.addPiece(x, y, playerToPiece.get(currentTurn));
+			if(checkForGameOver()){
+				this.isRunning = false;
+			}
 			changeTurn();
 			return true;
 		}
@@ -54,7 +67,7 @@ public class TicTacToe extends GameState{
 	@Override
 	public void changeTurn() {
 		turn += 1;
-		currentTurn = players.get(turn % players.size()).getName();
+		currentTurn = players[turn % players.length];
 	}
 	
 	
@@ -90,7 +103,43 @@ public class TicTacToe extends GameState{
 	
 	
 	private boolean checkRowCol(Piece p1, Piece p2, Piece p3){
-		return (!(p1 == null || p2 == null || p3 == null) &&
-				(p1.getType() != '\0' && p1.getType() == p2.getType() && p2.getType() == p3.getType()));
+		return (p1.getType() != 'E' && p1.getType() == p2.getType() && p2.getType() == p3.getType());
 	}
+	
+	
+	
+	// Testing PURPOSES ONLY
+	/*
+	public static void main(String[] args){
+		String[] players = new String[]{"Adrian", "Alex"};
+		
+		TicTacToe t = new TicTacToe(players);
+		Scanner scan = new Scanner(System.in);
+		int row, col;
+		
+		while(t.getIsRunning()){
+			System.out.println("Current turn: " + t.getCurrentTurn());
+			drawBoard(t.getBoard());
+			System.out.print("Enter [ROW][COL]: ");
+			row = scan.nextInt();
+			col = scan.nextInt();
+			t.playMove(row, col, t.getCurrentTurn());
+		}
+		drawBoard(t.getBoard());
+		System.out.println("Winner: " + t.getWinner());
+		scan.close();
+	}
+	
+	
+	public static void drawBoard(Board b){
+		int row = b.getRows();
+		int col = b.getColumns();
+		for(int i = 0; i < row; i++){
+			for(int j = 0; j < col; j++){
+				System.out.print(b.getTile(i, j).getFirstPiece().getType() + " | ");
+			}
+			System.out.println("");
+		}
+	}
+	*/
 }
