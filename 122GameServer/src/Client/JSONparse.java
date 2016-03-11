@@ -1,4 +1,4 @@
-package GamePlugins;
+package Client;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
