@@ -28,7 +28,7 @@ public class MainStage extends Stage{
 	
 	
 	
-	public MainStage(int rows, int columns){
+	public MainStage(){
 		super();
 		move = new ArrayList<Integer>();
 		for (int i = 0; i < 4; i ++)
@@ -61,7 +61,7 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
-        gameboard = new Board(rows, columns);
+        gameboard = new Board(3, 3);
 
         //text area
         TAlog = new TextArea();

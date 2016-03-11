@@ -1,8 +1,11 @@
 package Client;
 
+import static java.lang.Math.toIntExact;
 import java.util.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javafx.scene.input.MouseEvent;
 
@@ -16,15 +19,17 @@ public class Client implements Runnable{
 	public Socket socket;
 	private MainStage gui;
 	private GameData gameData;
+	private boolean myTurn = false;
 	
 	///////////////////////////////////////////
 	//// client constructor
-	public Client(String serverip, int portnum)
+	public Client(String serverip, int portnum, MainStage inputgui)
 	{
 		serverIP = serverip;
 		port = portnum;
 		gameData = new GameData();
-		//gui = inputgui;
+		gui = inputgui;
+		setupMouseListeners();
 		/*try{
 			socket = new Socket(serverIP, portnum);
 		}
@@ -61,9 +66,15 @@ public class Client implements Runnable{
                 	int xloc= t.getXlocation();
                 	int yloc= t.getYlocation();
                 	gui.logger("Mouse clicked: "+xloc+","+yloc,true);
-                	t.setText("X");
-                	setMove(-1, -1, xloc, yloc);
-                	
+                	if (myTurn)
+                	{
+                		t.setText("X");
+                		setMove(-1, -1, xloc, yloc);
+                	}
+                	else
+                	{
+                		gui.logger("Not Your Turn", true);
+                	}
                 });
         	}
 	}
@@ -74,14 +85,17 @@ public class Client implements Runnable{
 	////// function that is used by mouse listeners.
 	public void setMove(int xOrigin, int yOrigin, int xDest, int yDest)
 	{
+
 		ArrayList<Integer> move = new ArrayList<Integer>();
 		move.add(xOrigin);
 		move.add(yOrigin);
 		move.add(xDest);
 		move.add(yDest);
-		
+
 		System.out.println(move);
-		//sendMove(move);
+		sendMove(move);
+		
+		myTurn = false;
 	}
 	
 	
@@ -236,6 +250,52 @@ public class Client implements Runnable{
 		obj.put("xDest", move.get(2));   // xDest
 		obj.put("yDest", move.get(3));   // yDest
 		
+//		try 
+//		{
+//			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
+//		    out.write(obj.toJSONString());
+//		    out.flush();
+//		    out.close();
+//		}
+//		catch (IOException e)
+//		{
+//			e.printStackTrace();
+//		}	
+	}
+	
+	///////////////////////////////////////////////////////////
+	//// sends board state
+	public void sendBoard()
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("type", "boardState");
+		
+		int position = 0;
+		for (int i = 0; i < 3; i ++)
+		{
+			for (int j = 0 ; j < 3; j ++)
+			{
+				JSONArray myarray = new JSONArray();
+				myarray.add(i);
+				myarray.add(j);
+				if (i == 2)
+				{
+					myarray.add(0);
+				}
+				else
+				{
+					myarray.add(1);
+				}
+				obj.put(position, myarray);
+				position ++;
+			}
+			
+		}
+		
+		
+//		System.out.println(obj.toJSONString());
+//		
+//		parseBoard(obj.toJSONString());
 		
 		try 
 		{
@@ -247,7 +307,8 @@ public class Client implements Runnable{
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}	
+		}
+		
 	}
 	
 	
@@ -260,16 +321,82 @@ public class Client implements Runnable{
 	public void parseBoardSize()
 	{
 	    String input;
+	    String jsonString = "";
+	    long[] boardSize = new long[2];
 	    try {
 	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			while ((input = br.readLine()) != null) {
-
-				// parse board
+				jsonString += input;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	    
+		try {
+			JSONParser parser = new JSONParser();
+			Object object = parser.parse(jsonString);
+			JSONObject jsonObject = (JSONObject) object;
+			
+			long rows = (long) jsonObject.get("rows");
+			long columns = (long) jsonObject.get("columns");
+			boardSize[0] = rows;
+			boardSize[1] = columns;
+			
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	////////////////////////////////////////////////////////////
+	//// parses board state
+	public boolean parseBoard()
+	{
+		boolean gotInput = false;
+	    String input;
+	    String jsonString = "";
+	    try {
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			while ((input = br.readLine()) != null) {
+				jsonString += input;
+			}
+			gotInput = true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    	    
+		try {
+			JSONParser parser = new JSONParser();
+			Object object = parser.parse(jsonString);
+			JSONObject jsonObject = (JSONObject) object;
+			
+			for (int i = 0 ; i < 9 ; i ++)
+			{
+				JSONArray position = (JSONArray)jsonObject.get(Integer.toString(i));
+				Tile t = gui.gameboard.getTile(toIntExact((long)position.get(0)), toIntExact((long)position.get(1)));
+				if (toIntExact((long) position.get(2)) == 1)
+				{
+					t.setText("X");
+				}
+				else
+				{
+					t.setText("");
+				}
+				
+			}
+			
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return gotInput;
 
 	}
 
@@ -281,6 +408,15 @@ public class Client implements Runnable{
 		try{
 			socket = new Socket(InetAddress.getByName(serverIP), port);
 			System.out.println("Successful connection.");
+			sendBoard();
+			while (true)
+			{
+				if(parseBoard())
+				{
+					break;
+				}
+			}
+			
 		}
 		catch (IOException e)
 		{
