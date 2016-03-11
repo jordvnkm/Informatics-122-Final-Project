@@ -139,5 +139,9 @@ public class Game
     public final synchronized void startGame()
     {
         // TODO: get game state via getBoard, send gamestate to everyone in the 'players' list
+        for (Player player : players)
+        {
+            player.sendMessage(getBoard());
+        }    
     }
 }

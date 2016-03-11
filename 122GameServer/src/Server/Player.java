@@ -85,6 +85,8 @@ public class Player extends Thread
 //            }
         }
 
+        
+        
         //***The code below needs to be uncommented out. This is good code
 //    	//tells the server it is ready for login information
 //    	try 
