@@ -16,12 +16,14 @@ public class JSONparse{
 	
 	
 	//Constructor...Pass in JSONString
+    
 	public JSONparse(String jsonString){
 		this.jsonString = jsonString;
 		setValues();
 	}
 	
 	//Called by Constructor. Sets values of rowNum, columnNum, currentTurn, winner, isRunning, and tileList
+    
 	private void setValues(){
 		JSONParser parser = new JSONParser();
 		JSONObject jsonGameState = new JSONObject();
@@ -72,6 +74,7 @@ public class JSONparse{
 	//Gets the tile color as int[]...for example [255,255,255]
 	//uses rgb values
 	//Enter (0,0) as params to get the color of the Tile at COORDS 0,0 (topleft of board)
+    
 	public int[] getTileColor(int row, int column){
 		int ArrayPos = (columnNum * row + column);
 		JSONObject tile = new JSONObject();
@@ -84,6 +87,7 @@ public class JSONparse{
 	//Gets a piece Shape. Parameters are row and column, and position
 	//position parameter is for games that have more than 1 piece per Tile. 
 	//position parameter will be default 0 for games like Othello, TicTacToe, and Chutes
+    
 	public String getPieceShape(int row, int column, int position){
 		return getPiece(row, column, position).get("shape").toString();
 	}
@@ -92,6 +96,7 @@ public class JSONparse{
 	//Gets a piece color in form of int[]. Example: [255,255,255]
 	//position parameter is for games that have more than 1 piece per Tile. 
 	//position parameter will be default 0 for games like Othello, TicTacToe, and Chutes
+    
 	public int[] getPieceColor(int row, int column, int position){
 		JSONArray colorJSONArray = (JSONArray)getPiece(row, column, position).get("color");
 		int[] colorArray = {Integer.parseInt(colorJSONArray.get(0).toString()), Integer.parseInt(colorJSONArray.get(1).toString()), Integer.parseInt(colorJSONArray.get(2).toString())};
@@ -102,6 +107,7 @@ public class JSONparse{
 	//Gets a piece type as a char
 	//position parameter is for games that have more than 1 piece per Tile. 
 	//position parameter will be default 0 for games like Othello, TicTacToe, and Chutes
+    
 	public char getPieceType(int row, int column, int position){
 		return getPiece(row, column, position).get("type").toString().charAt(0);
 	}
@@ -109,12 +115,14 @@ public class JSONparse{
 	//Gets a piece layer as a string
 	//position parameter is for games that have more than 1 piece per Tile. 
 	//position parameter will be default 0 for games like Othello, TicTacToe, and Chutes
+    
 	public String getPieceLayer(int row, int column, int position){
 		return getPiece(row, column, position).get("layer").toString();
 	}
 	
 	
 	//Private helper method returning a JSONObject Piece.
+    
 	private JSONObject getPiece(int row, int column, int position){
 		JSONObject tile;
 		JSONArray pieceList;
