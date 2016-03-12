@@ -1,11 +1,11 @@
-package GamePlugins;
+package Client;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
 //This is the Parser for the JSONString produced by the GameStateToJSON class.
 
-public class JSONparse{
+public class JSONBoard{
 	private int rowNum;
 	private int columnNum;
 	private String currentTurn;
@@ -16,7 +16,7 @@ public class JSONparse{
 	
 	
 	//Constructor...Pass in JSONString
-	public JSONparse(String jsonString){
+	public JSONBoard(String jsonString){
 		this.jsonString = jsonString;
 		setValues();
 	}
