@@ -61,7 +61,7 @@ public class Client implements Runnable{
 	{
 		for(int i=0;i<3;i++)
         	for(int j=0;j<3;j++){
-        		gui.gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
+        		gui.getBoard().getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
         			Tile t = (Tile)e.getSource();
                 	int xloc= t.getXlocation();
                 	int yloc= t.getYlocation();
@@ -378,7 +378,7 @@ public class Client implements Runnable{
 			for (int i = 0 ; i < 9 ; i ++)
 			{
 				JSONArray position = (JSONArray)jsonObject.get(Integer.toString(i));
-				Tile t = gui.gameboard.getTile(toIntExact((long)position.get(0)), toIntExact((long)position.get(1)));
+				Tile t = gui.getBoard().getTile(toIntExact((long)position.get(0)), toIntExact((long)position.get(1)));
 				if (toIntExact((long) position.get(2)) == 1)
 				{
 					t.setText("X");
