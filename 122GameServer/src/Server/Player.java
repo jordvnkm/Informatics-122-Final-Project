@@ -8,8 +8,7 @@ package Server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,25 +75,12 @@ public class Player extends Thread
 
         // This is necessary to continuously receive messages from the
         // client, it has to be in a loop
-        while (true)
+        
+        sendMessage(initialHandshake());
+        
+        while (!loggedIn)
         {
-            String stringToParse = receiveMessage();
-            lobby.passesMessage(this, stringToParse);
-            // If parsed JSON shows the client wanted to make a move
-//            {
-//                game.makeMove(xCoord, yCoord, profile.getName());
-//            }
-        }
-
-        
-        
-        //***The code below needs to be uncommented out. This is good code
-//    	//tells the server it is ready for login information
-//    	try 
-//    	{
-//			sendMessage(initialHandshake());
-//			
-//			//loops until login in reached for this player
+			//loops until login in reached for this player
 //			while(!loggedIn)
 //			{
 //				JSONParser parser = new JSONParser();
@@ -139,8 +125,59 @@ public class Player extends Thread
 //        	
 //        	System.exit(-1);
 //		} 
+        }
+        
+        
+//        while (true)
+//        {
+//            String stringToParse = receiveMessage();
+//
+//            // TODO: in here we parse the message using a JSON parser, and then
+//            // Call the proper function based on what we get parsed out to.
+//            
+//            String[] response = parseMessage(stringToParse);
+//            switch (response[0])
+//            {
+//                // A move for games such as tic tac toe
+//                case "move1":
+//                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]), profile.getName());
+//                    checkGame();
+//                    break;
+//                // A move for games such as checkers
+//                case "move2":
+//                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]),Integer.valueOf(response[3]), Integer.valueOf(response[4]), profile.getName());
+//                    checkGame();
+//                    break;
+//                // A move for games such as chutes and ladders
+//                case "move3":
+//                    game.makeMove(profile.getName());
+//                    checkGame();
+//                    break;
+//                case "description":
+//                    profile.SetDescription(response[1]);
+//                    break;
+//                case "selectGame":
+//                    // set up a game for the player here
+//                    break;
+//                case "newGame":
+//                    // set up a new game for players to join here
+//                    break;
+//            }
+//        }
     }
 
+    private void checkGame()
+    {
+        if(game.checkForGameOver())
+        {
+            lobby.removeGame(game);
+        }
+        
+    }
+    public void leaveGame()
+    {
+        game = null;
+    }
     private Profile loginPlayer(JSONObject json)
     {
         //read login name
@@ -268,6 +305,14 @@ public class Player extends Thread
 
         return message.toJSONString();
     }
+    public void wonGame(String game)
+    {
+        profile.addWin(game);
+    }
     
+    public void lostGame(String game)
+    {
+        profile.addLoss(game);
+    }
 
 }

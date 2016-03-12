@@ -77,23 +77,18 @@ public class Game
                 // via p.sendMessage
 //                p.sendMessage(JSON);
             }
-            if (logic.checkForGameOver())
-            {
-                winner = logic.getWinner();
-                for (Player p : players)
-                {
-                    // The game is over and we have a winner (or tie), so we need
-                    // to update all of the players with the results
-//                p.sendMessage(WinningJSON);
-                }
-            }
         }
         return goodMove;
     }
 
     public synchronized boolean checkForGameOver()
     {
-        return logic.checkForGameOver();
+        if (logic.checkForGameOver())
+        {
+            gameWon();
+            return true;
+        }
+        return false;
     }
 
     public synchronized String getBoard()
@@ -126,6 +121,13 @@ public class Game
             startGame();
         }
     }
+    
+    public final synchronized void messagePlayers(String message)
+    {
+        players.stream().forEach((player) -> {
+            player.sendMessage(message);
+        });
+    }
 
     public final synchronized void announceWinners()
     {
@@ -143,5 +145,21 @@ public class Game
         {
             player.sendMessage(getBoard());
         }    
+    }
+    
+    private final synchronized void gameWon()
+    {
+        String winner = getWinner();
+        
+        for (Player player : players)
+        {
+            if (player.getName().equals(winner))
+                player.wonGame(pluginName);
+            else
+                player.lostGame(pluginName);
+            
+            player.leaveGame();
+        }
+        
     }
 }
