@@ -5,19 +5,14 @@
  */
 package Server;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.WindowConstants;
+
+import javax.swing.SwingUtilities;
+import javax.swing.event.SwingPropertyChangeSupport;
+
 
 /**
  *
@@ -28,16 +23,21 @@ public class Server extends Thread
 
     private ServerSocket server;
     private boolean runServer;
-    private Lobby lobby;
-    private int portNum;
-    private boolean threadStarted;
     
+    private Lobby lobby;
+    private ServerController controller;
+    
+    private boolean consoleDebug = true;
+    
+    
+
     //non-default constructor
-    public Server()
+    public Server(ServerController controller)
     {
+    	this.controller = controller;
+    	
         //instantiates our lobby for the connections
         lobby = new Lobby();   
-        threadStarted = false;
     }
 
     /**
@@ -50,57 +50,80 @@ public class Server extends Thread
      * @throws InterruptedException 
      ****************************************************************************
      */
-    public void startServer(int portNum) throws IOException, InterruptedException
-    {
-//    	this.portNum = portNum;
-//    	
-//    	if(!threadStarted)
-//    	{
-//    		threadStarted = true;
-//    		this.start();
-//       	}
-//    	
-//    	runServer = true;
-    	
+    public void startServer(int portNum) throws IOException
+    {	
         server = new ServerSocket(portNum);
 
         runServer = true;
 
-		while (runServer)
-        {
-            Socket tmpSocket = server.accept();
-sleep(1000);
-System.out.println("Hello");
-            lobby.addNewConnection(tmpSocket);
-        }
     }
 
-    public void stopServer() throws IOException
+    public void stopServer() 
     {
-        runServer = false;
-        server.close();
+        try {
+            runServer = false;
+			server.close();
+		} 
+        
+        catch (IOException e) 
+        {
+			if(consoleDebug)
+			{
+				e.printStackTrace();
+				System.out.println("handling closing the server connection to stop the server in the stopServer()");
+			}
+		}
       
+    }
+    
+    
+    
+    private void displayConnection(String ip, int port)
+    {
+    	  if (!SwingUtilities.isEventDispatchThread()) {
+    		     SwingUtilities.invokeLater(new Runnable() {
+    		       @Override
+    		       public void run() {
+    		    	   //displayConnection(ip, port);
+    		     	  controller.GUINewConnection(ip, port);
+
+    		       }
+    		     });
+    		   }
+    	  
     }
 
     @Override
     public void run()
-    {
-    	try{
-        server = new ServerSocket(portNum);
-
-        runServer = true;
+    {    	
+		Socket tmpSocket;
 
 		while (runServer)
         {
-            Socket tmpSocket = server.accept();
+			try {
+				
+				//waits for the connection
+				tmpSocket = server.accept();
+				
+				//adds player to lobby
+	           // lobby.addNewConnection(tmpSocket);
+	            displayConnection(tmpSocket.getRemoteSocketAddress().toString(), tmpSocket.getPort());
+	            
+	            
+			} 
+			
+			catch (IOException e) 
+			{
+				if(consoleDebug)
+				{
+					e.printStackTrace();
+					System.out.println("handling in the run() method of the server class (IO)");
+				}
+			}
 
-            lobby.addNewConnection(tmpSocket);
+
         }
-    	}
-    	catch(Exception e)
-    	{
-    		
-    	}
+
     }
 
 }

@@ -14,8 +14,10 @@ public class ServerGUI extends javax.swing.JFrame {
     /**
      * Creates new form ServerGUI
      */
-    public ServerGUI() {
+    public ServerGUI() 
+    {
         initComponents();
+        this.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
     }
 
     /**
@@ -88,7 +90,7 @@ public class ServerGUI extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jLabel2)
                         .addGap(14, 14, 14)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)))

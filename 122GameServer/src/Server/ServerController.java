@@ -2,7 +2,10 @@ package Server;
 
 import java.util.List;
 
+import javax.management.timer.Timer;
 import javax.swing.JOptionPane;
+
+import org.w3c.dom.css.Counter;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,11 +19,23 @@ public class ServerController
     private ServerGUI gui;
     private Server server;
     
+    private boolean threadRunning;
+    
+	private javax.swing.Timer tick; //used for the countdown
+	private int countDown;
+
+    private boolean consoleDebug = true;
+    
 	public ServerController()
 	{
 		 //instantiates the server and ServerGUI instance
         gui = new ServerGUI();
-        server = new Server();
+        server = new Server(this);
+        
+        //initializes what we want the coutdown of the shutdown procedure to be
+        countDown = 5;
+        
+        threadRunning = false;
         
         //sets the stopButton grayed out to start
         gui.stopButton.setEnabled(false);
@@ -53,6 +68,7 @@ public class ServerController
             public void run()
             {
                 gui.setVisible(true);
+                gui.setResizable(false);
             }
         });
 	}
@@ -62,14 +78,13 @@ public class ServerController
 	{
   
 		try{
-			String portNum = gui.portTextField.getText();
+			String portNum = gui.portTextField.getText().replace(" ", "");
 	        
-	        if (Integer.valueOf(portNum) < 1 || Integer.valueOf(portNum) > 49151 || Integer.valueOf(portNum) == 0)
+	        if (Integer.valueOf(portNum) < 1 || Integer.valueOf(portNum) > 49151 || portNum.equals(""))
 	        {
-	            throw new Exception();
+	            throw new Exception(portNum);
 	        }
 	        
-
 	        
 	        //appends the starting message to the server GUI
 	        gui.statusTextArea.append("Starting server... (Port #" + portNum + ")\n");
@@ -80,12 +95,23 @@ public class ServerController
 	        
 	        //starts the server with the specified port number
 	        server.startServer(Integer.valueOf(portNum));
+	        
+	        if(!threadRunning)
+	        {
+	        	threadRunning = true;
+	        	server.start();
+	        }
 	
-	//        gui.statusTextArea.append("Connection from IP: " + tmpSocket.getRemoteSocketAddress().toString() + " wiith the PORT: " + tmpSocket.getPort() + "\n");
 		}
         
         catch (IOException e)
         {
+        	if(consoleDebug)
+        	{
+        		System.out.println("Error in trying to turn the port string into a number");
+                e.printStackTrace();
+        	}
+        	
             JOptionPane.showMessageDialog(gui,
                     "Please try a different port number",
                     "Port Number in Use",
@@ -94,8 +120,12 @@ public class ServerController
         
         catch (Exception exception)
         {
-            System.out.println("This is the ex: " + exception.getStackTrace().toString());
-            exception.printStackTrace();
+        	if(consoleDebug)
+        	{
+                System.out.println("Error in trying to turn the port string into a number (Exception type):-" + exception.getMessage() +"-");
+                exception.printStackTrace();
+        	}
+
             JOptionPane.showMessageDialog(gui,
                     "Please enter a port number between 1 and 49151",
                     "Invalid Port Number",
@@ -106,24 +136,48 @@ public class ServerController
 	
 	private void stopServer()
 	{
-        try{
+   
 			gui.statusTextArea.append("Stopping server...\n");
 	        gui.startButton.setEnabled(true);
 	        gui.stopButton.setEnabled(false);
 	        gui.portTextField.setEnabled(true);
 	        
 	        server.stopServer();
-        }
-        catch (IOException e)
-        {
-            JOptionPane.showMessageDialog(gui,
-                    "Could not stop the server",
-                    "Fatal Error",
-                    JOptionPane.ERROR_MESSAGE);
+	        	        		
+	       ActionListener action = new ActionListener() 
+	       {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+						if(countDown < 1)
+						{
+							tick.stop();
+							System.exit(0);
+						}
+						else
+						{
+							gui.statusTextArea.append(String.valueOf(countDown) + "\n");
+							countDown--;
+							gui.repaint();
 
-            System.exit(-1);
-        }
-        
+						}
+				
+				}
+			};
+			
+			gui.statusTextArea.append("\n*****SHUTTING DOWN*****\n");
+			gui.statusTextArea.append("Shutting down server in:\n");
+
+			
+	        tick = new javax.swing.Timer(1000, action);
+	        tick.setInitialDelay(0);
+	        tick.start();
+
+     
+	}
+	
+	public void GUINewConnection(String ip, int port)
+	{
+		gui.statusTextArea.append("Connection from IP: " + ip + " with the PORT: " + port + "\n");
 	}
 
 }
