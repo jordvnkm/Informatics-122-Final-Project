@@ -5,73 +5,39 @@
  */
 package Server;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.WindowConstants;
+
+import javax.swing.SwingUtilities;
+import javax.swing.event.SwingPropertyChangeSupport;
+
 
 /**
  *
  * @author malar
  */
-public class Server implements Runnable 
+public class Server extends Thread
 {
 
     private ServerSocket server;
-    private ServerGUI gui;
     private boolean runServer;
+    
     private Lobby lobby;
+    private ServerController controller;
+    
+    private boolean consoleDebug = true;
+    
+    
 
     //non-default constructor
-    public Server()
+    public Server(ServerController controller)
     {
+    	this.controller = controller;
+    	
         //instantiates our lobby for the connections
-        lobby = new Lobby();
-
-        //instantiates the ServerGUI instance
-        gui = new ServerGUI();
-
-        //sets the stopButton grayed out to start
-        gui.stopButton.setEnabled(false);
-
-        //listener for start button
-        gui.startButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                startServer();
-            }
-        });
-
-        //listener for stop button
-        gui.stopButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                stopServer();
-            }
-        });
-
-        //thread safe runnable and sets visible
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                gui.setVisible(true);
-            }
-        });
+        lobby = new Lobby();   
     }
 
     /**
@@ -80,82 +46,83 @@ public class Server implements Runnable
      *
      * Begins listening for client connections. When connection is accepted, the
      * player socket is sent to the Lobby
+     * @throws IOException 
+     * @throws InterruptedException 
      ****************************************************************************
      */
-    private void startServer()
-    {
-        try
-        {
-            String portNum = gui.portTextField.getText();
-            System.out.println("This is the port num: " + portNum);
+    public void startServer(int portNum) throws IOException
+    {	
+        server = new ServerSocket(portNum);
 
-            if (Integer.valueOf(portNum) < 1 || Integer.valueOf(portNum) > 49151 || Integer.valueOf(portNum) == 0)
-            {
-                throw new Exception();
-            }
+        runServer = true;
 
-            gui.statusTextArea.append("Starting server... (Port #" + portNum + ")\n");
-
-            server = new ServerSocket(Integer.valueOf(portNum));
-
-            runServer = true;
-            gui.startButton.setEnabled(false);
-            gui.stopButton.setEnabled(true);
-            gui.portTextField.setEnabled(false);
-
-//			while (runServer)
-            for (int i = 0; i < 2; i++)
-            {
-                Socket tmpSocket = server.accept();
-                gui.statusTextArea.append("Connection from IP: " + tmpSocket.getRemoteSocketAddress().toString() + " wiith the PORT: " + tmpSocket.getPort() + "\n");
-                lobby.addNewConnection(tmpSocket);
-            }
-
-        } catch (IOException e)
-        {
-            JOptionPane.showMessageDialog(gui,
-                    "Please try a different port number",
-                    "Port Number in Use",
-                    JOptionPane.ERROR_MESSAGE);
-        } catch (Exception exception)
-        {
-            System.out.println("This is the ex: " + exception.getStackTrace().toString());
-            exception.printStackTrace();
-            JOptionPane.showMessageDialog(gui,
-                    "Please enter a port number between 1 and 49151",
-                    "Invalid Port Number",
-                    JOptionPane.ERROR_MESSAGE);
-
-        }
     }
 
-    private void stopServer()
+    public void stopServer() 
     {
-        gui.statusTextArea.append("Stopping server...\n");
-        runServer = false;
-        gui.startButton.setEnabled(true);
-        gui.stopButton.setEnabled(false);
-        gui.portTextField.setEnabled(true);
-
-        try
+        try {
+            runServer = false;
+			server.close();
+		} 
+        
+        catch (IOException e) 
         {
-            server.close();
-        } catch (IOException e)
-        {
-            JOptionPane.showMessageDialog(gui,
-                    "Could not stop the server",
-                    "Fatal Error",
-                    JOptionPane.ERROR_MESSAGE);
+			if(consoleDebug)
+			{
+				e.printStackTrace();
+				System.out.println("handling closing the server connection to stop the server in the stopServer()");
+			}
+		}
+      
+    }
+    
+    
+    
+    private void displayConnection(String ip, int port)
+    {
+    	  if (!SwingUtilities.isEventDispatchThread()) {
+    		     SwingUtilities.invokeLater(new Runnable() {
+    		       @Override
+    		       public void run() {
+    		    	   //displayConnection(ip, port);
+    		     	  controller.GUINewConnection(ip, port);
 
-            System.exit(-1);
-        }
-
+    		       }
+    		     });
+    		   }
+    	  
     }
 
     @Override
     public void run()
-    {
-        // TODO Auto-generated method stub
+    {    	
+		Socket tmpSocket;
+
+		while (runServer)
+        {
+			try {
+				
+				//waits for the connection
+				tmpSocket = server.accept();
+				
+				//adds player to lobby
+	           // lobby.addNewConnection(tmpSocket);
+	            displayConnection(tmpSocket.getRemoteSocketAddress().toString(), tmpSocket.getPort());
+	            
+	            
+			} 
+			
+			catch (IOException e) 
+			{
+				if(consoleDebug)
+				{
+					e.printStackTrace();
+					System.out.println("handling in the run() method of the server class (IO)");
+				}
+			}
+
+
+        }
 
     }
 
