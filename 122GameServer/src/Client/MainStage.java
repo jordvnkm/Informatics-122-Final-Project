@@ -21,20 +21,11 @@ public class MainStage extends Stage{
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-	public ArrayList<Integer> move;
-	Thread thread;
-	private boolean madeMove;
 	public Board gameboard;
-	
 	
 	
 	public MainStage(){
 		super();
-		move = new ArrayList<Integer>();
-		for (int i = 0; i < 4; i ++)
-		{
-			move.add(-1);
-		}
 		
 		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane(), 800, 720);
@@ -61,7 +52,6 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
-        gameboard = new Board(3, 3);
 
         //text area
         TAlog = new TextArea();
@@ -90,6 +80,10 @@ public class MainStage extends Stage{
 	}
 
 
+	public void setBoard(int rows, int columns)
+	{
+		gameboard = new Board(rows, columns);
+	}
 	
 	//Add a string to the logger. Set debug to true if its a debugger line.
 	//Debugger lines should be lines not shown to the player.

@@ -20,6 +20,11 @@ public class Client implements Runnable{
 	private MainStage gui;
 	private GameData gameData;
 	private boolean myTurn = false;
+	private boolean madeMove = false;
+	private ArrayList<Integer> move = new ArrayList<Integer>();
+	private String clientName;
+	private boolean isRunning = true;
+	private boolean wonGame = false;
 	
 	///////////////////////////////////////////
 	//// client constructor
@@ -29,7 +34,6 @@ public class Client implements Runnable{
 		port = portnum;
 		gameData = new GameData();
 		gui = inputgui;
-		setupMouseListeners();
 		/*try{
 			socket = new Socket(serverIP, portnum);
 		}
@@ -37,8 +41,8 @@ public class Client implements Runnable{
 		{
 			e.printStackTrace();
 		}	*/
-		//setupBoard();
-		//setupMouseListeners();
+		setupBoard();
+		setupMouseListeners();
 		(new Thread(this)).start();
 	}
 	
@@ -85,17 +89,13 @@ public class Client implements Runnable{
 	////// function that is used by mouse listeners.
 	public void setMove(int xOrigin, int yOrigin, int xDest, int yDest)
 	{
-
-		ArrayList<Integer> move = new ArrayList<Integer>();
 		move.add(xOrigin);
 		move.add(yOrigin);
 		move.add(xDest);
 		move.add(yDest);
 
 		System.out.println(move);
-		sendMove(move);
-		
-		myTurn = false;
+		madeMove = true;
 	}
 	
 	
@@ -216,40 +216,13 @@ public class Client implements Runnable{
 	
 	////////////////////////////////////////////////////
 	///// sends location of piece that has been selected
-	public void sendSelectPiece(int x, int y)
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("type", "selectPiece");
-		obj.put("xVal", x);
-		obj.put("yVal", y);
-		
-		try 
-		{
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-		    out.write(obj.toJSONString());
-		    out.flush();
-		    out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	
-	
-	////////////////////////////////////////////////
-	/// sends the location that the piece is supposed to move 
-	public void sendMove(ArrayList<Integer> move)
-	{
-		
-		JSONObject obj = new JSONObject();
-		obj.put("type", "movePiece");
-		obj.put("xOrigin", move.get(0)); // xOrigin
-		obj.put("yOrigin", move.get(1)); // yOrigin
-		obj.put("xDest", move.get(2));   // xDest
-		obj.put("yDest", move.get(3));   // yDest
-		
+//	public void sendSelectPiece(int x, int y)
+//	{
+//		JSONObject obj = new JSONObject();
+//		obj.put("type", "selectPiece");
+//		obj.put("xVal", x);
+//		obj.put("yVal", y);
+//		
 //		try 
 //		{
 //			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
@@ -260,42 +233,22 @@ public class Client implements Runnable{
 //		catch (IOException e)
 //		{
 //			e.printStackTrace();
-//		}	
-	}
+//		}
+//	}
 	
-	///////////////////////////////////////////////////////////
-	//// sends board state
-	public void sendBoard()
+	
+	
+	////////////////////////////////////////////////
+	/// sends the location that the piece is supposed to move 
+	public void sendMove()
 	{
+		
 		JSONObject obj = new JSONObject();
-		obj.put("type", "boardState");
-		
-		int position = 0;
-		for (int i = 0; i < 3; i ++)
-		{
-			for (int j = 0 ; j < 3; j ++)
-			{
-				JSONArray myarray = new JSONArray();
-				myarray.add(i);
-				myarray.add(j);
-				if (i == 2)
-				{
-					myarray.add(0);
-				}
-				else
-				{
-					myarray.add(1);
-				}
-				obj.put(position, myarray);
-				position ++;
-			}
-			
-		}
-		
-		
-//		System.out.println(obj.toJSONString());
-//		
-//		parseBoard(obj.toJSONString());
+		obj.put("type", "movePiece");
+		obj.put("xOrigin", move.get(0)); // xOrigin
+		obj.put("yOrigin", move.get(1)); // yOrigin
+		obj.put("xDest", move.get(2));   // xDest
+		obj.put("yDest", move.get(3));   // yDest
 		
 		try 
 		{
@@ -307,8 +260,9 @@ public class Client implements Runnable{
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}
+		}	
 		
+		madeMove = false;
 	}
 	
 	
@@ -354,49 +308,71 @@ public class Client implements Runnable{
 	
 	////////////////////////////////////////////////////////////
 	//// parses board state
-	public boolean parseBoard()
+	public void parseGameState()
 	{
-		boolean gotInput = false;
-	    String input;
-	    String jsonString = "";
+		String jsonString = "";
+		String input;
 	    try {
 	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			while ((input = br.readLine()) != null) {
 				jsonString += input;
 			}
-			gotInput = true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			return gotInput;
-		}
-	    	    
-		try {
-			JSONParser parser = new JSONParser();
-			Object object = parser.parse(jsonString);
-			JSONObject jsonObject = (JSONObject) object;
-			
-			for (int i = 0 ; i < 9 ; i ++)
-			{
-				JSONArray position = (JSONArray)jsonObject.get(Integer.toString(i));
-				Tile t = gui.gameboard.getTile(toIntExact((long)position.get(0)), toIntExact((long)position.get(1)));
-				if (toIntExact((long) position.get(2)) == 1)
-				{
-					t.setText("X");
-				}
-				else
-				{
-					t.setText("");
-				}
-				
-			}
-			
-			
-		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return gotInput;
+		JSONparse state = new JSONparse(jsonString);
+		
+		
+		/////////////////////////////////////////////// 
+		// set up board from server information
+		gui.setBoard(state.getRowNum(), state.getColumnNum());
+		for (int i = 0; i < state.getRowNum(); i ++)
+		{
+			for (int j = 0 ; j < state.getColumnNum(); j ++)
+			{
+				Tile t = gui.gameboard.getTile(i, j);
+				int[] rgb = state.getTileColor(i, j);
+            	t.setBackgroundColor(rgb[0], rgb[1], rgb[2]);
+
+            	for (int x = 0 ; x < 2 ; x ++)
+            	{
+            		String shape = state.getPieceShape(i, j, x);
+            		if (!shape.equals(""))
+            		{
+            			int[] color = state.getPieceColor(i, j, x);
+            			String layer = state.getPieceLayer(i, j, x);
+            			String type = state.getPieceType(i, j, x);
+            			Piece piece = new Piece(color, shape , layer , type.charAt(0));
+            			t.addPiece(piece);
+            		}
+            		
+            	}
+			}
+		}
+		
+		/////////////////////////////////////////////////////
+		////// set turn
+		if (state.getCurrentTurn().equals(clientName))
+		{
+			myTurn = true;
+		}
+		
+		//// set running state
+		isRunning = state.getIsRunning();
+		
+		
+		//// if winner is not empty, set winner
+		if (!state.getWinner().equals("")){
+			if (state.getWinner().equals(clientName)){
+				wonGame = true;
+			}
+			else{
+				wonGame = false;
+			}
+		}
+		
 
 	}
 
@@ -408,18 +384,21 @@ public class Client implements Runnable{
 		try{
 			socket = new Socket(InetAddress.getByName(serverIP), port);
 			System.out.println("Successful connection.");
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			sendBoard();
-			while (true)
+			
+			while (isRunning)
 			{
-				if(parseBoard())
+				while (myTurn)
 				{
-					break;
+					if (madeMove)
+					{
+						sendMove(); // sends move;
+						madeValidMove(); // listens for server response .sets myTurn;
+					}
+				}
+				
+				while (!myTurn)
+				{
+					parseGameState();
 				}
 			}
 			

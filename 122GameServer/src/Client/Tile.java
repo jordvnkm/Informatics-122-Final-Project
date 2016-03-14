@@ -1,5 +1,6 @@
 package Client;
 
+import java.util.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -12,6 +13,8 @@ public class Tile extends Canvas{
 	private Color bg,fg;
 	private String fgText;
 	private int xlocation,ylocation;
+	private ArrayList<Piece> pieces;
+	
 	public Tile(){
 		super();
 		gc = getGraphicsContext2D();
@@ -21,6 +24,7 @@ public class Tile extends Canvas{
 		fg = Color.rgb(0, 0, 0);
 		fgText="X";
 		draw();
+		pieces = new ArrayList<Piece>();
 	}
 	public Tile(int x,int y,int xloc,int yloc){
 		super(x,y);
@@ -33,6 +37,7 @@ public class Tile extends Canvas{
 		xlocation = xloc;
 		ylocation = yloc;
 		draw();
+		pieces = new ArrayList<Piece>();
 	}
 	
 	public void setBackgroundColor(int r,int g,int b){
@@ -63,5 +68,10 @@ public class Tile extends Canvas{
 	
 	public int getYlocation(){
 		return ylocation;
+	}
+	
+	public void addPiece(Piece p)
+	{
+		pieces.add(p);
 	}
 }
