@@ -14,7 +14,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +25,7 @@ import java.util.logging.Logger;
  * needed methods
  * 
  * 	-profileExists()
- *  -createNewProfile() 
+ *  -createNewProfile() - Working, might need to confirm before removing this
  *  - just a normal constructor with no parameters
  *  -
  */
@@ -36,29 +38,31 @@ public class Profile {
     
     
     //***this is a demo constructor and needs to be deleted
+    /*
     public Profile(String userName)
     {
     	this.userName = userName;
     	profileFile = "";
     }
+    */
     
     
-//    /**
-//     * Constructor: Creates an Profile object for the user 
-//     * @param name name of the user to create the object for.
-//     */
-//    public Profile(String name)
-//    {
-//        this.userName = name;
-//        this.profileFile = "Profiles/" + this.userName + ".profile";
-//        scores = new HashMap<>();
-//        
-//        // Check to see if the file exists, if not, initialize it
-//        initFile();
-//        
-//        // Load the file
-//        loadFile();
-//    }
+    /**
+     * Constructor: Creates an Profile object for the user 
+     * @param name name of the user to create the object for.
+     */
+    public Profile(String name)
+    {
+        this.userName = name;
+        this.profileFile = "Profiles/" + this.userName + ".profile";
+        scores = new HashMap<>();
+        
+        // Check to see if the file exists, if not, initialize it
+        initFile();
+        
+        // Load the file
+        loadFile();
+    }
     
     public boolean profileExists(String name)
     {
@@ -100,7 +104,7 @@ public class Profile {
             
             // If, for some reason, the profile file was deleted, we'll reinitialize
             // it here, this is just for error handling.
-            if (profileFile.length() == 0)
+            if (profileFile.length() == 0 || !profileExists(this.profileFile))
             {
                 initFile();
             }
@@ -154,21 +158,43 @@ public class Profile {
     public final void initFile()
     {
         File file = new File(profileFile);
-        
+        		
         // If the file doesn't exist, we'll create it with some initial values
         if (!file.exists())
         {
             try {
-                file.createNewFile();
-                if (description == null)
-                    this.description = "User has not created a description";
-                
-                saveFile();
+                createNewProfile(file);
             } catch (IOException ex) {
                 Logger.getLogger(Profile.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+    
+    
+    /**
+     * Creates a new profile if not found in the directory
+     * @param file name of the player file that is being created
+     */
+    public final void createNewProfile(File file) throws IOException{
+    	file.createNewFile();
+    	if(description == null){
+    		this.description = "User has not created a description";
+    	}
+    	// Iterate through the plugins directory, will add new 
+    	// lines when more plugins are implemented
+    	File[] pluginDir = new File("plugins/").listFiles();
+    	for(File f: pluginDir)
+    	{
+    		if(f.getName().equals("plugin.jar"))
+    			continue;
+    		int i = f.getName().indexOf('.');
+    		scores.put(f.getName().substring(0, i), new Score());
+    	}
+    	saveFile();
+    }
+    
+    
+    
     
     /**
      * Increment a game win by 1 point
@@ -206,5 +232,9 @@ public class Profile {
     public final String getName()
     {
         return this.userName;
+    }
+    
+    public static void main(String[] args){
+    	Profile p = new Profile("Adrian");
     }
 }
