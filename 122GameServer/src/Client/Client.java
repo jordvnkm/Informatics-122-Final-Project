@@ -23,8 +23,11 @@ public class Client implements Runnable{
 	private boolean madeMove = false;
 	private ArrayList<Integer> move = new ArrayList<Integer>();
 	private String clientName;
+	private String opponentName;
+	private String gameName;
 	private boolean isRunning = true;
-	private boolean wonGame = false;
+	private String winner;
+
 	
 	///////////////////////////////////////////
 	//// client constructor
@@ -65,7 +68,7 @@ public class Client implements Runnable{
 	{
 		for(int i=0;i<3;i++)
         	for(int j=0;j<3;j++){
-        		gui.gameboard.getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
+        		gui.getBoard().getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
         			Tile t = (Tile)e.getSource();
                 	int xloc= t.getXlocation();
                 	int yloc= t.getYlocation();
@@ -332,14 +335,14 @@ public class Client implements Runnable{
 		{
 			for (int j = 0 ; j < state.getColumnNum(); j ++)
 			{
-				Tile t = gui.gameboard.getTile(i, j);
+				Tile t = gui.getBoard().getTile(i, j);
 				int[] rgb = state.getTileColor(i, j);
             	t.setBackgroundColor(rgb[0], rgb[1], rgb[2]);
 
             	for (int x = 0 ; x < 2 ; x ++)
             	{
             		String shape = state.getPieceShape(i, j, x);
-            		if (!shape.equals(""))
+            		if (!shape.equals("empty"))
             		{
             			int[] color = state.getPieceColor(i, j, x);
             			String layer = state.getPieceLayer(i, j, x);
@@ -363,17 +366,48 @@ public class Client implements Runnable{
 		isRunning = state.getIsRunning();
 		
 		
-		//// if winner is not empty, set winner
-		if (!state.getWinner().equals("")){
-			if (state.getWinner().equals(clientName)){
-				wonGame = true;
-			}
-			else{
-				wonGame = false;
-			}
+		//// game is not running set winner
+		if (!isRunning){
+			winner = state.getWinner();
 		}
 		
 
+	}
+	
+	
+	public void parseValidMove()
+	{
+		String jsonString = "";
+		String input;
+	    try {
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			while ((input = br.readLine()) != null) {
+				jsonString += input;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	    
+	    try {
+	    	JSONParser parser = new JSONParser();
+	    	Object object = parser.parse(jsonString);
+	    	JSONObject jsonObject = (JSONObject) object;
+
+	    	String valid = (String) jsonObject.get("xDest");
+	    	
+	    	if (valid.equals("validMove"))
+	    	{
+	    		madeMove = false;
+	    		myTurn = false;
+	    	}
+
+
+	    } catch (ParseException e) {
+	    	// TODO Auto-generated catch block
+	    	e.printStackTrace();
+	    }
 	}
 
 
@@ -385,6 +419,19 @@ public class Client implements Runnable{
 			socket = new Socket(InetAddress.getByName(serverIP), port);
 			System.out.println("Successful connection.");
 			
+			requestGameList(); // request list of games
+			requestPlayerList(); // request list of players
+			displayServer(); // displays game list and players online
+			while (true)
+			{
+				if (choseGame)
+				{
+					sendGameRequest(gameName, opponentName);
+					parseGameState();
+					break;
+				}
+			}
+			
 			while (isRunning)
 			{
 				while (myTurn)
@@ -392,7 +439,7 @@ public class Client implements Runnable{
 					if (madeMove)
 					{
 						sendMove(); // sends move;
-						madeValidMove(); // listens for server response .sets myTurn;
+						parseValidMove(); // listens for server response .sets myTurn;
 					}
 				}
 				

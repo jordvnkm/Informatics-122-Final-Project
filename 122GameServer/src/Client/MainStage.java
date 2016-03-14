@@ -1,9 +1,5 @@
 package Client;
 
-import java.util.*;
-
-import java.util.concurrent.*;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,7 +8,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -21,14 +16,16 @@ public class MainStage extends Stage{
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-	public Board gameboard;
+
+	private Board gameboard;
 	
 	
+	//main GUI setup
 	public MainStage(){
 		super();
-		
+
 		setTitle("INF 122 Game Client");
-        Scene scene = new Scene(new BorderPane(), 800, 720);
+        Scene scene = new Scene(new BorderPane());
         //Menus
         MenuBar mb = new MenuBar();
         Menu servermenu = new Menu("Server");
@@ -55,6 +52,7 @@ public class MainStage extends Stage{
 
         //text area
         TAlog = new TextArea();
+        TAlog.setMaxHeight(100);
 
         //Button
         Button actionButton = new Button("Button");

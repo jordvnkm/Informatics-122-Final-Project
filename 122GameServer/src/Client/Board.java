@@ -11,16 +11,14 @@ public class Board extends GridPane{
 		super();
 	}
 	//main constructor
-	public Board(long rows,long columns){
-        this.setMinSize(166*3,166*3);
-        this.setPrefSize(166*3, 166*3);
-        this.setMaxSize(166*3, 166*3);
+	public Board(int rows,int columns){
+        this.setPrefSize(600, 600);
         tiles = new ArrayList<ArrayList<Tile>>();
         for(int i=0;i<rows;i++){
         	tiles.add(new ArrayList<Tile>());
         	for(int j=0;j<columns;j++)
         	{
-        		tiles.get(i).add(new Tile(166,166,i,j));
+        		tiles.get(i).add(new Tile(600/columns,600/columns,i,j));
         		Tile x = tiles.get(i).get(j);
         		x.setBackgroundColor(255, 255, 255);
         		x.setForegroundColor(0, 0, 0);
