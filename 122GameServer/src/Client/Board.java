@@ -7,11 +7,15 @@ import javafx.scene.layout.GridPane;
 
 public class Board extends GridPane{
 	private ArrayList <ArrayList<Tile>> tiles;
+	private int rows;
+	private int columns;
 	public Board(){
 		super();
 	}
 	//main constructor
-	public Board(int rows,int columns){
+	public Board(int myrows,int mycolumns){
+		rows = myrows;
+		columns = mycolumns;
         this.setPrefSize(600, 600);
         tiles = new ArrayList<ArrayList<Tile>>();
         for(int i=0;i<rows;i++){
@@ -29,5 +33,26 @@ public class Board extends GridPane{
 	}
 	public Tile getTile(int x,int y){
 		return tiles.get(x).get(y);
+	}
+	
+	public int getRows()
+	{
+		return rows;
+	}
+	
+	public void setRows(int r)
+	{
+		rows = r;
+	}
+	
+	
+	public int getColumns()
+	{
+		return columns;
+	}
+	
+	public void setColumns(int c)
+	{
+		columns = c;
 	}
 }

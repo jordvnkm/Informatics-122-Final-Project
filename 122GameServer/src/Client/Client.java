@@ -27,6 +27,7 @@ public class Client implements Runnable{
 	private String gameName;
 	private boolean isRunning = true;
 	private String winner;
+	private boolean choseGame = false;
 
 	
 	///////////////////////////////////////////
@@ -37,20 +38,19 @@ public class Client implements Runnable{
 		port = portnum;
 		gameData = new GameData();
 		gui = inputgui;
-		/*try{
-			socket = new Socket(serverIP, portnum);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}	*/
-		setupBoard();
-		setupMouseListeners();
+
+		setupBoard(); // will need to do this when parsing game state
+		setupMouseListeners(); // will need to do this when parsing game state
 		(new Thread(this)).start();
 	}
 	
 	public void setupBoard(){
-		
+		gui.setBoard(0, 0);
+	}
+	
+	public void setupBoard(int rows, int columns)
+	{
+		gui.setBoard(rows, columns);
 	}
 	
 	////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ public class Client implements Runnable{
 	///sets up mouse listener on gui
 	public void setupMouseListeners()
 	{
-		for(int i=0;i<3;i++)
-        	for(int j=0;j<3;j++){
+		for(int i=0;i<gui.getRows();i++)
+        	for(int j=0;j<gui.getColumns();j++){
         		gui.getBoard().getTile(i, j).setOnMouseClicked((MouseEvent e) -> {
         			Tile t = (Tile)e.getSource();
                 	int xloc= t.getXlocation();
@@ -108,12 +108,11 @@ public class Client implements Runnable{
 	
 	/////////////////////////////////////////////////////////////////
 	/////sends a request that states which game the player wants to join
-	public void sendGameRequest(String game, String opponent)
+	public void sendGameRequest(String game)
 	{
 		JSONObject obj = new JSONObject();
 		obj.put("type", "gameRequest");
 		obj.put("game", game);
-		obj.put("opponent", opponent);
 		
 		try 
 		{
@@ -271,43 +270,7 @@ public class Client implements Runnable{
 	
 /////////////////////////////////////////////////////////////////////////////////////////////
 ///////////functions that parse information from the socket///////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////
-	
-	/////////////////////////////////////////////////////////////////
-	/// parses board size
-	public void parseBoardSize()
-	{
-	    String input;
-	    String jsonString = "";
-	    long[] boardSize = new long[2];
-	    try {
-	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			while ((input = br.readLine()) != null) {
-				jsonString += input;
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-		try {
-			JSONParser parser = new JSONParser();
-			Object object = parser.parse(jsonString);
-			JSONObject jsonObject = (JSONObject) object;
-			
-			long rows = (long) jsonObject.get("rows");
-			long columns = (long) jsonObject.get("columns");
-			boardSize[0] = rows;
-			boardSize[1] = columns;
-			
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-	
+///////////////////////////////////////////////////////////////////////////////////////////////	
 	
 	////////////////////////////////////////////////////////////
 	//// parses board state
@@ -315,22 +278,28 @@ public class Client implements Runnable{
 	{
 		String jsonString = "";
 		String input;
-	    try {
-	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			while ((input = br.readLine()) != null) {
-				jsonString += input;
+		while (true)
+		{
+			try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				while ((input = br.readLine()) != null) {
+					jsonString += input;
+				}
+				if (!jsonString.equals("")){ // if it received input break out of loop
+					break;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		}		
 		
 		JSONparse state = new JSONparse(jsonString);
 		
 		
 		/////////////////////////////////////////////// 
 		// set up board from server information
-		gui.setBoard(state.getRowNum(), state.getColumnNum());
+		setupBoard(state.getRowNum(), state.getColumnNum());
 		for (int i = 0; i < state.getRowNum(); i ++)
 		{
 			for (int j = 0 ; j < state.getColumnNum(); j ++)
@@ -377,17 +346,25 @@ public class Client implements Runnable{
 	
 	public void parseValidMove()
 	{
+		madeMove = false;
+		
 		String jsonString = "";
 		String input;
-	    try {
-	    	BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			while ((input = br.readLine()) != null) {
-				jsonString += input;
+		while (true)
+		{
+			try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				while ((input = br.readLine()) != null) {
+					jsonString += input;
+				}
+				if (!jsonString.equals("")){ // if it received input break out of loop
+					break;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		}	
 
 	    
 	    try {
@@ -399,7 +376,6 @@ public class Client implements Runnable{
 	    	
 	    	if (valid.equals("validMove"))
 	    	{
-	    		madeMove = false;
 	    		myTurn = false;
 	    	}
 
@@ -409,6 +385,9 @@ public class Client implements Runnable{
 	    	e.printStackTrace();
 	    }
 	}
+	
+	
+	public void 
 
 
 
@@ -420,13 +399,15 @@ public class Client implements Runnable{
 			System.out.println("Successful connection.");
 			
 			requestGameList(); // request list of games
+			parseGameList();
 			requestPlayerList(); // request list of players
+			parsePlayerList();
 			displayServer(); // displays game list and players online
 			while (true)
 			{
 				if (choseGame)
 				{
-					sendGameRequest(gameName, opponentName);
+					sendGameRequest(gameName);
 					parseGameState();
 					break;
 				}
