@@ -1,38 +1,50 @@
 package Client;
 
+
+import java.util.*;
+
+import javafx.geometry.VPos;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 public class Tile extends Canvas{
 	//resizable canvas source:https://dlemmermann.wordpress.com/2014/04/10/javafx-tip-1-resizable-canvas/
 	private GraphicsContext gc;
-	private double width=166,height=166;
 	private Color bg,fg;
 	private String fgText;
 	private int xlocation,ylocation;
-	public Tile(){
-		super();
-		gc = getGraphicsContext2D();
-		this.setWidth(width);
-		this.setHeight(height);
-		bg = Color.rgb(255, 255, 255);
-		fg = Color.rgb(0, 0, 0);
-		fgText="X";
-		draw();
-	}
+	private ArrayList<Piece> pieces;
+	
+	//do not use default constructor.
+	private Tile(){}
+	
+	/*
+	 * x = tile width, y = tile height
+	 * xloc = x position in the grid
+	 * yloc = y position in the grid
+	 */
+
 	public Tile(int x,int y,int xloc,int yloc){
 		super(x,y);
-		gc = getGraphicsContext2D();
-		this.setWidth(width);
-		this.setHeight(height);
-		bg = Color.rgb(0, 0, 0);
-		fg = Color.rgb(255, 255, 255);
-		fgText="X";
+		setup();
 		xlocation = xloc;
 		ylocation = yloc;
 		draw();
+		pieces = new ArrayList<Piece>();
+	}
+	
+	public void setup(){
+		gc = getGraphicsContext2D();
+		//centering text http://stackoverflow.com/questions/14882806/center-text-on-canvas
+		gc.setTextAlign(TextAlignment.CENTER);
+		gc.setTextBaseline(VPos.CENTER);
+		bg = Color.rgb(0, 0, 0);
+		fg = Color.rgb(255, 255, 255);
+		fgText="";
 	}
 	
 	public void setBackgroundColor(int r,int g,int b){
@@ -48,13 +60,16 @@ public class Tile extends Canvas{
 		draw();
 	}
 	public void draw(){
-		//drawBackground
+		//draw Background
         gc.setFill(bg);
-		gc.fillRect(0,0, width,height);
-		//drawForeground
+		gc.fillRect(0,0, getWidth(),getHeight());
+		//draw Border
+		gc.setFill(Color.rgb(255, 255, 255));
+		gc.strokeRect(0,0,getWidth(),getHeight());
+		//draw Foreground
         gc.setFill(fg);
-        gc.setFont(new Font(166));
-        gc.fillText(fgText, 40,140);
+        gc.setFont(new Font(getHeight()));
+        gc.fillText(fgText, Math.round(getWidth()/2),Math.round(getHeight()/2));
 	}
 
 	public int getXlocation(){
@@ -63,5 +78,10 @@ public class Tile extends Canvas{
 	
 	public int getYlocation(){
 		return ylocation;
+	}
+	
+	public void addPiece(Piece p)
+	{
+		pieces.add(p);
 	}
 }
