@@ -12,13 +12,13 @@ public class Board extends GridPane{
 	}
 	//main constructor
 	public Board(int rows,int columns){
-        this.setPrefSize(800, 800);
+        this.setPrefSize(600, 600);
         tiles = new ArrayList<ArrayList<Tile>>();
         for(int i=0;i<rows;i++){
         	tiles.add(new ArrayList<Tile>());
         	for(int j=0;j<columns;j++)
         	{
-        		tiles.get(i).add(new Tile(800/columns,800/rows,i,j));
+        		tiles.get(i).add(new Tile(600/columns,600/columns,i,j));
         		Tile x = tiles.get(i).get(j);
         		x.setBackgroundColor(255, 255, 255);
         		x.setForegroundColor(0, 0, 0);

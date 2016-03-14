@@ -19,10 +19,9 @@ public class MainStage extends Stage{
 	private Board gameboard;
 	
 	
-	
+	//main GUI setup
 	public MainStage(){
 		super();
-		
 		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane());
         //Menus
