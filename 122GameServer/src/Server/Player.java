@@ -72,49 +72,41 @@ public class Player extends Thread
         
         sendMessage(initialHandshake());
         
-        while (!loggedIn)
-        {
-			//loops until login in reached for this player
-			while(!loggedIn)
-			{
-				JSONParser parser = new JSONParser();
-
-				//gets the message from the client
-				String loginInfo = receiveMessage();
-
-				// TODO: REMOVE THE TRY AND CATCH LATER
-				Object obj = null;
-				try {
-					obj = parser.parse(loginInfo);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+        try{
+	        while (!loggedIn)
+	        {
+				//loops until login in reached for this player
+				while(!loggedIn)
+				{
+					JSONParser parser = new JSONParser();
+	
+					//gets the message from the client
+					String loginInfo = receiveMessage();
+					Object obj = parser.parse(loginInfo);
+					JSONObject jsonObject = (JSONObject) obj;
+					
+					//read input and check to see if its a login or new acct creation
+					String type = (String) jsonObject.get("type");
+	
+					if(type.equals("login"))
+						loggedIn = loginPlayer(jsonObject);
+					else if(type.equals("setup"))
+						loggedIn = addNewPlayer(jsonObject);
+					
+					if(!loggedIn)
+						sendMessage(badLogin());
+	
 				}
-				JSONObject jsonObject = (JSONObject) obj;
+	
 				
-				//read input and check to see if its a login or new acct creation
-				String type = (String) jsonObject.get("type");
-
-				if(type.equals("login"))
-					loggedIn = loginPlayer(jsonObject);
-				else if(type.equals("setup"))
-					addNewPlayer(jsonObject);
-				
-				if(!loggedIn)
-					sendMessage(badLogin());
-
-			}
-
-			
-			//sends player to select game method
-			//selectGame();
-		} 
-    	/*
+				//sends player to select game method
+				//selectGame();
+			} 
+        }
     	catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
         
         
 //        while (true)
@@ -173,13 +165,12 @@ public class Player extends Thread
     
     private boolean loginPlayer(JSONObject json)
     {
-    	/* Everything is temporary */
         //read login name
     	String name = (String)json.get("name");
     	
         //check profile to see if valid
     	this.profile = new Profile();
-    	if(!this.profile.profileExists(name + ".profile")){
+    	if(!this.profile.profileExists(name)){
     		return false;
     	}
     	
@@ -189,7 +180,6 @@ public class Player extends Thread
 
     private boolean addNewPlayer(JSONObject json)
     {
-    	/* Everything is temporary */
         //read login name
     	String name = (String)json.get("name");
     	

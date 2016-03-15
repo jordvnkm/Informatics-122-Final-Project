@@ -61,9 +61,14 @@ public class Profile {
     	this.scores = new HashMap<>();
     }
     
+    
+    /*
+     * Checks to see if the file exists
+     * @param name - name to check for in directory
+     */
     public boolean profileExists(String name)
     {
-        File file = new File(profileFile);
+        File file = new File(profileFile + name + ".profile");
         
         // If the file doesn't exist, we'll create it with some initial values
         if (file.exists())
@@ -73,6 +78,10 @@ public class Profile {
     }
     
     
+    /*
+     * Will create a new file containing the user's name
+     * @param name - The name of the user
+     */
     public void createNewProfile(String name){
     	this.setProfileFile(name);
     	this.initFile();
