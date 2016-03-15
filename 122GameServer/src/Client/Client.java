@@ -372,9 +372,9 @@ public class Client implements Runnable{
 	    	Object object = parser.parse(jsonString);
 	    	JSONObject jsonObject = (JSONObject) object;
 
-	    	String valid = (String) jsonObject.get("xDest");
+	    	String valid = (String) jsonObject.get("valid");
 	    	
-	    	if (valid.equals("validMove"))
+	    	if (valid.equals("true"))
 	    	{
 	    		myTurn = false;
 	    	}
@@ -386,9 +386,64 @@ public class Client implements Runnable{
 	    }
 	}
 	
-	
-	public void 
+	///////////////////////////////////////////////////////////////////
+	////// parses gamelist that is sent from server
+	public void parseGameList()
+	{
+		String jsonString = "";
+		String input;
+		while (true)
+		{
+			try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				while ((input = br.readLine()) != null) {
+					jsonString += input;
+				}
+				if (!jsonString.equals("")){ // if it received input break out of loop
+					break;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	    try {
+	    	JSONParser parser = new JSONParser();
+	    	Object object = parser.parse(jsonString);
+	    	JSONObject jsonObject = (JSONObject) object;
 
+	    	JSONArray gameArray = (JSONArray) jsonObject.get("games");
+	    	for (int i = 0 ; i < gameArray.size(); i ++)
+	    	{
+	    		JSONObject obj = (JSONObject)gameArray.get(i);
+	    		String name = (String)obj.get("name");
+	    		gameData.addGame(name);
+	    	}
+	    	
+	    	
+	    	JSONArray playerArray = (JSONArray) jsonObject.get("players");
+	    	for (int i = 0 ; i < gameArray.size(); i ++)
+	    	{
+	    		JSONObject obj = (JSONObject)gameArray.get(i);
+	    		String player = (String)obj.get("name");
+	    		gameData.addPlayer(player);
+	    	}
+	    	
+	    	
+
+
+	    } catch (ParseException e) {
+	    	// TODO Auto-generated catch block
+	    	e.printStackTrace();
+	    }
+	}
+
+	
+	public void parsePlayerList()
+	{
+		
+	}
 
 
 
@@ -403,6 +458,8 @@ public class Client implements Runnable{
 			requestPlayerList(); // request list of players
 			parsePlayerList();
 			displayServer(); // displays game list and players online
+			
+			
 			while (true)
 			{
 				if (choseGame)
