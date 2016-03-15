@@ -28,37 +28,38 @@ import java.util.logging.Logger;
  *  -
  */
 public class Profile {
-    private final String userName;  // The user whose file will be accessed
+    private String userName;  // The user whose file will be accessed
     private String description;     // Descrption of the user
-    private final String profileFile; // Filename to access
+    private String profileFile; // Filename to access
     private Map<String, Score> scores; // A collection of the users wins/losses
-   
     
     
-    //***this is a demo constructor and needs to be deleted
-    public Profile(String userName)
+    /**
+     * Constructor: Creates an Profile object for the user 
+     * @param name name of the user to create the object for.
+     */
+    public Profile(String name)
     {
-    	this.userName = userName;
-    	profileFile = "";
+        this.userName = name;
+        this.profileFile = "Profiles/" + this.userName + ".profile";
+        scores = new HashMap<>();
+        
+        // Check to see if the file exists, if not, initialize it
+        initFile();
+        
+        // Load the file
+        loadFile();
     }
     
     
-//    /**
-//     * Constructor: Creates an Profile object for the user 
-//     * @param name name of the user to create the object for.
-//     */
-//    public Profile(String name)
-//    {
-//        this.userName = name;
-//        this.profileFile = "Profiles/" + this.userName + ".profile";
-//        scores = new HashMap<>();
-//        
-//        // Check to see if the file exists, if not, initialize it
-//        initFile();
-//        
-//        // Load the file
-//        loadFile();
-//    }
+    
+    /*
+     * Constructor: No parameters for this profile
+     */
+    public Profile(){
+    	this.profileFile = "Profiles/";
+    	this.scores = new HashMap<>();
+    }
     
     public boolean profileExists(String name)
     {
@@ -70,6 +71,15 @@ public class Profile {
         
         return false;
     }
+    
+    
+    public void createNewProfile(String name){
+    	this.setProfileFile(name);
+    	this.initFile();
+    	this.loadFile();
+    }
+    
+    
     
     /**
      * Sets the user's personal description
@@ -206,5 +216,14 @@ public class Profile {
     public final String getName()
     {
         return this.userName;
+    }
+    
+    public final void setName(String name)
+    {
+    	this.userName = name;
+    }
+    
+    public final void setProfileFile(String name){
+    	this.profileFile = "Profiles/" + name + ".profile";
     }
 }

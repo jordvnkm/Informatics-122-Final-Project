@@ -67,12 +67,6 @@ public class Player extends Thread
     @Override
     public void run()
     {
-
-        //***This is for demo only. This code needs to be deleted
-//        sendMessage(initialHandshake());
-//        profile = new Profile("Jason");
-//        goToLobby();
-
         // This is necessary to continuously receive messages from the
         // client, it has to be in a loop
         
@@ -81,51 +75,46 @@ public class Player extends Thread
         while (!loggedIn)
         {
 			//loops until login in reached for this player
-//			while(!loggedIn)
-//			{
-//				JSONParser parser = new JSONParser();
-//
-//				//gets the message from the client
-//				String loginInfo = receiveMessage();
-//
-//				Object obj = parser.parse(loginInfo);
-//				JSONObject jsonObject = (JSONObject) obj;
-//				
-//				//read input and check to see if its a login or new acct creation
-//				String type = (String) jsonObject.get("type");
-//
-//				if(type.equals("login"))
-//					loginPlayer(jsonObject);
-//				else if(type.equals("setup"))
-//					addNewPlayer(jsonObject);
-//				
-//				if(!loggedIn)
-//					sendMessage(badLogin());
-//
-//			}
-//
-//			
-//			//sends player to select game method
-//			selectGame();
-//		} 
-//    	
-//    	catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    	
-//    	catch (Exception e) 
-//    	{
-//            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, e);
-//
-//        	JOptionPane.showMessageDialog(new JOptionPane(),
-//				    "Network Connection Error (within Player.run())",
-//				    "Fatal Error",
-//				    JOptionPane.ERROR_MESSAGE);
-//        	
-//        	System.exit(-1);
-//		} 
-        }
+			while(!loggedIn)
+			{
+				JSONParser parser = new JSONParser();
+
+				//gets the message from the client
+				String loginInfo = receiveMessage();
+
+				// TODO: REMOVE THE TRY AND CATCH LATER
+				Object obj = null;
+				try {
+					obj = parser.parse(loginInfo);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				JSONObject jsonObject = (JSONObject) obj;
+				
+				//read input and check to see if its a login or new acct creation
+				String type = (String) jsonObject.get("type");
+
+				if(type.equals("login"))
+					loggedIn = loginPlayer(jsonObject);
+				else if(type.equals("setup"))
+					addNewPlayer(jsonObject);
+				
+				if(!loggedIn)
+					sendMessage(badLogin());
+
+			}
+
+			
+			//sends player to select game method
+			//selectGame();
+		} 
+    	/*
+    	catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
         
         
 //        while (true)
@@ -170,29 +159,48 @@ public class Player extends Thread
     {
         if(game.checkForGameOver())
         {
-            lobby.removeGame(game);
+            //lobby.removeGame(game);
         }
         
     }
+    
+    
     public void leaveGame()
     {
         game = null;
     }
-    private Profile loginPlayer(JSONObject json)
+    
+    
+    private boolean loginPlayer(JSONObject json)
     {
+    	/* Everything is temporary */
         //read login name
-
+    	String name = (String)json.get("name");
+    	
         //check profile to see if valid
-        return null;
+    	this.profile = new Profile();
+    	if(!this.profile.profileExists(name + ".profile")){
+    		return false;
+    	}
+    	
+    	this.profile.createNewProfile(name);
+        return true;
     }
 
-    private Profile addNewPlayer(JSONObject json)
+    private boolean addNewPlayer(JSONObject json)
     {
-        //check to see if name is valid
-
-        //create profile
-        //return profile
-        return null;
+    	/* Everything is temporary */
+        //read login name
+    	String name = (String)json.get("name");
+    	
+        //check profile to see if valid
+    	this.profile = new Profile();
+    	if(this.profile.profileExists(name + ".profile")){
+    		return false;
+    	}
+  
+    	this.profile.createNewProfile(name);
+        return true;
     }
 
     private void goToLobby()
