@@ -8,8 +8,7 @@ package Server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,94 +67,140 @@ public class Player extends Thread
     @Override
     public void run()
     {
-
-        //***This is for demo only. This code needs to be deleted
-//        sendMessage(initialHandshake());
-//        profile = new Profile("Jason");
-//        goToLobby();
-
         // This is necessary to continuously receive messages from the
         // client, it has to be in a loop
-        while (true)
+        
+        sendMessage(initialHandshake());
+        
+        while (!loggedIn)
         {
-            String stringToParse = receiveMessage();
-            lobby.passesMessage(this, stringToParse);
-            // If parsed JSON shows the client wanted to make a move
+			//loops until login in reached for this player
+			while(!loggedIn)
+			{
+				JSONParser parser = new JSONParser();
+
+				//gets the message from the client
+				String loginInfo = receiveMessage();
+
+				// TODO: REMOVE THE TRY AND CATCH LATER
+				Object obj = null;
+				try {
+					obj = parser.parse(loginInfo);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				JSONObject jsonObject = (JSONObject) obj;
+				
+				//read input and check to see if its a login or new acct creation
+				String type = (String) jsonObject.get("type");
+
+				if(type.equals("login"))
+					loggedIn = loginPlayer(jsonObject);
+				else if(type.equals("setup"))
+					addNewPlayer(jsonObject);
+				
+				if(!loggedIn)
+					sendMessage(badLogin());
+
+			}
+
+			
+			//sends player to select game method
+			//selectGame();
+		} 
+    	/*
+    	catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+        
+        
+//        while (true)
+//        {
+//            String stringToParse = receiveMessage();
+//
+//            // TODO: in here we parse the message using a JSON parser, and then
+//            // Call the proper function based on what we get parsed out to.
+//            
+//            String[] response = parseMessage(stringToParse);
+//            switch (response[0])
 //            {
-//                game.makeMove(xCoord, yCoord, profile.getName());
+//                // A move for games such as tic tac toe
+//                case "move1":
+//                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]), profile.getName());
+//                    checkGame();
+//                    break;
+//                // A move for games such as checkers
+//                case "move2":
+//                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]),Integer.valueOf(response[3]), Integer.valueOf(response[4]), profile.getName());
+//                    checkGame();
+//                    break;
+//                // A move for games such as chutes and ladders
+//                case "move3":
+//                    game.makeMove(profile.getName());
+//                    checkGame();
+//                    break;
+//                case "description":
+//                    profile.SetDescription(response[1]);
+//                    break;
+//                case "selectGame":
+//                    // set up a game for the player here
+//                    break;
+//                case "newGame":
+//                    // set up a new game for players to join here
+//                    break;
 //            }
+//        }
+    }
+
+    private void checkGame()
+    {
+        if(game.checkForGameOver())
+        {
+            //lobby.removeGame(game);
         }
-
         
-        
-        //***The code below needs to be uncommented out. This is good code
-//    	//tells the server it is ready for login information
-//    	try 
-//    	{
-//			sendMessage(initialHandshake());
-//			
-//			//loops until login in reached for this player
-//			while(!loggedIn)
-//			{
-//				JSONParser parser = new JSONParser();
-//
-//				//gets the message from the client
-//				String loginInfo = receiveMessage();
-//
-//				Object obj = parser.parse(loginInfo);
-//				JSONObject jsonObject = (JSONObject) obj;
-//				
-//				//read input and check to see if its a login or new acct creation
-//				String type = (String) jsonObject.get("type");
-//
-//				if(type.equals("login"))
-//					loginPlayer(jsonObject);
-//				else if(type.equals("setup"))
-//					addNewPlayer(jsonObject);
-//				
-//				if(!loggedIn)
-//					sendMessage(badLogin());
-//
-//			}
-//
-//			
-//			//sends player to select game method
-//			selectGame();
-//		} 
-//    	
-//    	catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    	
-//    	catch (Exception e) 
-//    	{
-//            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, e);
-//
-//        	JOptionPane.showMessageDialog(new JOptionPane(),
-//				    "Network Connection Error (within Player.run())",
-//				    "Fatal Error",
-//				    JOptionPane.ERROR_MESSAGE);
-//        	
-//        	System.exit(-1);
-//		} 
     }
-
-    private Profile loginPlayer(JSONObject json)
+    
+    
+    public void leaveGame()
     {
+        game = null;
+    }
+    
+    
+    private boolean loginPlayer(JSONObject json)
+    {
+    	/* Everything is temporary */
         //read login name
-
+    	String name = (String)json.get("name");
+    	
         //check profile to see if valid
-        return null;
+    	this.profile = new Profile();
+    	if(!this.profile.profileExists(name + ".profile")){
+    		return false;
+    	}
+    	
+    	this.profile.createNewProfile(name);
+        return true;
     }
 
-    private Profile addNewPlayer(JSONObject json)
+    private boolean addNewPlayer(JSONObject json)
     {
-        //check to see if name is valid
-
-        //create profile
-        //return profile
-        return null;
+    	/* Everything is temporary */
+        //read login name
+    	String name = (String)json.get("name");
+    	
+        //check profile to see if valid
+    	this.profile = new Profile();
+    	if(this.profile.profileExists(name + ".profile")){
+    		return false;
+    	}
+  
+    	this.profile.createNewProfile(name);
+        return true;
     }
 
     private void goToLobby()
@@ -268,6 +313,14 @@ public class Player extends Thread
 
         return message.toJSONString();
     }
+    public void wonGame(String game)
+    {
+        profile.addWin(game);
+    }
     
+    public void lostGame(String game)
+    {
+        profile.addLoss(game);
+    }
 
 }

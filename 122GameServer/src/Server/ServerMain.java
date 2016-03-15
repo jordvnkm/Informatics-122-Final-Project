@@ -10,16 +10,9 @@ import java.util.ArrayList;
 
 
 public class ServerMain
-{
-    static ArrayList<Server> serverList; 
-    
+{    
     public static void main(String[] args) throws IOException
     {
-    	if (serverList == null) 
-            serverList = new ArrayList<>();
-    	
-        serverList.add(new Server()); // This theoretically will us to have multiple
-                                          // virtual servers running on one machine
-                                          // each with its own player/game list
+    	new ServerController();
     }
 }

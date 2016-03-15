@@ -5,7 +5,7 @@ import org.json.simple.parser.*;
 
 //This is the Parser for the JSONString produced by the GameStateToJSON class.
 
-public class JSONparse{
+public class JSONBoard{
 	private int rowNum;
 	private int columnNum;
 	private String currentTurn;
@@ -16,7 +16,7 @@ public class JSONparse{
 	
 	
 	//Constructor...Pass in JSONString
-	public JSONparse(String jsonString){
+	public JSONBoard(String jsonString){
 		this.jsonString = jsonString;
 		setValues();
 	}
@@ -88,7 +88,6 @@ public class JSONparse{
 		try{
 			return getPiece(row, column, position).get("shape").toString();
 		}catch(Exception pe){
-			System.out.println(pe);
 			return null;
 		}
 	}
@@ -103,7 +102,6 @@ public class JSONparse{
 			int[] colorArray = {Integer.parseInt(colorJSONArray.get(0).toString()), Integer.parseInt(colorJSONArray.get(1).toString()), Integer.parseInt(colorJSONArray.get(2).toString())};
 			return colorArray;
 		}catch(Exception pe){
-			System.out.println(pe);
 			return null;
 		}
 	}
@@ -116,7 +114,6 @@ public class JSONparse{
 		try{
 			return getPiece(row, column, position).get("type").toString();
 		}catch(Exception pe){
-			System.out.println(pe);
 			return null;
 		}
 	}
@@ -128,7 +125,6 @@ public class JSONparse{
 		try{
 			return getPiece(row, column, position).get("layer").toString();
 		}catch(Exception pe){
-			System.out.println(pe);
 			return null;
 		}
 	}
@@ -144,7 +140,6 @@ public class JSONparse{
 			pieceList = (JSONArray)tile.get("pieces");
 			return (JSONObject)pieceList.get(position);
 		}catch(Exception pe){
-			System.out.println(pe);
 			return null;
 		}
 	}
