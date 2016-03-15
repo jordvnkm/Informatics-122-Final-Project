@@ -18,7 +18,7 @@ public class MainStage extends Stage{
 	private TextArea TAlog;
 
 	private Board gameboard;
-	
+	private Button actionButton;
 	
 	//main GUI setup
 	public MainStage(){
@@ -55,7 +55,7 @@ public class MainStage extends Stage{
         TAlog.setMaxHeight(100);
 
         //Button
-        Button actionButton = new Button("Button");
+        actionButton = new Button("Button");
         actionButton.setMinSize(100,100);
         actionButton.setOnAction((ActionEvent e) -> {
         	logger("Button Pressed!",true);
@@ -95,5 +95,12 @@ public class MainStage extends Stage{
 	
 	public Board getBoard(){
 		return gameboard;
+	}
+	public void setBoard(Board b){
+		gameboard = b; 
+	}
+	
+	public Button getButton(){
+		return actionButton;
 	}
 }
