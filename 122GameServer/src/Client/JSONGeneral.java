@@ -82,6 +82,13 @@ public class JSONGeneral
 				  returnString.add(NameList.get(i).toString());
 			}
 		}
+		
+		//returns whether a plugin is valid.
+		else if(type.equals("InvalidPlugin")){
+			returnString.add("InvalidPlugin");
+			returnString.add(jsonObj.get("Valid").toString());
+		}
+		
 		//For textual messages to display on the clientside GUI
 		else if(type.equals("SendTextMessage")){
 			returnString.add("SendTextMessage");
