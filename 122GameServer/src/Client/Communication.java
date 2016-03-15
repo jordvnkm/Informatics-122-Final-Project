@@ -45,7 +45,8 @@ public class Communication extends Thread
 			if(consoleDebug)
 				System.out.println(serverMessage);
 			
-			if(!JSONGeneral.checkGreeting(serverMessage))
+			//Check server msg
+			if(false)
 				throw new Exception("***Server Welcome Message is Incorrect***");
 			
 			}
