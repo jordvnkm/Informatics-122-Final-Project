@@ -125,23 +125,4 @@ public class MainStage extends Stage{
 	}
 	
 
-	/**
-	 * displays to the user an error, where they have to press OK to continue.
-	 * Header - header of the window.
-	 * content - The error itself.
-	 * if any of the strings is null, then a default for that field is displayed.
-	 */
-	public void popupError(String content, String header,String title){
-		if (content==null)
-			content="There was an error.";
-		if (header==null)
-			header="";
-		if (title==null)
-			title="Error :(";
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle(title);
-		alert.setHeaderText(header);
-		alert.setContentText(content);
-		alert.showAndWait();
-	}
 }
