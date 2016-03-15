@@ -10,15 +10,13 @@ public class Board extends GridPane{
 
 	private int rows;
 	private int columns;
-	public Board(){
-		super();
-	}
 
 	private final int BOARD_WIDTH=600;
 	private final int BOARD_HEIGHT=600;
 	
 	//not using default constructor
-	//private Board(){}
+	//constructor set to private to prevent use of the constructor.
+	private Board(){}
 	//http://stackoverflow.com/questions/23272924/dynamically-add-elements-to-a-fixed-size-gridpane-in-javafx
 
 	//main constructor
@@ -56,8 +54,6 @@ public class Board extends GridPane{
         		//System.out.println("added tile");
         	}
         }
-        System.out.println("width "+getWidth());
-        System.out.println("height "+getHeight());
 	}
 	
 	public Tile getTile(int x,int y){
@@ -72,6 +68,7 @@ public class Board extends GridPane{
 	public void setRows(int r)
 	{
 		rows = r;
+		setDimensions(rows,columns);
 	}
 	
 	
@@ -83,5 +80,6 @@ public class Board extends GridPane{
 	public void setColumns(int c)
 	{
 		columns = c;
+		setDimensions(rows,columns);
 	}
 }
