@@ -18,36 +18,45 @@ public class ChutesAndLaddersGame extends GameState{
 	private int columns;
 	private final int[] purple = {87,20,96};
 	private final int[] green = {76,156,64};
+	private Random r;
+	
 	public ChutesAndLaddersGame(String[] players){
 		super(players);
-		setUpBoard();
-		rows = board.getRows();
-		columns = board.getColumns();
+		specialty = new HashMap<int[],int[]>();
+		positioning = new HashMap<Integer,int[]>();
+		currentPos = new HashMap<String,Integer>();
+		r = new Random();
+		
 		playerToPiece = new HashMap<String, Piece>();
 		playerToPiece.put(players[0],  new Piece(purple , "CIRCLE", "1", 'O'));
 		playerToPiece.put(players[1],  new Piece(green, "CIRCLE", "1", 'O'));
 		
-		specialty = new HashMap<int[],int[]>();
-		positioning = new HashMap<Integer,int[]>();
-		currentPos = new HashMap<String,Integer>();
 		currentPos.put(players[0], 0);
 		currentPos.put(players[1], 0);
 		
+		setUpBoard();
 	}
 
 	@Override
 	public void setUpBoard(){
 		board = new Board(8,8);
-
+		rows = board.getRows();
+		columns = board.getColumns();
+		
+		for(int i = 0; i < rows; i++){
+			for(int j = 0; j < columns; j++){
+				board.setTile(i, j, new Tile());
+			}
+		}
 		
 		int pos=0;
 		int i =0;
+		// Setting the path black
 		for(int h=0; h<2; h++){	
 			for(int j=0; j<board.getColumns(); j++){
 				positioning.put(pos, new int[]{i,j});
 				pos++;
-				board.getBoard()[i][j] = new Tile(new int[]{0,0,0});
-
+				board.setTile(i, j, new Tile(new int[]{0, 0, 0}));
 			}
 			i++;
 
@@ -55,31 +64,32 @@ public class ChutesAndLaddersGame extends GameState{
 			board.getBoard()[i][7] = new Tile(new int[]{0,0,0});
 			pos++;
 			i++;
-			for(int j=board.getColumns(); j>0;j--){
+			for(int j=board.getColumns() - 1; j>=0 ;j--){
 				positioning.put(pos, new int[]{i,j});
 				pos++;
-				board.getBoard()[i][j] = new Tile(new int[]{0,0,0});
+				board.setTile(i, j, new Tile(new int[]{0, 0, 0}));
 			}
 			i++;
 
 			positioning.put(pos, new int[]{i,0});
-			board.getBoard()[i][0] = new Tile(new int[]{0,0,0});
+			board.setTile(i, 0, new Tile(new int[]{0, 0, 0}));
 			pos++;
 			i++;	
 		}
-		board.getBoard()[2][5].setBackgroundColor(19, 208, 242);
-		board.getBoard()[6][4].setBackgroundColor(19, 208, 242);
+
+		board.getTile(2, 5).setBackgroundColor(19, 208, 242);
+		board.getTile(6, 4).setBackgroundColor(19, 208, 242);
 
 		//chute landing
-		board.getBoard()[4][0].setBackgroundColor(255, 115, 0);
-		board.getBoard()[2][4].setBackgroundColor(255, 115, 0);
+		board.getTile(4, 0).setBackgroundColor(255, 115, 0);
+		board.getTile(2, 4).setBackgroundColor(255, 115, 0);
 
 		//chute
-		board.getBoard()[4][7].setBackgroundColor(255, 0, 0);
-		board.getBoard()[6][0].setBackgroundColor(255, 0, 0);
+		board.getTile(4, 7).setBackgroundColor(255, 0, 0);
+		board.getTile(6, 0).setBackgroundColor(255, 0, 0);
 		//ladder
-		board.getBoard()[4][0].setBackgroundColor(0,252,255);
-		board.getBoard()[2][4].setBackgroundColor(0,252,255);
+		board.getTile(4, 0).setBackgroundColor(0,252,255);
+		board.getTile(2, 4).setBackgroundColor(0,252,255);
 
 		specialty.put( new int[]{4,7}, new int[]{2,4});
 		specialty.put( new int[]{6,0}, new int[]{4,0});
@@ -95,9 +105,10 @@ public class ChutesAndLaddersGame extends GameState{
 		
 	}
 public int randomNumGen(){
-	  Random rand = null;
-	  return (rand.nextInt(6) + 1);
+	  return r.nextInt(6) + 1;
 }
+
+
 public int[] giveNewSpot(String name){
 	int moves =randomNumGen();
 	int newPos= moves+currentPos.get(name);
@@ -211,15 +222,14 @@ public int[] giveNewSpot(String name){
 		
 		ChutesAndLaddersGame t = new ChutesAndLaddersGame(players);
 		Scanner scan = new Scanner(System.in);
-		int row, col;
+		String row;
 		
 		while(t.getIsRunning()){
 			System.out.println("Current turn: " + t.getCurrentTurn());
 			drawBoard(t.getBoard());
-			System.out.print("Enter [ROW][COL]: ");
-			row = scan.nextInt();
-			col = scan.nextInt();
-			t.playMove(row, col, t.getCurrentTurn());
+			System.out.print("Enter: ");
+			row = scan.nextLine();
+			t.playMove(2, 2, t.getCurrentTurn());
 		}
 		drawBoard(t.getBoard());
 		System.out.println("Winner: " + t.getWinner());
