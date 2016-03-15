@@ -40,17 +40,18 @@ public class Client implements Runnable{
 		gui = inputgui;
 
 		setupBoard(); // will need to do this when parsing game state
-		setupMouseListeners(); // will need to do this when parsing game state
 		(new Thread(this)).start();
 	}
 	
 	public void setupBoard(){
 		gui.setBoard(0, 0);
+		setupMouseListeners();
 	}
 	
 	public void setupBoard(int rows, int columns)
 	{
 		gui.setBoard(rows, columns);
+		setupMouseListeners();
 	}
 	
 	////////////////////////////////////////////////////
@@ -294,7 +295,7 @@ public class Client implements Runnable{
 			}
 		}		
 		
-		JSONparse state = new JSONparse(jsonString);
+		JSONBoard state = new JSONBoard(jsonString);
 		
 		
 		/////////////////////////////////////////////// 
@@ -407,6 +408,7 @@ public class Client implements Runnable{
 				e.printStackTrace();
 			}
 		}
+		
 		
 	    try {
 	    	JSONParser parser = new JSONParser();
