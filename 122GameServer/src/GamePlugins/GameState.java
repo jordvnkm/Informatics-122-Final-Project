@@ -8,6 +8,8 @@ public abstract class GameState {
 	protected String currentTurn;
 	protected String winner;
 	protected boolean isRunning;
+	protected String errorMsg;
+	protected String gameMsg;
 	
 	
 	public GameState(String[] players){
@@ -16,6 +18,8 @@ public abstract class GameState {
 		this.turn = 0;
 		this.currentTurn = players[0];
 		this.winner = "TIE";
+		this.errorMsg = "default";
+		this.gameMsg = "default";
 	}
 	
 	
@@ -47,12 +51,20 @@ public abstract class GameState {
 		return this.isRunning;
 	}
 	
+	public String getErrorMsg(){
+		return this.errorMsg;
+	}
+	
+	public String getGameMsg(){
+		return this.gameMsg;
+	}
+	
 	public Board getBoard(){
 		return this.board;
 	}
 	
 	public String getGameState(){
-		String jsonString = GameStateToJSON.gameStateToJSON(this.board, this.currentTurn, this.winner, this.isRunning);
+		String jsonString = GameStateToJSON.gameStateToJSON(this.board, this.currentTurn, this.winner, this.isRunning, this.errorMsg, this.gameMsg);
 		return jsonString;
 	}
 }

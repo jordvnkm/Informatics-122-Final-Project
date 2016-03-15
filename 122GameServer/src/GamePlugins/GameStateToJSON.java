@@ -17,6 +17,8 @@ public class GameStateToJSON
 	 *  - currentTurn
 	 * 	- is_running
 	 *  - winner
+	 *  - errorMsg
+	 *  - gameMsg
 	 *  - board
 	 * 		-tiles[]
 	 * 			-backgroundColor
@@ -36,7 +38,7 @@ public class GameStateToJSON
 	 * 
 	 ********************************************************************/
 	@SuppressWarnings("unchecked")
-	public static String gameStateToJSON(Board board, String currentTurn, String winner, boolean isRunning)
+	public static String gameStateToJSON(Board board, String currentTurn, String winner, boolean isRunning, String errorMsg, String gameMsg)
 	{
 		//contains the entire state
 		JSONObject jsonGameState = new JSONObject();
@@ -103,6 +105,8 @@ public class GameStateToJSON
 		jsonGameState.put("winner", winner);
 		jsonGameState.put("rowNum", board.getRows());
 		jsonGameState.put("columnNum", board.getColumns());
+		jsonGameState.put("errorMsg", errorMsg);
+		jsonGameState.put("gameMsg", gameMsg);
 		
 		
 		

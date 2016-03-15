@@ -12,6 +12,8 @@ public class JSONBoard{
 	private String winner;
 	private boolean isRunning;
 	private String jsonString;
+	private String errorMsg;
+	private String gameMsg;
 	private JSONArray tileList;
 	
 	
@@ -34,6 +36,8 @@ public class JSONBoard{
 			isRunning = Boolean.parseBoolean(jsonGameState.get("is_running").toString());
 			rowNum = Integer.parseInt(jsonGameState.get("rowNum").toString());
 			columnNum = Integer.parseInt(jsonGameState.get("columnNum").toString());
+			errorMsg = jsonGameState.get("errorMsg").toString();
+			gameMsg = jsonGameState.get("gameMsg").toString();
 			jsonBoard = (JSONObject)jsonGameState.get("board");
 			
 			tileList = (JSONArray)jsonBoard.get("tiles");
@@ -67,6 +71,14 @@ public class JSONBoard{
 
 	public boolean getIsRunning() {
 		return isRunning;
+	}
+	
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+	
+	public String getGameMsg() {
+		return gameMsg;
 	}
 	
 	//Gets the tile color as int[]...for example [255,255,255]
