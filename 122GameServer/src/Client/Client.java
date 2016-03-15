@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import javafx.application.Platform;
 import javafx.scene.input.MouseEvent;
 
 import java.net.*;
@@ -44,7 +45,7 @@ public class Client implements Runnable{
 	}
 	
 	public void setupBoard(){
-		gui.setBoard(0, 0);
+		gui.setBoard(4, 4);
 		setupMouseListeners();
 	}
 	
@@ -59,6 +60,19 @@ public class Client implements Runnable{
 	public void setGui(MainStage inputgui)
 	{
 		gui = inputgui;
+	}
+	
+	
+	//////////////////////////////////////////////////////////
+	//// writes string to logger
+	public void writeToLogger(String message)
+	{
+		Platform.runLater(new Runnable(){
+			@Override
+			public void run() {
+					gui.logger(message, true);	
+			}
+		});
 	}
 	
 	
@@ -297,33 +311,37 @@ public class Client implements Runnable{
 		
 		JSONBoard state = new JSONBoard(jsonString);
 		
-		
-		/////////////////////////////////////////////// 
-		// set up board from server information
-		setupBoard(state.getRowNum(), state.getColumnNum());
-		for (int i = 0; i < state.getRowNum(); i ++)
-		{
-			for (int j = 0 ; j < state.getColumnNum(); j ++)
-			{
-				Tile t = gui.getBoard().getTile(i, j);
-				int[] rgb = state.getTileColor(i, j);
-            	t.setBackgroundColor(rgb[0], rgb[1], rgb[2]);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run(){
+				/////////////////////////////////////////////// 
+				// set up board from server information
+				setupBoard(state.getRowNum(), state.getColumnNum());
+				for (int i = 0; i < state.getRowNum(); i ++)
+				{
+					for (int j = 0 ; j < state.getColumnNum(); j ++)
+					{
+						Tile t = gui.getBoard().getTile(i, j);
+						int[] rgb = state.getTileColor(i, j);
+						t.setBackgroundColor(rgb[0], rgb[1], rgb[2]);
 
-            	for (int x = 0 ; x < 2 ; x ++)
-            	{
-            		String shape = state.getPieceShape(i, j, x);
-            		if (!shape.equals("empty"))
-            		{
-            			int[] color = state.getPieceColor(i, j, x);
-            			String layer = state.getPieceLayer(i, j, x);
-            			String type = state.getPieceType(i, j, x);
-            			Piece piece = new Piece(color, shape , layer , type.charAt(0));
-            			t.addPiece(piece);
-            		}
-            		
-            	}
+						for (int x = 0 ; x < 2 ; x ++)
+						{
+							String shape = state.getPieceShape(i, j, x);
+							if (!shape.equals("empty"))
+							{
+								int[] color = state.getPieceColor(i, j, x);
+								String layer = state.getPieceLayer(i, j, x);
+								String type = state.getPieceType(i, j, x);
+								Piece piece = new Piece(color, shape , layer , type.charAt(0));
+								t.addPiece(piece);
+							}
+
+						}
+					}
+				}
 			}
-		}
+		});
 		
 		/////////////////////////////////////////////////////
 		////// set turn
@@ -414,7 +432,8 @@ public class Client implements Runnable{
 	    	JSONParser parser = new JSONParser();
 	    	Object object = parser.parse(jsonString);
 	    	JSONObject jsonObject = (JSONObject) object;
-
+	    	
+	    	////// parses game list
 	    	JSONArray gameArray = (JSONArray) jsonObject.get("games");
 	    	for (int i = 0 ; i < gameArray.size(); i ++)
 	    	{
@@ -427,13 +446,10 @@ public class Client implements Runnable{
 	    	JSONArray playerArray = (JSONArray) jsonObject.get("players");
 	    	for (int i = 0 ; i < gameArray.size(); i ++)
 	    	{
-	    		JSONObject obj = (JSONObject)gameArray.get(i);
+	    		JSONObject obj = (JSONObject)playerArray.get(i);
 	    		String player = (String)obj.get("name");
 	    		gameData.addPlayer(player);
 	    	}
-	    	
-	    	
-
 
 	    } catch (ParseException e) {
 	    	// TODO Auto-generated catch block
@@ -442,9 +458,46 @@ public class Client implements Runnable{
 	}
 
 	
+	
 	public void parsePlayerList()
 	{
+		String jsonString = "";
+		String input;
+		while (true)
+		{
+			try {
+				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				while ((input = br.readLine()) != null) {
+					jsonString += input;
+				}
+				if (!jsonString.equals("")){ // if it received input break out of loop
+					break;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
+		
+	    try {
+	    	JSONParser parser = new JSONParser();
+	    	Object object = parser.parse(jsonString);
+	    	JSONObject jsonObject = (JSONObject) object;
+	    	
+	    	///// parses player list
+	    	JSONArray playerArray = (JSONArray) jsonObject.get("players");
+	    	for (int i = 0 ; i < playerArray.size(); i ++)
+	    	{
+	    		JSONObject obj = (JSONObject)playerArray.get(i);
+	    		String player = (String)obj.get("name");
+	    		gameData.addPlayer(player);
+	    	}
+
+	    } catch (ParseException e) {
+	    	// TODO Auto-generated catch block
+	    	e.printStackTrace();
+	    }
 	}
 
 
@@ -453,7 +506,7 @@ public class Client implements Runnable{
 	public void run() {
 		try{
 			socket = new Socket(InetAddress.getByName(serverIP), port);
-			System.out.println("Successful connection.");
+			writeToLogger("Successful connection.");
 			
 			requestGameList(); // request list of games
 			parseGameList();

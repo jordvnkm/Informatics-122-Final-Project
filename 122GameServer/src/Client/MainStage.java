@@ -18,20 +18,21 @@ public class MainStage extends Stage{
 	private TextArea TAlog;
 
 	private Board gameboard;
-	Scene scene = new Scene(new BorderPane());
-	MenuBar mb = new MenuBar();
-	BorderPane bottom = new BorderPane();
-	Button actionButton = new Button("Button");
-	
+//	private Scene scene = new Scene(new BorderPane());
+//	private MenuBar mb = new MenuBar();
+//	private BorderPane bottom = new BorderPane();
+
+	private Button actionButton;
+
 	
 	//main GUI setup
 	public MainStage(){
 		super();
 
 		setTitle("INF 122 Game Client");
-        //Scene scene = new Scene(new BorderPane());
+        Scene scene = new Scene(new BorderPane());
         //Menus
-        //MenuBar mb = new MenuBar();
+        MenuBar mb = new MenuBar();
         Menu servermenu = new Menu("Server");
         MenuItem MIselectserv = new MenuItem("Select Server");
         MenuItem MIplayerprofile = new MenuItem("Player Profile");
@@ -53,25 +54,33 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
-        //gameboard = new Board(3, 3 );
+        gameboard = new Board(3, 3 );
 
         //text area
         TAlog = new TextArea();
         TAlog.setMaxHeight(100);
 
         //Button
-        //Button actionButton = new Button("Button");
+        actionButton = new Button("Button");
+
         actionButton.setMinSize(100,100);
         actionButton.setOnAction((ActionEvent e) -> { // need to figure out action for button
         	logger("Button Pressed!",true);
         });
         
         //construct bottom
-        //BorderPane bottom = new BorderPane();
+        BorderPane bottom = new BorderPane();
         bottom.setCenter(TAlog);
         BorderPane bottomright = new BorderPane();
         bottomright.setCenter(actionButton);
         bottom.setRight(bottomright);
+        
+		((BorderPane) scene.getRoot()).setTop(mb);
+		((BorderPane) scene.getRoot()).setCenter(gameboard);
+		((BorderPane) scene.getRoot()).setBottom(bottom);
+		setScene(scene);
+		show();
+        
 		
 	}
 
@@ -87,12 +96,9 @@ public class MainStage extends Stage{
 	
 	public void setBoard(int rows, int columns)
 	{
-		gameboard = new Board(rows, columns);
-		((BorderPane) scene.getRoot()).setTop(mb);
-		((BorderPane) scene.getRoot()).setCenter(gameboard);
-		((BorderPane) scene.getRoot()).setBottom(bottom);
-		setScene(scene);
-		show();
+//		gameboard = new Board(rows, columns);
+		gameboard.setDimensions(rows, columns);
+
 	}
 	
 	//Add a string to the logger. Set debug to true if its a debugger line.
@@ -108,4 +114,12 @@ public class MainStage extends Stage{
 	public Board getBoard(){
 		return gameboard;
 	}
+	public void setBoard(Board b){
+		gameboard = b; 
+	}
+	
+	public Button getButton(){
+		return actionButton;
+	}
+	
 }
