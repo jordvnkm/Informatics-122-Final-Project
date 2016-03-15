@@ -62,11 +62,7 @@ public class MainStage extends Stage{
 
         //Button
         actionButton = new Button("Button");
-
         actionButton.setMinSize(100,100);
-        actionButton.setOnAction((ActionEvent e) -> { // need to figure out action for button
-        	logger("Button Pressed!",true);
-        });
         
         //construct bottom
         BorderPane bottom = new BorderPane();

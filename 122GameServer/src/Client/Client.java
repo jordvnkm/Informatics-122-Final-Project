@@ -8,6 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.net.*;
@@ -29,7 +30,9 @@ public class Client implements Runnable{
 	private boolean isRunning = true;
 	private String winner;
 	private boolean choseGame = false;
-
+	private Communication com;
+	private boolean buttonPressed = false;
+	private boolean buttonValid = false;
 	
 	///////////////////////////////////////////
 	//// client constructor
@@ -45,14 +48,16 @@ public class Client implements Runnable{
 	}
 	
 	public void setupBoard(){
-		gui.setBoard(4, 4);
+		//gui.setBoard(0, 0);
 		setupMouseListeners();
+		setupActionButton();
 	}
 	
 	public void setupBoard(int rows, int columns)
 	{
 		gui.setBoard(rows, columns);
 		setupMouseListeners();
+		setupActionButton();
 	}
 	
 	////////////////////////////////////////////////////
@@ -75,6 +80,33 @@ public class Client implements Runnable{
 		});
 	}
 	
+	
+	//////////////////////////////////////////////////////////
+	/////// sets up action button
+	public void setupActionButton()
+	{
+		gui.getButton().setOnAction((ActionEvent e) -> { // need to figure out action for button
+			gui.logger("Button Pressed !",true);
+			if (myTurn)
+			{
+				if (buttonValid)
+				{
+					setButtonPressed();
+				}
+				setButtonPressed();
+			}
+			else
+			{
+				gui.logger("Not your turn!", true);
+			}
+		});
+	}
+	
+	
+	public void setButtonPressed(){
+		buttonPressed = true;
+		madeMove = true;
+	}
 	
 	
 	//////////////////////////////////////////////////////
@@ -123,66 +155,31 @@ public class Client implements Runnable{
 	
 	/////////////////////////////////////////////////////////////////
 	/////sends a request that states which game the player wants to join
-	public void sendGameRequest(String game)
+	public void sendGameRequest(Communication com , String game)
 	{
 		JSONObject obj = new JSONObject();
 		obj.put("type", "gameRequest");
 		obj.put("game", game);
 		
-		try 
-		{
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-		    out.write(obj.toJSONString());
-		    out.flush();
-		    out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	
-	/////////////////////////////////////////////////////////////////
-	//// requests the board size
-	public void requestBoardSize()
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("type", "requestBoardSize");
-
-		try 
-		{
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-		    out.write(obj.toJSONString());
-		    out.flush();
-		    out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		if (com.sendMessage(obj.toJSONString()))
+			writeToLogger("Game request sent.");
+		else
+			writeToLogger("Game request failed.");
 	}
 	
 	
 	
 	//////////////////////////////////////////////////////////
 	/// sends a string representing that the button on the GUI has been pressed
-	public void sendButtonPressed()
+	public void sendButtonPressed(Communication com)
 	{
 		JSONObject obj = new JSONObject();
 		obj.put("type", "ButtonPressed");
 
-		try 
-		{
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-		    out.write(obj.toJSONString());
-		    out.flush();
-		    out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		if (com.sendMessage(obj.toJSONString()))
+			writeToLogger("Button pressed sent");
+		else
+			writeToLogger("Button pressed failed.");
 	}
 	
 	
@@ -190,43 +187,29 @@ public class Client implements Runnable{
 	
 	////////////////////////////////////////////////////////////////
 	///// sends a string through the socket requesting players in the server
-	public void requestPlayerList()
+	public void requestPlayerList(Communication com)
 	{
 		JSONObject obj = new JSONObject();
 		obj.put("type", "requestPlayerList");
 
-		try 
-		{
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-		    out.write(obj.toJSONString());
-		    out.flush();
-		    out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		if (com.sendMessage(obj.toJSONString()))
+			writeToLogger("Player list request sent.");
+		else
+			writeToLogger("Player list request failed.");
 	}
 	
 	
 	
 	////////////////////////////////////////////
 	///// sends a string through the socket requesting gamelist
-	public void requestGameList()
+	public void requestGameList(Communication com)
 	{	
 		JSONObject obj = new JSONObject();
 		obj.put("type", "requestGameList");
-		try 
-		{
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-		    out.write(obj.toJSONString());
-		    out.flush();
-		    out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		if (com.sendMessage(obj.toJSONString()))
+			writeToLogger("Game list request sent.");
+		else
+			writeToLogger("Game list request failed.");
 	}
 	
 	
@@ -257,7 +240,7 @@ public class Client implements Runnable{
 	
 	////////////////////////////////////////////////
 	/// sends the location that the piece is supposed to move 
-	public void sendMove()
+	public void sendMove(Communication com)
 	{
 		
 		JSONObject obj = new JSONObject();
@@ -267,17 +250,12 @@ public class Client implements Runnable{
 		obj.put("xDest", move.get(2));   // xDest
 		obj.put("yDest", move.get(3));   // yDest
 		
-		try 
-		{
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-		    out.write(obj.toJSONString());
-		    out.flush();
-		    out.close();
+		if (com.sendMessage(obj.toJSONString())){
+			writeToLogger("Move sent");
 		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}	
+		else{
+			writeToLogger("Move not sent");
+		}
 		
 		madeMove = false;
 	}
@@ -289,25 +267,15 @@ public class Client implements Runnable{
 	
 	////////////////////////////////////////////////////////////
 	//// parses board state
-	public void parseGameState()
+	public void parseGameState(Communication com)
 	{
 		String jsonString = "";
-		String input;
 		while (true)
 		{
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				while ((input = br.readLine()) != null) {
-					jsonString += input;
-				}
-				if (!jsonString.equals("")){ // if it received input break out of loop
-					break;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}		
+			jsonString = com.receiveMessage();
+			if (!jsonString.equals(""))
+				break;
+		}	
 		
 		JSONBoard state = new JSONBoard(jsonString);
 		
@@ -362,28 +330,19 @@ public class Client implements Runnable{
 
 	}
 	
-	
-	public void parseValidMove()
+	/////////////////////////////////////////////////
+	//// parse valid move * may not need if valid field is sent with game state
+	public void parseValidMove(Communication com)
 	{
 		madeMove = false;
 		
 		String jsonString = "";
-		String input;
 		while (true)
 		{
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				while ((input = br.readLine()) != null) {
-					jsonString += input;
-				}
-				if (!jsonString.equals("")){ // if it received input break out of loop
-					break;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}	
+			jsonString = com.receiveMessage();
+			if (!jsonString.equals(""))
+				break;
+		}
 
 	    
 	    try {
@@ -407,24 +366,14 @@ public class Client implements Runnable{
 	
 	///////////////////////////////////////////////////////////////////
 	////// parses gamelist that is sent from server
-	public void parseGameList()
+	public void parseGameList(Communication com)
 	{
 		String jsonString = "";
-		String input;
 		while (true)
 		{
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				while ((input = br.readLine()) != null) {
-					jsonString += input;
-				}
-				if (!jsonString.equals("")){ // if it received input break out of loop
-					break;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			jsonString = com.receiveMessage();
+			if (!jsonString.equals(""))
+				break;
 		}
 		
 		
@@ -459,24 +408,14 @@ public class Client implements Runnable{
 
 	
 	
-	public void parsePlayerList()
+	public void parsePlayerList(Communication com)
 	{
 		String jsonString = "";
-		String input;
 		while (true)
 		{
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				while ((input = br.readLine()) != null) {
-					jsonString += input;
-				}
-				if (!jsonString.equals("")){ // if it received input break out of loop
-					break;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			jsonString = com.receiveMessage();
+			if (!jsonString.equals(""))
+				break;
 		}
 		
 		
@@ -504,63 +443,46 @@ public class Client implements Runnable{
 
 	@Override
 	public void run() {
-		try{
-			socket = new Socket(InetAddress.getByName(serverIP), port);
-			writeToLogger("Successful connection.");
-			
-			requestGameList(); // request list of games
-			parseGameList();
-			requestPlayerList(); // request list of players
-			parsePlayerList();
-			displayServer(); // displays game list and players online
-			
-			
-			while (true)
-			{
-				if (choseGame)
-				{
-					sendGameRequest(gameName);
-					parseGameState();
-					break;
-				}
-			}
-			
-			while (isRunning)
-			{
-				while (myTurn)
-				{
-					if (madeMove)
-					{
-						sendMove(); // sends move;
-						parseValidMove(); // listens for server response .sets myTurn;
-					}
-				}
-				
-				while (!myTurn)
-				{
-					parseGameState();
-				}
-			}
-			
-		}
-		catch (IOException e)
-		{
-			System.out.println("failed to connect");
-			e.printStackTrace();
-		}
-		
-		/*while(true){
-		for(int i=0;i<3;i++)
-			for(int j=0;j<3;j++){
-					gui.getBoard().getTile(i, j).setBackgroundColor(255, 0, 127);
-					try{Thread.sleep(100);}catch(InterruptedException e){}
-			}
-		for(int i=0;i<3;i++)
-			for(int j=0;j<3;j++){
-					gui.getBoard().getTile(j, i).setBackgroundColor(127, 0, 255);
-					try{Thread.sleep(100);}catch(InterruptedException e){}
-			}
-		}*/
+//		Communication com = new Communication(serverIP, port);
+//		if (com.connectToServer())
+//			writeToLogger("Successful connection.");
+//		else
+//			writeToLogger("Could not connect to server.");
+//
+//		requestGameList(com); // request list of games
+//		parseGameList(com);
+//		requestPlayerList(com); // request list of players
+//		parsePlayerList(com);
+//		displayServer(com); // displays game list and players online
+//
+//
+//		while (true)
+//		{
+//			if (choseGame)
+//			{
+//				sendGameRequest(com, gameName);
+//				parseGameState(com);
+//				break;
+//			}
+//		}
+//
+//		while (isRunning)
+//		{
+//			while (myTurn)
+//			{
+//				if (madeMove)
+//				{
+//					sendMove(com); // sends move;
+//					parseValidMove(com); // listens for server response .sets myTurn;
+//				}
+//			}
+//
+//			while (!myTurn)
+//			{
+//				parseGameState(com);
+//			}
+//		}
+//
 	}
 
 }
