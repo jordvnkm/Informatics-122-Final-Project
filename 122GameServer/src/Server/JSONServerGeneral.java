@@ -1,40 +1,30 @@
 package Server;
 
+
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
 public class JSONServerGeneral 
-{
-	JSONParser parser;
-	String jsonString;
-	Object obj;
-	JSONObject jsonObj;
-	
-	//Receives String in JSONFormat
-	public JSONServerGeneral(String jsonString){
-		parser = new JSONParser();
-		this.jsonString = jsonString;
-		setupParseObj();
-	}
-	
-	private void setupParseObj(){
-		try{
-			obj = parser.parse(this.jsonString);
-			jsonObj = (JSONObject)obj;
-		}catch(ParseException pe){
-			System.out.println("position: " + pe.getPosition());
-			System.out.println(pe);
-		}
-	}
-	
+{	
 	//Returns String Array
 	//For Example:
 	//		If we receive {"type": "MovePiece", "X": 1, "Y": 2}
 	//This returns the String Array:
 	//		["MovePiece", "1", "2"]
 	
-	public String[] checkType()
+	
+	public static String[] checkType(String jsonString)
 	{
+		JSONParser parser = null;
+		Object obj = null;
+		try{
+			parser = new JSONParser();
+			obj = parser.parse(jsonString);
+		}catch(ParseException pe){
+			System.out.println("position: " + pe.getPosition());
+			System.out.println(pe);
+		}
+		JSONObject jsonObj = (JSONObject)obj;
 		String type = jsonObj.get("type").toString();
 		String[] returnString = null;
 		
