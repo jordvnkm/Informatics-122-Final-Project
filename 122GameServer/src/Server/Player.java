@@ -202,7 +202,7 @@ public class Player extends Thread
         //needs to push this player thread into the lobby. Just cuz the lobby
         // has a list of players, doesn't mean the thread is running in lobby
         // it's still running in Player and can only run in player.
-        game = lobby.selectGame(this);
+        lobby.joinLobby(this);
     }
 
 	/**
