@@ -1,15 +1,14 @@
 package Client;
 
-import static java.lang.Math.toIntExact;
 import java.util.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 
 import java.net.*;
@@ -530,10 +529,31 @@ public class Client implements Runnable{
 /**
  * Thread is started when the client makes a request to 
  * connect to the server (selectServer).
+ * All gui calls must be done by using the Platform.runLater method
  */
 	@Override
 	public void run() {
 		System.out.println("Thread to start communicating with server started");
+		//Attempt communication using serverIP and port
+		
+		//if error occurs
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run(){
+				Dialogs.popupError("Failed to connect to "+serverIP+":"+port+".", "Connection Error", "Connection Error");
+				selectServer();
+				//kill/end thread
+			}});
+		
+		//if successful
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run(){
+				gui.logger("Connected to "+serverIP+":"+port+".", false);
+
+			}});
+
+		
 //		Communication com = new Communication(serverIP, port);
 //		if (com.connectToServer())
 //			writeToLogger("Successful connection.");
