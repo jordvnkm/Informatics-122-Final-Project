@@ -100,7 +100,7 @@ public class Player extends Thread
 			
 			if(tokens[0].equals("LoginType") && tokens[1].equals("CreateUser")){
 				loggedIn = addNewPlayer();
-			} else if(tokens[1].equals("LoginType") && tokens[1].equals("Login")){
+			} else if(tokens[0].equals("LoginType") && tokens[1].equals("Login")){
 				loggedIn = loginPlayer();
 			}
 			
@@ -110,7 +110,7 @@ public class Player extends Thread
 
 		}
 
-			
+		System.out.println("Player Created/Logged In");
 			//sends player to select game method
 			//selectGame();
         
@@ -165,37 +165,6 @@ public class Player extends Thread
      * @param json 
      * @return
      */
-    private boolean loginPlayer(JSONObject json)
-    {
-        //read login name
-    	String name = (String)json.get("name");
-    	
-        //check profile to see if valid
-    	this.profile = new Profile();
-    	if(!this.profile.profileExists(name)){
-    		return false;
-    	}
-    	
-    	this.profile.createNewProfile(name);
-        return true;
-    }
-
-    /*
-    private boolean addNewPlayer(JSONObject json)
-    {
-        //read login name
-    	String name = (String)json.get("name");
-    	
-        //check profile to see if valid
-    	this.profile = new Profile();
-    	if(this.profile.profileExists(name + ".profile")){
-    		return false;
-    	}
-  
-    	this.profile.createNewProfile(name);
-        return true;
-    }
-    */
     
     private boolean addNewPlayer(){
     	String message = receiveMessage();
@@ -218,7 +187,7 @@ public class Player extends Thread
     private boolean loginPlayer(){
     	String message = receiveMessage();
     	String[] tokens = JSONServerGeneral.checkType(message);
-    	
+    	System.out.println("Logging Player In: " + message);
     	this.profile = new Profile();
     	if(tokens[0].equals("Username") && !this.profile.profileExists(tokens[1]))
     		return false;
@@ -325,10 +294,7 @@ public class Player extends Thread
      */
     private String badLogin()
     {
-        JSONObject message = new JSONObject();
-        message.put("error", "username not valid");
-
-        return message.toJSONString();
+        return JSONServerTranslator.loginStatus("Failure");
     }
     public void wonGame(String game)
     {

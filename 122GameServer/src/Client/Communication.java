@@ -156,32 +156,33 @@ public class Communication extends Thread
     {
     	Communication c = new Communication("localhost", 8000);
     	c.connectToServer();
-    	
-    	JSONObject j = new JSONObject();
-    	j.put("type", "LoginType");
-    	j.put("Command", "CreateUser");
-    	c.sendMessage(j.toJSONString());
-    	
-    	j = new JSONObject();
-    	j.put("type", "Username");
-    	j.put("User", "Alex");
-    	c.sendMessage(j.toJSONString());
+    
+    	c.sendMessage(JSONClientTranslator.loginType("Login"));
     	
     	while(true){
     		try {
-				c.sleep(2000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 			}
     		break;
     	}
     	
-    	j = new JSONObject();
-    	j.put("type", "Description");
-    	j.put("Bio", "Likes bikes");
-    	c.sendMessage(j.toJSONString());
+    	c.sendMessage(JSONClientTranslator.username("Alex"));
     	while(true)
     	{
-    		// do nothing
+    		try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    		break;
+    	}
+    	
+    	String message = c.receiveMessage();
+    	System.out.println(message);
+    	
+    	while(true){
+    		
     	}
     }
 	
