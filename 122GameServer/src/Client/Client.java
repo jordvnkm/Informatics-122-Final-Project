@@ -78,6 +78,14 @@ public class Client implements Runnable{
 		gui.getLoginMenuItem().setOnAction((ActionEvent e) -> {
 	    	login();
 	    });
+		
+		//When Disconnect is pressed
+		gui.getDisconnectMenuItem().setOnAction((ActionEvent e) ->{
+			if(com!=null){
+				com.closeConnection();
+				gui.logger("Disconnected from server.", false);
+			}
+		});
 	}
 	/**
 	 * Opens the server select Dialog, and attempts to establish a conection with the server
@@ -360,7 +368,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}	
@@ -427,7 +435,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}
@@ -459,7 +467,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}
@@ -501,7 +509,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}
@@ -557,15 +565,36 @@ public class Client implements Runnable{
 		}
 		
     	while (true){
-    		String message = com.receiveMessage();
+    		try{
+    		String message;
+    		message= com.receiveMessage();
     		System.out.println("New Message: "+message);
+    		//Respond to messages from server
+    		ArrayList<String> parsed = JSONGeneral.checkType(message);
+    		if(parsed.size()==0){
+    			System.out.println("Malformed Message Sent:" + message);
+    		}
+    		String type = parsed.get(0);
     		
-    		//some message to end connection, and for eclipse to 
-    		//stop telling me the code below is unreachable
-    		if(message.equals(""))
+    		
+    		if(type.equals("Welcome")){
+    			writeToLogger(parsed.get(1));
+    			Platform.runLater(new Runnable() {
+    				@Override
+    				public void run(){
+    					login();
+    				}});
+    		}
+    		
+    		
+    		
+    		}catch(Exception e){
     			break;
-    	}
+    		}
 
+    	}
+    	
+    	writeToLogger("You have disconnected from the server.");
 		com.closeConnection();
     	connectionEstablished=false;
     	com=null;

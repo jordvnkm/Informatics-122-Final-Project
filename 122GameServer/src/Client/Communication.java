@@ -40,25 +40,6 @@ public class Communication extends Thread
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
             
-            
-			//this should be the welcome message
-			String serverMessage = input.readUTF();
-			
-			if(true)
-				System.out.println(serverMessage);
-			
-			//Check server msg
-			if(false)
-				throw new Exception("***Server Welcome Message is Incorrect***");
-			
-	
-			
-		
-			if(consoleDebug)
-			{
-				System.out.println("****Could not connect to server****");
-				return false;
-			}
 		
 		
 
@@ -91,21 +72,10 @@ public class Communication extends Thread
 	/*
 	 * Receives a message from the server
 	 */
-	public String receiveMessage()
+	public String receiveMessage() throws Exception
 	{
-		try 
-		{
 			return(input.readUTF());
-		} 
 		
-		catch (IOException e) {
-			if(consoleDebug)
-			{
-				System.out.println("****Could not receive a message****");
-				e.printStackTrace();
-			}
-			return "";
-		}
 	}
 	
 	/***************************************************************************
@@ -115,8 +85,9 @@ public class Communication extends Thread
 	 * 		to the server. The server will return a JSON message that contains a
 	 * 		status of if the login was good or not along with some other. If the
 	 * 		connection fails, null will be returned 
+	 * @throws Exception 
 	 ***************************************************************************/
-	public String loginHandshake(String s)
+	public String loginHandshake(String s) throws Exception
 	{
 	
 			//gets the input from the GUI and send the appropriate login information to the server
@@ -140,7 +111,12 @@ public class Communication extends Thread
     	
     	while(listening)
     	{
-    		serverMessage = receiveMessage();
+    		try {
+				serverMessage = receiveMessage();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     		//update GUI???
     		//need to know if its a a game list or something els??
     	}
@@ -188,7 +164,13 @@ public class Communication extends Thread
     		break;
     	}
     	
-    	String message = c.receiveMessage();
+    	String message = null;
+		try {
+			message = c.receiveMessage();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	System.out.println(message);
     	
     	while(true){
