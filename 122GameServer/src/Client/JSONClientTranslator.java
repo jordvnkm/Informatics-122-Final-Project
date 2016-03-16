@@ -48,7 +48,7 @@ public class JSONClientTranslator{
 	public static String username(String user){
 		JSONObject name = new JSONObject();
 		name.put("type", "Username");
-		name.put("Command", user);
+		name.put("User", user);
 		return name.toJSONString();
 	}
 	
