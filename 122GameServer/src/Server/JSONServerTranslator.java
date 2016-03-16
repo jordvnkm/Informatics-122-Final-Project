@@ -1,6 +1,10 @@
 package Server;
 import org.json.simple.*;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 //For converting data into JSON strings to be sent to client
@@ -90,6 +94,14 @@ public class JSONServerTranslator{
 		return text.toJSONString();
 	}
 	
+	public static String openGameList(List<String> g)
+	{
+		throw new NotImplementedException();
+	}
 	
+	public static String gameList(List<String> g)
+	{
+		throw new NotImplementedException();
+	}
 	
 }
