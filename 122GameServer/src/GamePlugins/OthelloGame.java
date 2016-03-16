@@ -26,7 +26,7 @@ public class OthelloGame extends GameState{
 		board = new Board(8,8);
 		for(int i = 0; i < board.getRows(); i++){
 			for(int j = 0; j < board.getColumns(); j++){
-				board.getBoard()[i][j] = new Tile(new int[]{0,255,0});
+				board.getBoard()[i][j] = new Tile(new int[]{0, 255, 0}); // Green Background
 			}
 		}
 		board.addPiece(board.getRows()/2-1, board.getColumns()/2-1,  new Piece(white, "CIRCLE", "1", 'O'));
@@ -58,6 +58,7 @@ public class OthelloGame extends GameState{
 		if(!currentTurn.equals(name)){
 			return false;
 		}
+		
 		if (checkValidMove(x, y)){
 			board.addPiece(x,y, playerToPiece.get(currentTurn));
 			changeTurn();
@@ -106,6 +107,12 @@ public class OthelloGame extends GameState{
 		}
 		else
 			return true;
+	}
+	
+	@Override
+	public boolean buttonPressed(String button, String name)
+	{
+		return false;
 	}
 	
 	
