@@ -94,14 +94,16 @@ public class JSONServerTranslator{
 		return text.toJSONString();
 	}
 	
-	public static String openGameList(List<String> g)
+	public static String gameList(List<String> games, boolean open)
 	{
-		throw new NotImplementedException();
-	}
-	
-	public static String gameList(List<String> g)
-	{
-		throw new NotImplementedException();
+		JSONObject msg = new JSONObject();
+		msg.put("type", open ? "OpenGameList" : "GameList");
+		JSONArray gameArray = new JSONArray();
+		for(String game : games){
+			gameArray.add(game);
+		}
+		msg.put("List", gameArray);
+		return msg.toJSONString();
 	}
 	
 }

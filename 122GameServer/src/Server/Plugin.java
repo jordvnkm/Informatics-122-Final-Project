@@ -12,6 +12,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +23,7 @@ import java.util.logging.Logger;
  */
 public class Plugin {
 
-	private final String pluginsDir = "plugins";
+	private final static String pluginsDir = "plugins";
 
 	URLClassLoader cl;
 	Class<?> pluginClass;
@@ -76,7 +78,12 @@ public class Plugin {
 			// Test for playMove
 			Method m = pluginClass.getMethod("playMove", new Class[] { int.class, int.class, String.class });
 			m.invoke(instance, new Object[] { 0, 0, "test1" });
-				
+
+
+			// Test for Button Pressed
+			m = pluginClass.getMethod("buttonPressed", new Class[] { String.class, String.class });
+			m.invoke(instance, new Object[] { "test1", "test1" });
+
 			// Test for 
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
@@ -123,6 +130,24 @@ public class Plugin {
 	}
 
 	/**
+	 * Send a buttonpress to the plugin.
+	 * @param button the name of the button that was pressed
+	 * @param player the player making the move
+	 * @return true if valid move, otherwise false
+	 */
+	public boolean buttonPressed(String button, String player) {
+		try {
+			Method m = pluginClass.getMethod("buttonPressed", new Class[] { String.class, String.class });
+			if (m != null)
+				return (boolean) m.invoke(instance, new Object[] { button, player });
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException ex) {
+			Logger.getLogger(Plugin.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return false;
+	}
+	
+	/**
 	 * gets the gamestate from the plugin, in json string format
 	 * @return the string as returned from the plugin
 	 */
@@ -137,5 +162,22 @@ public class Plugin {
 		}
 		return "Error";
 	}
-
+        
+        public static List<String> getGameList()
+        {
+        	Plugin test;
+            File folder = new File(pluginsDir);
+            File[] listOfFiles = folder.listFiles();
+            ArrayList<String> pluginList = new ArrayList<>();
+            for (File file : listOfFiles) 
+            {
+                if (file.isFile() && file.getName().endsWith(".jar")) 
+                {
+                	test = new Plugin(file.getName());
+                	if (test.isValidPlugin())
+                		pluginList.add(file.getName().split(".")[0]);
+                }
+            }
+            return pluginList;
+        }
 }
