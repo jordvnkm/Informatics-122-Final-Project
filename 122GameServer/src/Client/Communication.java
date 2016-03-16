@@ -108,7 +108,7 @@ public class Communication extends Thread
 				System.out.println("****Could not receive a message****");
 				e.printStackTrace();
 			}
-			return null;
+			return "";
 		}
 	}
 	
