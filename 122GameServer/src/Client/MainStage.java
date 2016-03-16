@@ -25,7 +25,10 @@ public class MainStage extends Stage{
 //	private BorderPane bottom = new BorderPane();
 
 	private Button actionButton;
-
+	
+	//MenuItems needed by the Client
+	private MenuItem MIselectserv,
+	MIcreatelogin,MIrequestgame,MIquitgame,MIlogin;
 	
 	//main GUI setup
 	public MainStage(){
@@ -36,14 +39,18 @@ public class MainStage extends Stage{
         //Menus
         MenuBar mb = new MenuBar();
         Menu servermenu = new Menu("Server");
-        MenuItem MIselectserv = new MenuItem("Select Server");
-        MenuItem MIplayerprofile = new MenuItem("Player Profile");
+        MIselectserv = new MenuItem("Select Server");
+        MIcreatelogin = new MenuItem("Create Login");
+        MIlogin = new MenuItem("Login");
         MenuItem MIExit = new MenuItem("Exit");
-        servermenu.getItems().addAll(MIselectserv,MIplayerprofile,new SeparatorMenuItem(),MIExit);
+        MIExit.setOnAction((ActionEvent e) -> {
+	    	System.exit(0);
+	    });
+        servermenu.getItems().addAll(MIselectserv,MIcreatelogin,MIlogin,new SeparatorMenuItem(),MIExit);
         
         Menu gamemenu = new Menu("Game");
-        MenuItem MIrequestgame = new MenuItem("Request Game");
-        MenuItem MIquitgame = new MenuItem("Quit Game");
+        MIrequestgame = new MenuItem("Request Game");
+        MIquitgame = new MenuItem("Quit Game");
         gamemenu.getItems().addAll(MIrequestgame,MIquitgame);
         
         Menu windowmenu = new Menu("Window");
@@ -121,4 +128,26 @@ public class MainStage extends Stage{
 	}
 	
 
+	//Getters needed by the client to setup listeners, so it can send
+	//messages to the server when they are clicked (as GUI doesn't know
+	//anything about client presently)
+	public MenuItem getSelectServMenuItem(){
+		return MIselectserv;
+	}
+	
+	public MenuItem getcreateloginMenuItem(){
+		return MIcreatelogin;
+	}
+	
+	public MenuItem getrequestgameMenuItem(){
+		return MIrequestgame;
+	}
+	
+	public MenuItem getQuitGameMenuItem(){
+		return MIquitgame;
+	}
+	
+	public MenuItem getLoginMenuItem(){
+		return MIlogin;
+	}
 }

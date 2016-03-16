@@ -9,6 +9,7 @@ import org.json.simple.parser.ParseException;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 
 import java.net.*;
@@ -42,11 +43,97 @@ public class Client implements Runnable{
 		port = portnum;
 		gameData = new GameData();
 		gui = inputgui;
-
+		setupMenuListeners();
 		setupBoard(); // will need to do this when parsing game state
+
+	}
+	
+	
+	/**
+	 * These setup listeners to spawn Dialogs when
+	 * These Menu Items are pressed.
+	 * 
+	 * Not all MenuItems need this, some do not need to
+	 * be controlled by the Client.
+	 */
+	public void setupMenuListeners(){
+		
+		//When Select Server.. is pressed
+		gui.getSelectServMenuItem().setOnAction((ActionEvent e) -> {
+	    	selectServer();
+	    });
+		//When Player Profile Menu Item.. is pressed
+		gui.getcreateloginMenuItem().setOnAction((ActionEvent e) -> {
+	    	createlogin();
+	    });
+		//When Request Game.. is pressed
+		gui.getrequestgameMenuItem().setOnAction((ActionEvent e) -> {
+	    	requestGame();
+	    });
+		//When Quit Game.. is pressed
+		gui.getQuitGameMenuItem().setOnAction((ActionEvent e) -> {
+	    	quitGame();
+	    });
+		
+		//When Login.. is pressed
+		gui.getLoginMenuItem().setOnAction((ActionEvent e) -> {
+	    	login();
+	    });
+	}
+	/**
+	 * Opens the server select Dialog, and attempts to establish a conection with the server
+	 */
+	public void selectServer(){
+		String[] info = Dialogs.getServerInfo();
+		//if they canceled...
+		if(info==null)
+			return;
+		
+		serverIP = info[0];
+		port =Integer.parseInt(info[1]);
+		
+		//Start the thread for managing connections
 		(new Thread(this)).start();
 	}
 	
+	/**
+	 * Opens request game menu and sends the client response to the server
+	 */
+	public void requestGame(){
+		
+	}
+	
+	/**
+	 * Sends the server that the client quits the game.
+	 */
+	public void quitGame(){
+		
+	}
+	
+	/**
+	 * opens dialog for the player to login.
+	 */
+	public void login(){
+		String username = Dialogs.getLoginInfo();
+		//check if they canceled
+		if(username==null)
+			return;
+		//check with server if valid login
+		//set username if valid (possibly in another method)
+	}
+	
+	/**
+	 *Shows login username and info to the player
+	 */
+	public void createlogin(){
+		String[] result = Dialogs.createLogin();
+		
+		//check if they canceled
+		if(result==null)
+			return;
+		String username = result[0];
+		String info = result[1];
+	}
 	public void setupBoard(){
 		//gui.setBoard(0, 0);
 		setupMouseListeners();
@@ -440,9 +527,13 @@ public class Client implements Runnable{
 	}
 
 
-
+/**
+ * Thread is started when the client makes a request to 
+ * connect to the server (selectServer).
+ */
 	@Override
 	public void run() {
+		System.out.println("Thread to start communicating with server started");
 //		Communication com = new Communication(serverIP, port);
 //		if (com.connectToServer())
 //			writeToLogger("Successful connection.");
