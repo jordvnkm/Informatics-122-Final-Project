@@ -32,9 +32,9 @@ public class Communication extends Thread
 	/*
 	 * Connects client to server
 	 */
-	public boolean connectToServer()
+	public boolean connectToServer() throws Exception
 	{
-		try{
+
 			socket = new Socket(serverIP, serverPort);
 			
             input = new DataInputStream(socket.getInputStream());
@@ -51,23 +51,17 @@ public class Communication extends Thread
 			if(false)
 				throw new Exception("***Server Welcome Message is Incorrect***");
 			
-			}
+	
 			
-		catch (IOException e)
-		{
+		
 			if(consoleDebug)
 			{
 				System.out.println("****Could not connect to server****");
-				e.printStackTrace();
 				return false;
 			}
-		}	
 		
-		catch(Exception e)
-		{
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
+		
+
 		return true;
 	}
 	
@@ -152,10 +146,26 @@ public class Communication extends Thread
     	}
     }
     
+    public void closeConnection(){
+    	try {
+			input.close();
+			output.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
     public static void main(String[] Args)
     {
     	Communication c = new Communication("localhost", 8000);
-    	c.connectToServer();
+    	try {
+			c.connectToServer();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     
     	c.sendMessage(JSONClientTranslator.loginType("Login"));
     	

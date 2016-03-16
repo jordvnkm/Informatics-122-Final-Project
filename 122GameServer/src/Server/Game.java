@@ -167,4 +167,9 @@ public class Game
         }
         
     }
+
+	public String getPluginName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

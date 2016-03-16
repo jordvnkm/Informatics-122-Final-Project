@@ -33,7 +33,7 @@ public class Client implements Runnable{
 	private Communication com;
 	private boolean buttonPressed = false;
 	private boolean buttonValid = false;
-	
+	private boolean connectionEstablished = false;
 	///////////////////////////////////////////
 	//// client constructor
 	public Client(String serverip, int portnum, MainStage inputgui)
@@ -117,8 +117,10 @@ public class Client implements Runnable{
 		//check if they canceled
 		if(username==null)
 			return;
-		//check with server if valid login
-		//set username if valid (possibly in another method)
+		if(connectionEstablished){
+			com.sendMessage(JSONClientTranslator.loginType("Login"));
+		  	com.sendMessage(JSONClientTranslator.username(username));
+		}
 	}
 	
 	/**
@@ -535,60 +537,41 @@ public class Client implements Runnable{
 	public void run() {
 		System.out.println("Thread to start communicating with server started");
 		//Attempt communication using serverIP and port
+		com = new Communication(serverIP,port);
 		
-		//if error occurs
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run(){
-				Dialogs.popupError("Failed to connect to "+serverIP+":"+port+".", "Connection Error", "Connection Error");
-				selectServer();
-				//kill/end thread
-			}});
+    	try {
+			com.connectToServer();
+			//if successful
+			writeToLogger("Connected to "+serverIP+":"+port+".");
+			 connectionEstablished=true;
+		} catch (Exception e1) {
+			//if error occurs
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run(){
+					Dialogs.popupError("Failed to connect to "+serverIP+":"+port+".", "Connection Error", "Connection Error");
+					selectServer();
+					//kill/end thread
+				}});
+			e1.printStackTrace();
+		}
 		
-		//if successful
-		writeToLogger("Connected to "+serverIP+":"+port+".");
+    	while (true){
+    		String message = com.receiveMessage();
+    		System.out.println("New Message: "+message);
+    		
+    		//some message to end connection, and for eclipse to 
+    		//stop telling me the code below is unreachable
+    		if(message.equals(""))
+    			break;
+    	}
+
+		com.closeConnection();
+    	connectionEstablished=false;
+    	com=null;
 
 		
-//		Communication com = new Communication(serverIP, port);
-//		if (com.connectToServer())
-//			writeToLogger("Successful connection.");
-//		else
-//			writeToLogger("Could not connect to server.");
-//
-//		requestGameList(com); // request list of games
-//		parseGameList(com);
-//		requestPlayerList(com); // request list of players
-//		parsePlayerList(com);
-//		displayServer(com); // displays game list and players online
-//
-//
-//		while (true)
-//		{
-//			if (choseGame)
-//			{
-//				sendGameRequest(com, gameName);
-//				parseGameState(com);
-//				break;
-//			}
-//		}
-//
-//		while (isRunning)
-//		{
-//			while (myTurn)
-//			{
-//				if (madeMove)
-//				{
-//					sendMove(com); // sends move;
-//					parseValidMove(com); // listens for server response .sets myTurn;
-//				}
-//			}
-//
-//			while (!myTurn)
-//			{
-//				parseGameState(com);
-//			}
-//		}
-//
+
 	}
 
 }
