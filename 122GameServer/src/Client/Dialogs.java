@@ -74,13 +74,46 @@ public class Dialogs {
 	}
 	
 	/**
+	 * displays a window for requesting username (and possibly later, password).
+	 * returns null if they cancel
+	 * returns their login name and info string if they don't cancel.
+	 */
+	public static String getLoginInfo(){
+		Dialog<String> d = new Dialog<>();
+		d.setTitle("Login");
+		d.setHeaderText("Please enter login information:");
+		d.getDialogPane().getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
+		GridPane gp = new GridPane();
+		gp.setHgap(10);
+		gp.setVgap(10);
+		gp.setPadding(new Insets(20,150,10,10));
+		TextField login = new TextField();
+		login.setText("");
+		gp.add(new Label("Username:"),0,0);
+		gp.add(login, 1, 0);
+		
+		d.getDialogPane().setContent(gp);
+		d.setResultConverter(dialogButton ->{
+			if(dialogButton == ButtonType.OK){
+				return login.getText();
+			}
+			return null;
+		});
+		Optional<String> result = d.showAndWait();
+		
+		if(result.isPresent())
+			return login.getText();
+		return null;
+	}
+	
+	/**
 	 * displays a window for requesting login and an info string about the user.
 	 * returns null if they cancel
 	 * returns their login name and info string if they don't cancel.
 	 */
-	public static String[] getLoginInfo(){
+	public static String[] createLogin(){
 		Dialog<Pair<String,String>> d = new Dialog<>();
-		d.setTitle("Login");
+		d.setTitle("Create Login");
 		d.setHeaderText("Please enter login info:");
 		d.getDialogPane().getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
 		GridPane gp = new GridPane();

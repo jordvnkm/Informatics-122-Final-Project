@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import javafx.application.Platform;
 import Client.Board;
+import Client.Dialogs;
 import Client.MainStage;
 import Client.Tile;
 import javafx.application.Application;
@@ -42,7 +43,10 @@ class DummyClient implements Runnable{
 	public DummyClient(MainStage inputgui){
 		gui = inputgui;
 	    gui.getButton().setOnAction((ActionEvent e) -> {
-	    	runtest(20);
+	    	Dialogs.popupError("Oh no there was an error", "Error!", null);
+	    	Dialogs.getServerInfo();
+	    	Dialogs.getLoginInfo();
+	    	Dialogs.createLogin();
 	    });
 	   	(new Thread(this)).start();
 	    }
