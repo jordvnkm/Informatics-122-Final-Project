@@ -5,7 +5,6 @@
  */
 package Server;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -52,7 +51,7 @@ public class Player extends Thread
         //initializing input and output streams
         try
         {
-            input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
+            input = new DataInputStream(connection.getInputStream());
             output = new DataOutputStream(connection.getOutputStream());
         } catch (IOException ex)
         {
@@ -86,6 +85,8 @@ public class Player extends Thread
         // This is necessary to continuously receive messages from the
         // client, it has to be in a loop
         
+        sendMessage(initialHandshake());
+    
     	if(!loggedIn){
     		sendMessage(initialHandshake());
     	}
@@ -113,45 +114,40 @@ public class Player extends Thread
 
 		}
 
-		System.out.println("Player Created/Logged In");
-			//sends player to select game method
-			//selectGame();
+		// TODO : send game plist and players to client
+		System.out.println("Player " + profile.getName() + "  Created/Logged In");
         
-//        while (true)
-//        {
-//            String stringToParse = receiveMessage();
-//
-//            // TODO: in here we parse the message using a JSON parser, and then
-//            // Call the proper function based on what we get parsed out to.
-//            
-//            String[] response = parseMessage(stringToParse);
-//            switch (response[0])
-//            {
-//                // A move for games such as tic tac toe
-//                case "move1":
-//                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]), profile.getName());
-//                    break;
-//                // A move for games such as checkers
-//                case "move2":
-//                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]),Integer.valueOf(response[3]), Integer.valueOf(response[4]), profile.getName());
-//                    checkGame();
-//                    break;
-//                // A move for games such as chutes and ladders
-//                case "move3":
-//                    game.makeMove(profile.getName());
-//                    checkGame();
-//                    break;
-//                case "description":
-//                    profile.SetDescription(response[1]);
-//                    break;
-//                case "selectGame":
-//                    // set up a game for the player here
-//                    break;
-//                case "newGame":
-//                    // set up a new game for players to join here
-//                    break;
-//            }
-//        }
+		sendLists();
+		String player = profile.getName();
+        while (true)
+        {
+            String stringToParse = receiveMessage();
+
+            // TODO: in here we parse the message using a JSON parser, and then
+            // Call the proper function based on what we get parsed out to.
+            
+            String[] response = JSONServerGeneral.checkType(stringToParse);
+            switch (response[0])
+            {
+                // Player is attempting a move
+                case "MovePiece":
+                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]), player);
+                    break;
+                case "ButtonPressed":
+                	game.buttonPressed(response[1], player);
+                    break;
+                case "QuitGame":
+                    //TODO: Handle quit game events here
+                    break;
+                case "Description":
+                    profile.SetDescription(response[1]);
+                    break;
+                case "SelectedGame":
+            		String gameName = response[1];
+            		game = lobby.selectGame(this, gameName);
+                	break;
+            }
+        }
     }
     
     /**
@@ -160,54 +156,15 @@ public class Player extends Thread
     public void leaveGame()
     {
     	//TODO: this probably needs more than just this
+    	lobby.removeGameFromOpenList(game);
+    	lobby.removeGameFromFullList(game);
         game = null;
     }
-    
-    /**
-     * Log the player into the server
-     * @param json 
-     * @return
-     */
-    
-    private boolean addNewPlayer(){
-    	String message = receiveMessage();
-    	String[] tokens = JSONServerGeneral.checkType(message);
-    	
-    	this.profile = new Profile();
-    	if(tokens[0].equals("Username") && this.profile.profileExists(tokens[1]))
-    		return false;
-    	
-     	this.profile.createNewProfile(tokens[1]);
-    	
-    	message = receiveMessage();
-    	tokens = JSONServerGeneral.checkType(message);
-    	if(tokens[0].equals("Description"))
-    		this.profile.SetDescription(tokens[1]);
-    	
-    	return true;
-    }
-    
-    private boolean loginPlayer(){
-    	String message = receiveMessage();
-    	String[] tokens = JSONServerGeneral.checkType(message);
-    	System.out.println("Logging Player In: " + message);
-    	this.profile = new Profile();
-    	if(tokens[0].equals("Username") && !this.profile.profileExists(tokens[1]))
-    		return false;
-    	
-    	this.profile.createNewProfile(tokens[1]);
-    	return true;
-    }
-    
 
-    private void goToLobby()
+    public void sendLists()
     {
-        //needs to push this player thread into the lobby. Just cuz the lobby
-        // has a list of players, doesn't mean the thread is running in lobby
-        // it's still running in Player and can only run in player.
-        lobby.joinLobby(this);
+    	sendMessage(lobby.getGameList());
     }
-
 	/**
 	 * Send a message to the player socket
 	 * @param message the message to be sent (as a JSON string)
@@ -246,11 +203,11 @@ public class Player extends Thread
         } catch (IOException e)
         {
             // TODO Auto-generated catch block
-        	
             e.printStackTrace();
+
             JOptionPane.showMessageDialog(new JOptionPane(),
-                    "Network Connection Error (within Player.sendMessage())",
-                    "Fatal Error",
+                    "Network Connection Error (within Player.receiveMessage())",
+                    "Disconnect Error",
                     JOptionPane.ERROR_MESSAGE);
         }
 
@@ -275,7 +232,9 @@ public class Player extends Thread
      */
     private String initialHandshake()
     {
-        return JSONServerTranslator.welcomeMessage();
+        JSONObject message = new JSONObject();
+        message.put("Welcome", "Please send the login info");
+        return message.toJSONString();
     }
 
     /**
@@ -297,7 +256,10 @@ public class Player extends Thread
      */
     private String badLogin()
     {
-        return JSONServerTranslator.loginStatus("Failure");
+        JSONObject message = new JSONObject();
+        message.put("error", "username not valid");
+
+        return message.toJSONString();
     }
     public void wonGame(String game)
     {
@@ -315,5 +277,42 @@ public class Player extends Thread
     		return profile.getName();
     	else
     		return "Logging in...";
+    }
+        
+    public void startGame()
+    {
+        lobby.setGameAsFull(game);
+    }
+    
+    private boolean addNewPlayer()
+    {
+    	String message = receiveMessage();
+    	String[] tokens = JSONServerGeneral.checkType(message);
+    	
+    	this.profile = new Profile();
+    	if(tokens[0].equals("Username") && this.profile.profileExists(tokens[1]))
+    		return false;
+    	
+     	this.profile.createNewProfile(tokens[1]);
+    	
+    	message = receiveMessage();
+    	tokens = JSONServerGeneral.checkType(message);
+    	if(tokens[0].equals("Description"))
+    		this.profile.SetDescription(tokens[1]);
+    	
+    	return true;
+    }
+    
+    private boolean loginPlayer()
+    {
+    	String message = receiveMessage();
+    	String[] tokens = JSONServerGeneral.checkType(message);
+    	System.out.println("Logging Player In: " + message);
+    	this.profile = new Profile();
+    	if(tokens[0].equals("Username") && !this.profile.profileExists(tokens[1]))
+    		return false;
+    	
+    	this.profile.createNewProfile(tokens[1]);
+    	return true;
     }
 }
