@@ -7,28 +7,6 @@ import java.util.ArrayList;
 
 public class JSONGeneral
 {
-	JSONParser parser;
-	String jsonString;
-	Object obj;
-	JSONObject jsonObj;
-	
-	//Receives String in JSONFormat
-	public JSONGeneral(String jsonString){
-		parser = new JSONParser();
-		this.jsonString = jsonString;
-		setupParseObj();
-	}
-	
-	private void setupParseObj(){
-		try{
-			obj = parser.parse(this.jsonString);
-			jsonObj = (JSONObject)obj;
-		}catch(ParseException pe){
-			System.out.println("position: " + pe.getPosition());
-			System.out.println(pe);
-		}
-	}
-	
 	//Returns ArrayList of Strings
 	//For Example:
 	//		If we receive {"type": "MovePiece", "X": 1, "Y": 2}
@@ -39,8 +17,18 @@ public class JSONGeneral
 	//This returns the String ArrayList:
 	//		["GameList", "Othello", "Chutes", "TicTacToe"]
 	
-	public ArrayList<String> checkType()
+	public static ArrayList<String> checkType(String jsonString)
 	{
+		JSONParser parser = null;
+		Object obj = null;
+		try{
+			parser = new JSONParser();
+			obj = parser.parse(jsonString);
+		}catch(ParseException pe){
+			System.out.println("position: " + pe.getPosition());
+			System.out.println(pe);
+		}
+		JSONObject jsonObj = (JSONObject)obj;
 		String type = jsonObj.get("type").toString();
 		ArrayList<String> returnString = new ArrayList<String>();
 		
