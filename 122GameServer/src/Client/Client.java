@@ -546,12 +546,7 @@ public class Client implements Runnable{
 			}});
 		
 		//if successful
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run(){
-				gui.logger("Connected to "+serverIP+":"+port+".", false);
-
-			}});
+		writeToLogger("Connected to "+serverIP+":"+port+".");
 
 		
 //		Communication com = new Communication(serverIP, port);

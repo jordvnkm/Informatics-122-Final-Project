@@ -53,9 +53,9 @@ public class MainStage extends Stage{
         MIquitgame = new MenuItem("Quit Game");
         gamemenu.getItems().addAll(MIrequestgame,MIquitgame);
         
-        Menu windowmenu = new Menu("Window");
-        MenuItem MIoptions = new MenuItem("Options");
-        windowmenu.getItems().addAll(MIoptions);
+        //Menu windowmenu = new Menu("Window");
+        //MenuItem MIoptions = new MenuItem("Options");
+        //windowmenu.getItems().addAll(MIoptions);
         
         Menu helpmenu = new Menu("Help");
         MenuItem MIabout = new MenuItem("About");
@@ -64,7 +64,7 @@ public class MainStage extends Stage{
         });
         helpmenu.getItems().addAll(MIabout);
         
-        mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
+        mb.getMenus().addAll(servermenu,gamemenu,helpmenu);
         //Board
         gameboard = new Board(3, 3 );
 
