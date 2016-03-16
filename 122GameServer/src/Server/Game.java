@@ -31,7 +31,7 @@ public class Game
     {
         logic = new Plugin("TicTacToe");
         logic.initializeGame(null);
-
+/*
         System.out.println(logic.currentPlayer() + " moved to 0,1");
         logic.makeMove(0, 1, "test1");
         System.out.println(logic.currentPlayer() + " moved to 0,0");
@@ -54,6 +54,7 @@ public class Game
         {
             System.out.println("Game over: " + logic.getWinner());
         }
+        */
     }
 
     public Game(Player player, String plugin)
@@ -83,11 +84,13 @@ public class Game
 
     public synchronized boolean checkForGameOver()
     {
+    	/*
         if (logic.checkForGameOver())
         {
             gameWon();
             return true;
         }
+        */
         return false;
     }
 
@@ -97,8 +100,8 @@ public class Game
     }
 
     public synchronized String getWinner()
-    {
-        return logic.getWinner();
+    {	
+        return "TIE";//return logic.getWinner();
     }
 
     public int getCurrentNumPlayers()

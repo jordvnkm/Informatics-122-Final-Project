@@ -65,7 +65,7 @@ public class JSONServerGeneral
 		else if(type.equals("Username")){
 			returnString = new String[2];
 			returnString[0] = "Username";
-			returnString[1] = jsonObj.get("Command").toString();
+			returnString[1] = jsonObj.get("User").toString();
 		}
 		//For user description
 		else if(type.equals("Description")){

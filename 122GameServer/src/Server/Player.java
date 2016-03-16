@@ -5,6 +5,7 @@
  */
 package Server;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -51,7 +52,7 @@ public class Player extends Thread
         //initializing input and output streams
         try
         {
-            input = new DataInputStream(connection.getInputStream());
+            input = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
             output = new DataOutputStream(connection.getOutputStream());
         } catch (IOException ex)
         {
@@ -85,44 +86,33 @@ public class Player extends Thread
         // This is necessary to continuously receive messages from the
         // client, it has to be in a loop
         
-        sendMessage(initialHandshake());
+    	if(!loggedIn){
+    		sendMessage(initialHandshake());
+    	}
         
-        try{
-	        while (!loggedIn)
-	        {
-				//loops until login in reached for this player
-				while(!loggedIn)
-				{
-					JSONParser parser = new JSONParser();
-	
-					//gets the message from the client
-					String loginInfo = receiveMessage();
-					Object obj = parser.parse(loginInfo);
-					JSONObject jsonObject = (JSONObject) obj;
-					
-					//read input and check to see if its a login or new acct creation
-					String type = (String) jsonObject.get("type");
-	
-					if(type.equals("login"))
-						loggedIn = loginPlayer(jsonObject);
-					else if(type.equals("setup"))
-						loggedIn = addNewPlayer(jsonObject);
-					
-					if(!loggedIn)
-						sendMessage(badLogin());
-	
-				}
-	
-				
-				//sends player to select game method
-				//selectGame();
-			} 
-        }
-    	catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//loops until login in reached for this player
+		while(!loggedIn)
+		{	
+			//gets the message from the client
+			String loginInfo = receiveMessage();
+			String[] tokens = JSONServerGeneral.checkType(loginInfo);
+			System.out.println(loginInfo);
+			
+			if(tokens[0].equals("LoginType") && tokens[1].equals("CreateUser")){
+				loggedIn = addNewPlayer();
+			} else if(tokens[1].equals("LoginType") && tokens[1].equals("Login")){
+				loggedIn = loginPlayer();
+			}
+			
+			//read input and check to see if its a login or new acct creation
+			if(!loggedIn)
+				sendMessage(badLogin());
+
 		}
-        
+
+			
+			//sends player to select game method
+			//selectGame();
         
 //        while (true)
 //        {
@@ -190,6 +180,7 @@ public class Player extends Thread
         return true;
     }
 
+    /*
     private boolean addNewPlayer(JSONObject json)
     {
         //read login name
@@ -204,6 +195,38 @@ public class Player extends Thread
     	this.profile.createNewProfile(name);
         return true;
     }
+    */
+    
+    private boolean addNewPlayer(){
+    	String message = receiveMessage();
+    	String[] tokens = JSONServerGeneral.checkType(message);
+    	
+    	this.profile = new Profile();
+    	if(tokens[0].equals("Username") && this.profile.profileExists(tokens[1]))
+    		return false;
+    	
+     	this.profile.createNewProfile(tokens[1]);
+    	
+    	message = receiveMessage();
+    	tokens = JSONServerGeneral.checkType(message);
+    	if(tokens[0].equals("Description"))
+    		this.profile.SetDescription(tokens[1]);
+    	
+    	return true;
+    }
+    
+    private boolean loginPlayer(){
+    	String message = receiveMessage();
+    	String[] tokens = JSONServerGeneral.checkType(message);
+    	
+    	this.profile = new Profile();
+    	if(tokens[0].equals("Username") && !this.profile.profileExists(tokens[1]))
+    		return false;
+    	
+    	this.profile.createNewProfile(tokens[1]);
+    	return true;
+    }
+    
 
     private void goToLobby()
     {
@@ -251,13 +274,12 @@ public class Player extends Thread
         } catch (IOException e)
         {
             // TODO Auto-generated catch block
+        	
             e.printStackTrace();
-
             JOptionPane.showMessageDialog(new JOptionPane(),
                     "Network Connection Error (within Player.sendMessage())",
                     "Fatal Error",
                     JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
         }
 
         return "";
@@ -281,9 +303,7 @@ public class Player extends Thread
      */
     private String initialHandshake()
     {
-        JSONObject message = new JSONObject();
-        message.put("Welcome", "Please send the login info");
-        return message.toJSONString();
+        return JSONServerTranslator.welcomeMessage();
     }
 
     /**

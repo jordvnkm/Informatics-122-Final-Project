@@ -106,7 +106,7 @@ public class Server extends Thread
 				tmpSocket = server.accept();
 				
 				//adds player to lobby
-	           // lobby.addNewConnection(tmpSocket);
+	            lobby.addNewConnection(tmpSocket);
 	            displayConnection(tmpSocket.getRemoteSocketAddress().toString(), tmpSocket.getPort());
 	            
 	            

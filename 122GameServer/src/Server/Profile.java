@@ -53,7 +53,7 @@ public class Profile {
     
     
     
-    /*
+    /**
      * Constructor: No parameters for this profile
      */
     public Profile(){
@@ -62,7 +62,7 @@ public class Profile {
     }
     
     
-    /*
+    /**
      * Checks to see if the file exists
      * @param name - name to check for in directory
      */
@@ -78,11 +78,12 @@ public class Profile {
     }
     
     
-    /*
+    /**
      * Will create a new file containing the user's name
      * @param name - The name of the user
      */
     public void createNewProfile(String name){
+    	this.userName = name;
     	this.setProfileFile(name);
     	this.initFile();
     	this.loadFile();

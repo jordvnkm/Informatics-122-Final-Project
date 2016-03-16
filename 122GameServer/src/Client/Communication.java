@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import org.json.simple.JSONObject;
+
 public class Communication extends Thread
 {
 	private String serverIP;
@@ -42,7 +44,7 @@ public class Communication extends Thread
 			//this should be the welcome message
 			String serverMessage = input.readUTF();
 			
-			if(consoleDebug)
+			if(true)
 				System.out.println(serverMessage);
 			
 			//Check server msg
@@ -150,9 +152,37 @@ public class Communication extends Thread
     	}
     }
     
-//    public static void main(String[] Args)
-//    {
-//    	Communication c = new Communication("localhost", 8000);
-//    }
+    public static void main(String[] Args)
+    {
+    	Communication c = new Communication("localhost", 8000);
+    	c.connectToServer();
+    	
+    	JSONObject j = new JSONObject();
+    	j.put("type", "LoginType");
+    	j.put("Command", "CreateUser");
+    	c.sendMessage(j.toJSONString());
+    	
+    	j = new JSONObject();
+    	j.put("type", "Username");
+    	j.put("User", "Alex");
+    	c.sendMessage(j.toJSONString());
+    	
+    	while(true){
+    		try {
+				c.sleep(2000);
+			} catch (InterruptedException e) {
+			}
+    		break;
+    	}
+    	
+    	j = new JSONObject();
+    	j.put("type", "Description");
+    	j.put("Bio", "Likes bikes");
+    	c.sendMessage(j.toJSONString());
+    	while(true)
+    	{
+    		// do nothing
+    	}
+    }
 	
 }
