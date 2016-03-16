@@ -105,8 +105,11 @@ public class Player extends Thread
 			}
 			
 			//read input and check to see if its a login or new acct creation
-			if(!loggedIn)
+			if(!loggedIn){
 				sendMessage(badLogin());
+			} else {
+				sendMessage(JSONServerTranslator.loginStatus("Successful"));
+			}
 
 		}
 
