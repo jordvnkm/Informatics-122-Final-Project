@@ -1,18 +1,15 @@
 package Client;
 
-import java.util.*;
-
-import java.util.concurrent.*;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -21,23 +18,21 @@ public class MainStage extends Stage{
 	private boolean Debug = true;
 	//text area logger.
 	private TextArea TAlog;
-	public ArrayList<Integer> move;
-	Thread thread;
-	private boolean madeMove;
-	public Board gameboard;
+
+	private Board gameboard;
+//	private Scene scene = new Scene(new BorderPane());
+//	private MenuBar mb = new MenuBar();
+//	private BorderPane bottom = new BorderPane();
+
+	private Button actionButton;
+
 	
-	
-	
+	//main GUI setup
 	public MainStage(){
 		super();
-		move = new ArrayList<Integer>();
-		for (int i = 0; i < 4; i ++)
-		{
-			move.add(-1);
-		}
-		
+
 		setTitle("INF 122 Game Client");
-        Scene scene = new Scene(new BorderPane(), 800, 720);
+        Scene scene = new Scene(new BorderPane());
         //Menus
         MenuBar mb = new MenuBar();
         Menu servermenu = new Menu("Server");
@@ -61,15 +56,17 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);
         //Board
-        gameboard = new Board(3, 3);
+        gameboard = new Board(3, 3 );
 
         //text area
         TAlog = new TextArea();
+        TAlog.setMaxHeight(100);
 
         //Button
-        Button actionButton = new Button("Button");
+        actionButton = new Button("Button");
+
         actionButton.setMinSize(100,100);
-        actionButton.setOnAction((ActionEvent e) -> {
+        actionButton.setOnAction((ActionEvent e) -> { // need to figure out action for button
         	logger("Button Pressed!",true);
         });
         
@@ -80,16 +77,31 @@ public class MainStage extends Stage{
         bottomright.setCenter(actionButton);
         bottom.setRight(bottomright);
         
+		((BorderPane) scene.getRoot()).setTop(mb);
+		((BorderPane) scene.getRoot()).setCenter(gameboard);
+		((BorderPane) scene.getRoot()).setBottom(bottom);
+		setScene(scene);
+		show();
         
-        ((BorderPane) scene.getRoot()).setTop(mb);
-        ((BorderPane) scene.getRoot()).setCenter(gameboard);
-        ((BorderPane) scene.getRoot()).setBottom(bottom);
-        setScene(scene);
-        show();
 		
 	}
 
+	public int getRows()
+	{
+		return gameboard.getRows();
+	}
+	
+	public int getColumns()
+	{
+		return gameboard.getColumns();
+	}
+	
+	public void setBoard(int rows, int columns)
+	{
+//		gameboard = new Board(rows, columns);
+		gameboard.setDimensions(rows, columns);
 
+	}
 	
 	//Add a string to the logger. Set debug to true if its a debugger line.
 	//Debugger lines should be lines not shown to the player.
@@ -104,4 +116,13 @@ public class MainStage extends Stage{
 	public Board getBoard(){
 		return gameboard;
 	}
+	public void setBoard(Board b){
+		gameboard = b; 
+	}
+	
+	public Button getButton(){
+		return actionButton;
+	}
+	
+
 }

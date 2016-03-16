@@ -150,9 +150,9 @@ public class Communication extends Thread
     	}
     }
     
-    public static void main(String[] Args)
-    {
-    	Communication c = new Communication("localhost", 8000);
-    }
+//    public static void main(String[] Args)
+//    {
+//    	Communication c = new Communication("localhost", 8000);
+//    }
 	
 }
