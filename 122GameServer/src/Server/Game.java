@@ -75,7 +75,7 @@ public class Game
                 // The move was good so we need to update all of the players with
                 // a new board, generate a new board via JSON and then send it
                 // via p.sendMessage
-//                p.sendMessage(JSON);
+                p.sendMessage(getBoard());
             }
         }
         return goodMove;
@@ -116,8 +116,6 @@ public class Game
         players.add(player);
         if (players.size() == maxPlayers)
         {
-            // Todo: We need to start the game here
-            logic = new Plugin(pluginName);
             startGame();
         }
     }
@@ -140,11 +138,15 @@ public class Game
 
     public final synchronized void startGame()
     {
-        // TODO: get game state via getBoard, send gamestate to everyone in the 'players' list
+        // Todo: We need to start the game here
+        logic = new Plugin(pluginName);
+        logic.initializeGame((String[])players.toArray());
+        
+    	// TODO: get game state via getBoard, send gamestate to everyone in the 'players' list
         for (Player player : players)
         {
             player.sendMessage(getBoard());
-        }    
+        } 
     }
     
     private final synchronized void gameWon()

@@ -35,6 +35,11 @@ public class Player extends Thread
     private boolean loggedIn;
     private Game game;
 
+    /**
+     * Constructor, creates a player object and 'connects' them to the lobby
+     * @param connection the socket connection to talk over
+     * @param lobby contains lists of players and games
+     */
     public Player(Socket connection, Lobby lobby)
     {
         this.connection = connection;
@@ -60,9 +65,19 @@ public class Player extends Thread
             System.exit(-1);
         }
     }
+    
+    /**
+     * Getter to see whether the player is logged in currently.
+     * @return true if player is logged in, otherwise false.
+     */
+    public boolean loggedIn()
+    {
+    	return loggedIn;
+    }
 
-    /*
-     * This is the method that will be called when the thread is started
+  
+    /**
+     * Called when the thread is started.
      */
     @Override
     public void run()
@@ -122,7 +137,6 @@ public class Player extends Thread
 //                // A move for games such as tic tac toe
 //                case "move1":
 //                    game.makeMove(Integer.valueOf(response[1]), Integer.valueOf(response[2]), profile.getName());
-//                    checkGame();
 //                    break;
 //                // A move for games such as checkers
 //                case "move2":
@@ -146,23 +160,21 @@ public class Player extends Thread
 //            }
 //        }
     }
-
-    private void checkGame()
-    {
-        if(game.checkForGameOver())
-        {
-            //lobby.removeGame(game);
-        }
-        
-    }
     
-    
+    /**
+     * Player is leaving the game they're currently in
+     */
     public void leaveGame()
     {
+    	//TODO: this probably needs more than just this
         game = null;
     }
     
-    
+    /**
+     * Log the player into the server
+     * @param json 
+     * @return
+     */
     private boolean loginPlayer(JSONObject json)
     {
         //read login name
@@ -201,15 +213,10 @@ public class Player extends Thread
         game = lobby.selectGame(this);
     }
 
-    /**
-     * ******************************************************************
-     * public void sendMessage()
-     *
-     * This message sends all of it's string parameter's contents (we assume
-     * that this is a JSON message) to the client GUI
-     *
-     *******************************************************************
-     */
+	/**
+	 * Send a message to the player socket
+	 * @param message the message to be sent (as a JSON string)
+	 */
     public void sendMessage(String message)
     {
         try
@@ -312,5 +319,12 @@ public class Player extends Thread
     {
         profile.addLoss(game);
     }
-
+    
+    public String getPlayerName()
+    {
+    	if (loggedIn)
+    		return profile.getName();
+    	else
+    		return "Logging in...";
+    }
 }
