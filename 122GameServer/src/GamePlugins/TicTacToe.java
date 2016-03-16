@@ -53,6 +53,12 @@ public class TicTacToe extends GameState{
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean buttonPressed(String button, String name)
+	{
+		return false;
+	}
 
 	@Override
 	public boolean checkValidMove(int x, int y) {
