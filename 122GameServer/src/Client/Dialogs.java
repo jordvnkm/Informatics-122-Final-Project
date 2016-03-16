@@ -2,15 +2,21 @@ package Client;
 
 import java.util.Optional;
 
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.util.Pair;
 
 //http://code.makery.ch/blog/javafx-dialogs-official/
@@ -140,6 +146,71 @@ public class Dialogs {
 		
 		if(result.isPresent())
 			return new String[]{login.getText(),info.getText()};
+		return null;
+	}
+	
+	public static void infoPopup(String content, String header,String title){
+		if (content==null)
+			content="";
+		if (header==null)
+			header="";
+		if (title==null)
+			title="Info";
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(title);
+		alert.setHeaderText(header);
+		alert.setContentText(content);
+		alert.showAndWait();
+	}
+	
+	
+	/**
+	 * This window combines the gamelist selection and player profile viewing together.
+	 * The server will likely being calling this one, not the client. The client
+	 * would need to request the information from the server in order for 
+	 * the gamelist options and player profiles to be displayed.
+	 */
+	public static String chooseGame(String[] gamelist,String playerprofiles){
+		Dialog<String> d = new Dialog<>();
+		d.setTitle("Choose game");
+		d.setHeaderText("Choose a Game to Play:");
+		
+		ComboBox<String> gamedropdown = new ComboBox<String>();
+		for(String game:gamelist)
+			gamedropdown.getItems().add(game);
+		gamedropdown.setValue(gamelist[0]);
+		
+		TextArea textArea = new TextArea(playerprofiles);
+		textArea.setEditable(false);
+		textArea.setWrapText(true);
+		textArea.setMaxWidth(Double.MAX_VALUE);
+		textArea.setMaxHeight(Double.MAX_VALUE);
+		
+		BorderPane bp = new BorderPane();
+		
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20,150,10,10));
+		grid.add(new Label("Choose Game:"),0,0);
+		grid.add(gamedropdown, 1, 0);
+		grid.add(new Label("Current players looking for games:"), 0, 2);
+		bp.setTop(grid);
+		bp.setCenter(textArea);
+		
+		d.getDialogPane().setContent(bp);
+		d.getDialogPane().getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
+		
+		d.setResultConverter(dialogButton ->{
+			if(dialogButton == ButtonType.OK){
+				return gamedropdown.getValue();
+			}
+			return null;
+		});
+		
+		Optional<String> result = d.showAndWait();
+		if(result.isPresent())
+			return result.get();
 		return null;
 	}
 }

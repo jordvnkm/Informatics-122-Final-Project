@@ -59,6 +59,9 @@ public class MainStage extends Stage{
         
         Menu helpmenu = new Menu("Help");
         MenuItem MIabout = new MenuItem("About");
+        MIabout.setOnAction((ActionEvent e) -> {
+        	Dialogs.infoPopup("Made by Team 4. Thanks to Adrian, Andrew, Brett, Jason, Jordan, Mark, and Rachel for their contributions to this project.", "About", "About");
+        });
         helpmenu.getItems().addAll(MIabout);
         
         mb.getMenus().addAll(servermenu,gamemenu,windowmenu,helpmenu);

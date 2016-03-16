@@ -43,6 +43,9 @@ class DummyClient implements Runnable{
 	public DummyClient(MainStage inputgui){
 		gui = inputgui;
 	    gui.getButton().setOnAction((ActionEvent e) -> {
+	    	String s = Dialogs.chooseGame(new String[]{"chutes and ladders","tic tac toe","othello"}, "Player\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\nPlayer\n");
+	    	if (s!=null)
+	    		System.out.println(s);
 	    	Dialogs.popupError("Oh no there was an error", "Error!", null);
 	    	Dialogs.getServerInfo();
 	    	Dialogs.getLoginInfo();
