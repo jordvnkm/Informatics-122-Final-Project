@@ -12,9 +12,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.io.*;
 
 public class Client implements Runnable{
 	public String serverIP;
@@ -283,105 +280,9 @@ public class Client implements Runnable{
 	}
 	
 	
-/////////////////////////////////////////////////////////////////////////////////////////////
-///////////functions that send information through the socket///////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////
-	
-	/////////////////////////////////////////////////////////////////
-	/////sends a request that states which game the player wants to join
-	public void sendGameRequest(Communication com , String game)
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("type", "gameRequest");
-		obj.put("game", game);
-		
-		if (com.sendMessage(obj.toJSONString()))
-			writeToLogger("Game request sent.");
-		else
-			writeToLogger("Game request failed.");
-	}
-	
-	
-	
-	//////////////////////////////////////////////////////////
-	/// sends a string representing that the button on the GUI has been pressed
-	public void sendButtonPressed(Communication com)
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("type", "ButtonPressed");
-		obj.put("ButtonType", "Roll");
 
-		if (com.sendMessage(obj.toJSONString()))
-			writeToLogger("Button pressed sent");
-		else
-			writeToLogger("Button pressed failed.");
-	}
 	
-	//////////////////////////////////////////////////////////////////
-	//// sends a string representing that the player wants to quit game
-	public void sendQuitGame(Communication com)
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("type", "QuitGame");
-		
-		if (com.sendMessage(obj.toJSONString()))
-			writeToLogger("Quit game sent");
-		else
-			writeToLogger("Quit game failed.");
-	}
-	
-	
-	
-	
-	////////////////////////////////////////////////////////////////
-	///// sends a string through the socket requesting players in the server
-	public void requestPlayerList(Communication com)
-	{
-		JSONObject obj = new JSONObject();
-		obj.put("type", "requestPlayerList");
 
-		if (com.sendMessage(obj.toJSONString()))
-			writeToLogger("Player list request sent.");
-		else
-			writeToLogger("Player list request failed.");
-	}
-	
-	
-	
-	////////////////////////////////////////////
-	///// sends a string through the socket requesting gamelist
-	public void requestGameList(Communication com)
-	{	
-		JSONObject obj = new JSONObject();
-		obj.put("type", "requestGameList");
-		if (com.sendMessage(obj.toJSONString()))
-			writeToLogger("Game list request sent.");
-		else
-			writeToLogger("Game list request failed.");
-	}
-	
-	
-	
-	////////////////////////////////////////////////
-	/// sends the location that the piece is supposed to move 
-	public void sendMove(Communication com)
-	{
-		
-		JSONObject obj = new JSONObject();
-		obj.put("type", "movePiece");
-		obj.put("X", move.get(0)); // xOrigin
-		obj.put("Y", move.get(1)); // yOrigin
-		
-		if (com.sendMessage(obj.toJSONString())){
-			writeToLogger("Move sent");
-		}
-		else{
-			writeToLogger("Move not sent");
-		}
-		
-		madeMove = false;
-	}
-	
 	
 /////////////////////////////////////////////////////////////////////////////////////////////
 ///////////functions that parse information from the socket///////////////////////////////////
@@ -453,22 +354,7 @@ public class Client implements Runnable{
 			}
 		});
 		
-//		/////////////////////////////////////////////////////
-//		////// set turn
-//		if (state.getCurrentTurn().equals(clientName))
-//		{
-//			myTurn = true;
-//		}
-//		
-//		//// set running state
-//		isRunning = state.getIsRunning();
-//		
-//		
-//		//// game is not running set winner
-//		if (!isRunning){
-//			winner = state.getWinner();
-//			
-//		}
+
 		
 
 	}
