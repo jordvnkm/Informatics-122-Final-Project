@@ -58,6 +58,7 @@ public class MainStage extends Stage{
         Menu gamemenu = new Menu("Game");
         MIrequestgame = new MenuItem("Request Game");
         MIquitgame = new MenuItem("Quit Game");
+        MIquitgame.setDisable(true);
         gamemenu.getItems().addAll(MIrequestgame,MIquitgame);
         
         //Menu windowmenu = new Menu("Window");
