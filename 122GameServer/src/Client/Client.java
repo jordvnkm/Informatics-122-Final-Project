@@ -155,6 +155,11 @@ public class Client implements Runnable{
 			return;
 		String username = result[0];
 		String info = result[1];
+		if(connectionEstablished){
+			com.sendMessage(JSONClientTranslator.loginType("CreateUser"));
+		  	com.sendMessage(JSONClientTranslator.username(username));
+		  	com.sendMessage(JSONClientTranslator.description(info));
+		}
 	}
 	public void setupBoard(){
 		//gui.setBoard(0, 0);
@@ -597,15 +602,16 @@ public class Client implements Runnable{
     		}
     		String type = parsed.get(0);
     		
+    		System.out.println(message);
     		
     		
     		if(type.equals("Welcome")){
     			writeToLogger(parsed.get(1));
-    			Platform.runLater(new Runnable() {
-    				@Override
-    				public void run(){
-    					login();
-    				}});
+//    			Platform.runLater(new Runnable() {
+//    				@Override
+//    				public void run(){
+//    					//login();
+//    				}});
     		}
     		else if (type.equals("LoginStatus")){
     			writeToLogger("Login " + parsed.get(1));
@@ -614,7 +620,42 @@ public class Client implements Runnable{
     		}
     		
     		else if (type.equals("GameList")){
-    			
+    			for (int i = 1; i < parsed.size(); i ++)
+    			{
+    				gameData.addGame(parsed.get(i));
+    			}
+    		}
+    		else if (type.equals("error")){
+    			writeToLogger(parsed.get(1));
+    		}
+    		else if (type.equals("PlayerList"))
+    		{
+    			for (int i = 1; i < parsed.size(); i ++)
+    			{
+    				gameData.addPlayer(parsed.get(i));
+    			}
+    		}
+    		else if (type.equals("InvalidPlugin"))
+    		{
+    			if (!Boolean.valueOf(parsed.get(1)))
+    			{
+    				writeToLogger("Invalid plugin");
+    			}
+    		}
+    		else if (type.equals("WaitingToPlay"))
+    		{
+    			for (int i = 1; i < parsed.size(); i ++)
+    			{
+    				gameData.addWaiting(parsed.get(i));
+    			}
+    		}
+    		else if (type.equals("SendTextMessage"))
+    		{
+    			writeToLogger(parsed.get(1));
+    		}
+    		else if (type.equals("GameBoard"))
+    		{
+    			parseGameState(parsed.get(1));
     		}
     		
     		
