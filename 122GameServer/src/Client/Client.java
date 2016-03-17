@@ -260,7 +260,7 @@ public class Client implements Runnable{
                 	}
                 	else if (!myTurn)
                 	{
-                		System.out.println("HELLO");
+ 
                 		gui.logger("Not Your Turn", true);
                 	}
 
