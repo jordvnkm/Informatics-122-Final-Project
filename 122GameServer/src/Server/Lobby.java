@@ -50,13 +50,8 @@ public class Lobby
     public String getGameList()
     {
         List<String> tmpList = Game.getGameList();
-        //compiles a string list of games open
-        for (Game g : openGames)
-        {
-            tmpList.add(g.getPluginName());
-        }
         //creates and returns the JSON string from the list of open games
-        return JSONServerTranslator.gameList(tmpList, true);
+        return JSONServerTranslator.gameList(tmpList, false);
     }
 
     /**
