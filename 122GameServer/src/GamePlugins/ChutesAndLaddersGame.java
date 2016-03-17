@@ -252,6 +252,10 @@ public int[] giveNewSpot(String name){
 	public boolean buttonPressed(String button, String name) {
 		return playMove(0,0,name);
 	}
+    
+    public String getGameState(){
+        return super.getGameState();
+    }
 	
 }
 

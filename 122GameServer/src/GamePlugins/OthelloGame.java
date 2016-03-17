@@ -221,6 +221,10 @@ public class OthelloGame extends GameState{
         }
         return false;
     }
+    
+    public String getGameState(){
+        return super.getGameState();
+    }
 	
 	
 	

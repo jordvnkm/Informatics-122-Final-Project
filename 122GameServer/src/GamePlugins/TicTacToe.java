@@ -148,4 +148,8 @@ public class TicTacToe extends GameState{
 		}
 	}
 	*/
+    
+    public String getGameState(){
+        return super.getGameState();
+    }
 }
