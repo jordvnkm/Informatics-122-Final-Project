@@ -36,9 +36,7 @@ public class Plugin {
 	 * @param fileName the name of the file to load (without .jar)
 	 */
 	public Plugin(String fileName) {
-		if (validatePlugin(fileName)) {
 			loadPlugin(fileName); // This is to reset the plugin to pristine
-		}
 	}
 	
 	/**
