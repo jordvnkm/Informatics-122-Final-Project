@@ -27,7 +27,7 @@ public class Server extends Thread
     private Lobby lobby;
     private ServerController controller;
     
-    private boolean consoleDebug = true;
+    private boolean consoleDebug = false;
     
     
 

@@ -76,7 +76,7 @@ public class ServerGUI extends javax.swing.JFrame {
         startButton.setText("Start");
         jPanel1.add(startButton);
 
-        stopButton.setText("Stop");
+        stopButton.setText("Shutdown");
         jPanel1.add(stopButton);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

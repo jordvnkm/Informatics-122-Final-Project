@@ -24,7 +24,7 @@ public class ServerController
 	private javax.swing.Timer tick; //used for the countdown
 	private int countDown;
 
-    private boolean consoleDebug = true;
+    private boolean consoleDebug = false;
     
 	public ServerController()
 	{
