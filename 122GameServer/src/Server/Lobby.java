@@ -125,7 +125,7 @@ public class Lobby
             openGames.add(tmpGame);
             //this method will pop off the open game if it is a
             //		single player game
-            lookForOpenGames(p, gameName);
+            //lookForOpenGames(p, gameName);
         }
         else
             tmpGame.addPlayer(p);
