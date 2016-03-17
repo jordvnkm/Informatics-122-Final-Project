@@ -32,42 +32,17 @@ public class Communication extends Thread
 	/*
 	 * Connects client to server
 	 */
-	public boolean connectToServer()
+	public boolean connectToServer() throws Exception
 	{
-		try{
+
 			socket = new Socket(serverIP, serverPort);
 			
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
             
-            
-			//this should be the welcome message
-			String serverMessage = input.readUTF();
-			
-			if(true)
-				System.out.println(serverMessage);
-			
-			//Check server msg
-			if(false)
-				throw new Exception("***Server Welcome Message is Incorrect***");
-			
-			}
-			
-		catch (IOException e)
-		{
-			if(consoleDebug)
-			{
-				System.out.println("****Could not connect to server****");
-				e.printStackTrace();
-				return false;
-			}
-		}	
 		
-		catch(Exception e)
-		{
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
+		
+
 		return true;
 	}
 	
@@ -97,21 +72,10 @@ public class Communication extends Thread
 	/*
 	 * Receives a message from the server
 	 */
-	public String receiveMessage()
+	public String receiveMessage() throws Exception
 	{
-		try 
-		{
 			return(input.readUTF());
-		} 
 		
-		catch (IOException e) {
-			if(consoleDebug)
-			{
-				System.out.println("****Could not receive a message****");
-				e.printStackTrace();
-			}
-			return "";
-		}
 	}
 	
 	/***************************************************************************
@@ -121,8 +85,9 @@ public class Communication extends Thread
 	 * 		to the server. The server will return a JSON message that contains a
 	 * 		status of if the login was good or not along with some other. If the
 	 * 		connection fails, null will be returned 
+	 * @throws Exception 
 	 ***************************************************************************/
-	public String loginHandshake(String s)
+	public String loginHandshake(String s) throws Exception
 	{
 	
 			//gets the input from the GUI and send the appropriate login information to the server
@@ -146,16 +111,37 @@ public class Communication extends Thread
     	
     	while(listening)
     	{
-    		serverMessage = receiveMessage();
+    		try {
+				serverMessage = receiveMessage();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     		//update GUI???
     		//need to know if its a a game list or something els??
     	}
     }
     
+    public void closeConnection(){
+    	try {
+			input.close();
+			output.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
     public static void main(String[] Args)
     {
     	Communication c = new Communication("localhost", 8000);
-    	c.connectToServer();
+    	try {
+			c.connectToServer();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     
     	c.sendMessage(JSONClientTranslator.loginType("Login"));
     	
@@ -178,7 +164,13 @@ public class Communication extends Thread
     		break;
     	}
     	
-    	String message = c.receiveMessage();
+    	String message = null;
+		try {
+			message = c.receiveMessage();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	System.out.println(message);
     	
     	while(true){

@@ -33,7 +33,7 @@ public class Client implements Runnable{
 	private Communication com;
 	private boolean buttonPressed = false;
 	private boolean buttonValid = false;
-	
+	private boolean connectionEstablished = false;
 	///////////////////////////////////////////
 	//// client constructor
 	public Client(String serverip, int portnum, MainStage inputgui)
@@ -78,6 +78,14 @@ public class Client implements Runnable{
 		gui.getLoginMenuItem().setOnAction((ActionEvent e) -> {
 	    	login();
 	    });
+		
+		//When Disconnect is pressed
+		gui.getDisconnectMenuItem().setOnAction((ActionEvent e) ->{
+			if(com!=null){
+				com.closeConnection();
+				gui.logger("Disconnected from server.", false);
+			}
+		});
 	}
 	/**
 	 * Opens the server select Dialog, and attempts to establish a conection with the server
@@ -99,6 +107,14 @@ public class Client implements Runnable{
 	 * Opens request game menu and sends the client response to the server
 	 */
 	public void requestGame(){
+		if(com!=null){
+			String players = "";
+			for (String s:gameData.getPlayers())
+				players+=s+"\n";
+			Dialogs.chooseGame(gameData.getGames().toArray(new String[]{}), players);
+			
+			
+		}
 		
 	}
 	
@@ -117,8 +133,10 @@ public class Client implements Runnable{
 		//check if they canceled
 		if(username==null)
 			return;
-		//check with server if valid login
-		//set username if valid (possibly in another method)
+		if(connectionEstablished){
+			com.sendMessage(JSONClientTranslator.loginType("Login"));
+		  	com.sendMessage(JSONClientTranslator.username(username));
+		}
 	}
 	
 	/**
@@ -132,6 +150,11 @@ public class Client implements Runnable{
 			return;
 		String username = result[0];
 		String info = result[1];
+		if(connectionEstablished){
+			com.sendMessage(JSONClientTranslator.loginType("CreateUser"));
+		  	com.sendMessage(JSONClientTranslator.username(username));
+		  	com.sendMessage(JSONClientTranslator.username(info));
+		}
 	}
 	public void setupBoard(){
 		//gui.setBoard(0, 0);
@@ -358,7 +381,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}	
@@ -425,7 +448,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}
@@ -457,7 +480,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}
@@ -499,7 +522,7 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			jsonString = com.receiveMessage();
+			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}
@@ -535,60 +558,95 @@ public class Client implements Runnable{
 	public void run() {
 		System.out.println("Thread to start communicating with server started");
 		//Attempt communication using serverIP and port
+		com = new Communication(serverIP,port);
 		
-		//if error occurs
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run(){
-				Dialogs.popupError("Failed to connect to "+serverIP+":"+port+".", "Connection Error", "Connection Error");
-				selectServer();
-				//kill/end thread
-			}});
+    	try {
+			com.connectToServer();
+			//if successful
+			writeToLogger("Connected to "+serverIP+":"+port+".");
+			 connectionEstablished=true;
+		} catch (Exception e1) {
+			//if error occurs
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run(){
+					Dialogs.popupError("Failed to connect to "+serverIP+":"+port+".", "Connection Error", "Connection Error");
+					selectServer();
+					//kill/end thread
+				}});
+			e1.printStackTrace();
+		}
 		
-		//if successful
-		writeToLogger("Connected to "+serverIP+":"+port+".");
+    	while (true){
+    		try{
+    		String message;
+    		message= com.receiveMessage();
+    		System.out.println("New Message: "+message);
+    		//Respond to messages from server
+    		ArrayList<String> parsed = JSONGeneral.checkType(message);
+    		if(parsed.size()==0){
+    			System.out.println("Malformed Message Sent:" + message);
+    		}
+    		String type = parsed.get(0);
+    		
+    		
+    		if(type.equals("Welcome")){
+    			writeToLogger(parsed.get(1));
+    			
+    			//player needs to choose to make new
+    			//or use existing account on server
+    			//through menus
+    			
+    			/*Platform.runLater(new Runnable() {
+    				@Override
+    				public void run(){
+    					login();
+    				}});*/
+    		}
+    		else if(type.equals("LoginStatus")){
+    			if(parsed.get(1).equals("Successful"))
+    				writeToLogger("Login Successful.");
+    			else if(parsed.get(1).equals("Failure"))
+    				writeToLogger("Login Failed.");
+    		}
+    		else if(type.equals("GameList")){
+    			gameData.clearGameData();
+    			for(int i=1;i<parsed.size();i++)
+    				gameData.addGame(parsed.get(i));
+    		}
+    		else if(type.equals("WaitingToPlay")){
+    			
+    		}
+    		else if(type.equals("PlayerList")){
+    			gameData.clearPlayerData();
+    			for(int i=0;i<parsed.size();i++)
+    				gameData.addPlayer(parsed.get(i));
+    		}
+    		else if(type.equals("ButtonDisabled")){
+    			
+    		}
+    		else if(type.equals("ButtonText")){
+    			
+    		}
+    		else if(type.equals("GameBoard")){
+    			
+    		}
+    		
+    		
+    		
+    		}catch(Exception e){
+    			break;
+    		}
+
+    	}
+    	
+    	writeToLogger("You have disconnected from the server.");
+		com.closeConnection();
+    	connectionEstablished=false;
+    	com=null;
 
 		
-//		Communication com = new Communication(serverIP, port);
-//		if (com.connectToServer())
-//			writeToLogger("Successful connection.");
-//		else
-//			writeToLogger("Could not connect to server.");
-//
-//		requestGameList(com); // request list of games
-//		parseGameList(com);
-//		requestPlayerList(com); // request list of players
-//		parsePlayerList(com);
-//		displayServer(com); // displays game list and players online
-//
-//
-//		while (true)
-//		{
-//			if (choseGame)
-//			{
-//				sendGameRequest(com, gameName);
-//				parseGameState(com);
-//				break;
-//			}
-//		}
-//
-//		while (isRunning)
-//		{
-//			while (myTurn)
-//			{
-//				if (madeMove)
-//				{
-//					sendMove(com); // sends move;
-//					parseValidMove(com); // listens for server response .sets myTurn;
-//				}
-//			}
-//
-//			while (!myTurn)
-//			{
-//				parseGameState(com);
-//			}
-//		}
-//
+
 	}
 
 }

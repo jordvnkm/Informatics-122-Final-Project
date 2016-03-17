@@ -28,7 +28,7 @@ public class MainStage extends Stage{
 	
 	//MenuItems needed by the Client
 	private MenuItem MIselectserv,
-	MIcreatelogin,MIrequestgame,MIquitgame,MIlogin;
+	MIcreatelogin,MIrequestgame,MIquitgame,MIlogin,MIdisconnect;
 	
 	//main GUI setup
 	public MainStage(){
@@ -42,11 +42,13 @@ public class MainStage extends Stage{
         MIselectserv = new MenuItem("Select Server");
         MIcreatelogin = new MenuItem("Create Login");
         MIlogin = new MenuItem("Login");
+        MIdisconnect = new MenuItem("Disconnect");
+        MIdisconnect.setDisable(true);
         MenuItem MIExit = new MenuItem("Exit");
         MIExit.setOnAction((ActionEvent e) -> {
 	    	System.exit(0);
 	    });
-        servermenu.getItems().addAll(MIselectserv,MIcreatelogin,MIlogin,new SeparatorMenuItem(),MIExit);
+        servermenu.getItems().addAll(MIselectserv,MIcreatelogin,MIlogin,MIdisconnect,new SeparatorMenuItem(),MIExit);
         
         Menu gamemenu = new Menu("Game");
         MIrequestgame = new MenuItem("Request Game");
@@ -152,5 +154,9 @@ public class MainStage extends Stage{
 	
 	public MenuItem getLoginMenuItem(){
 		return MIlogin;
+	}
+	
+	public MenuItem getDisconnectMenuItem(){
+		return MIdisconnect;
 	}
 }

@@ -178,7 +178,10 @@ public class Dialogs {
 		ComboBox<String> gamedropdown = new ComboBox<String>();
 		for(String game:gamelist)
 			gamedropdown.getItems().add(game);
-		gamedropdown.setValue(gamelist[0]);
+		if(gamelist.length==0)
+			gamedropdown.setValue("No Games Available");
+		else
+			gamedropdown.setValue(gamelist[0]);
 		
 		TextArea textArea = new TextArea(playerprofiles);
 		textArea.setEditable(false);

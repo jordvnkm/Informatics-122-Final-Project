@@ -11,6 +11,7 @@ public class GameData {
 	public GameData()
 	{
 		games = new ArrayList<String>();
+		players = new ArrayList<String>();
 	}
 	
 	public void addGame(String gameName)
@@ -21,5 +22,19 @@ public class GameData {
 	public void addPlayer(String playerName)
 	{
 		players.add(playerName);
+	}
+	public ArrayList<String> getGames(){
+		return games;
+	}
+	
+	public void clearGameData(){
+		games.clear();
+	}
+	
+	public void clearPlayerData(){
+		players.clear();
+	}
+	public ArrayList<String> getPlayers(){
+		return players;
 	}
 }
