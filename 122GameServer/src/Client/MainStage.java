@@ -1,6 +1,8 @@
 package Client;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -10,7 +12,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainStage extends Stage{
@@ -33,7 +37,8 @@ public class MainStage extends Stage{
 	//main GUI setup
 	public MainStage(){
 		super();
-
+		setResizable(false);
+		
 		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane());
         //Menus
@@ -53,6 +58,7 @@ public class MainStage extends Stage{
         Menu gamemenu = new Menu("Game");
         MIrequestgame = new MenuItem("Request Game");
         MIquitgame = new MenuItem("Quit Game");
+        MIquitgame.setDisable(true);
         gamemenu.getItems().addAll(MIrequestgame,MIquitgame);
         
         //Menu windowmenu = new Menu("Window");
@@ -68,12 +74,21 @@ public class MainStage extends Stage{
         
         mb.getMenus().addAll(servermenu,gamemenu,helpmenu);
         //Board
-        gameboard = new Board(3, 3 );
-
+        gameboard = new Board(10,10);
+        for(int i=0;i<10;i++){
+        	for(int j=0;j<10;j++){
+        		if(i%2==0 && j%2==0)
+        			gameboard.getTile(i, j).setBackgroundColor(0, 0, 0);
+        		else if(i%2==1 && j%2==1)
+        			gameboard.getTile(i, j).setBackgroundColor(0, 0, 0);
+        	gameboard.getTile(i, j).draw();
+        	}
+        }
         //text area
         TAlog = new TextArea();
         TAlog.setMaxHeight(100);
-
+        TAlog.setMaxWidth(500);
+        TAlog.setEditable(false);
         //Button
         actionButton = new Button("Button");
         actionButton.setMinSize(100,100);
@@ -84,14 +99,22 @@ public class MainStage extends Stage{
         BorderPane bottomright = new BorderPane();
         bottomright.setCenter(actionButton);
         bottom.setRight(bottomright);
+        bottomright.setPadding(new Insets(10,10,10,10));
         
+        //centering board
+        AnchorPane sp = new AnchorPane();
+        AnchorPane.setTopAnchor(gameboard,15.0);
+        AnchorPane.setLeftAnchor(gameboard, 15.0);
+        sp.getChildren().add(gameboard);
+		
 		((BorderPane) scene.getRoot()).setTop(mb);
-		((BorderPane) scene.getRoot()).setCenter(gameboard);
+		
+		((BorderPane) scene.getRoot()).setCenter(sp);
 		((BorderPane) scene.getRoot()).setBottom(bottom);
 		setScene(scene);
+		 
 		show();
-        
-		
+
 	}
 
 	public int getRows()
@@ -114,7 +137,7 @@ public class MainStage extends Stage{
 	//Debugger lines should be lines not shown to the player.
 	public void logger(String s, boolean debuggerline){
 		if(Debug || (!Debug && !debuggerline))
-			TAlog.appendText("\n" + s);
+			TAlog.appendText(s+"\n");
 	}
 	public void setDebug(boolean input){
 		Debug = input;

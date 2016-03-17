@@ -53,7 +53,8 @@ public class Client implements Runnable{
 		gui = inputgui;
 		setupBoard(); // will need to do this when parsing game state
 		setupMenuListeners();
-
+		selectServer();
+		gui.logger("Welcome!", false);
 	}
 	
 	
@@ -251,7 +252,7 @@ public class Client implements Runnable{
                 	int yloc= t.getYlocation();
                 	if (myTurn && isRunning)
                 	{
-                		gui.logger("Mouse clicked: "+xloc+","+yloc,true);
+                		gui.logger("You clicked: "+xloc+","+yloc,true);
                 		setMove( xloc, yloc);
                 	}
                 	else if (!isRunning)
@@ -445,6 +446,7 @@ public class Client implements Runnable{
 						gui.logger("Game is a tie!", true);
 					}
 					else{
+						winner = state.getWinner();
 						gui.logger("Winner is " + winner + "!", true);
 					}
 				}
@@ -646,7 +648,11 @@ public class Client implements Runnable{
     		}
     		else if (type.equals("LoginStatus")){
     			writeToLogger("Login " + parsed.get(1));
-    			System.out.println(message);
+    			Platform.runLater(new Runnable() {
+				@Override
+				public void run(){
+					gui.setTitle("INF 122 Game Client - "+clientName);
+				}});			
     			
     		}
     		
