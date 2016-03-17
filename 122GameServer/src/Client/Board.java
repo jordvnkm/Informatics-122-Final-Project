@@ -23,8 +23,7 @@ public class Board extends GridPane{
 	public Board(int myrows,int mycolumns){
 		rows = myrows;
 		columns = mycolumns;
-       // this.setPrefSize(600, 600);
-       System.out.println("a"+getWidth());
+        this.setPrefSize(600, 600);
         tiles = new ArrayList<ArrayList<Tile>>();
         setDimensions(rows,columns);
 	}
