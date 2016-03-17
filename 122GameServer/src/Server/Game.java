@@ -2,7 +2,7 @@ package Server;
 
 //***
 //importing the GamePlugins package to access board
-import GamePlugins.*;
+
 //***
 
 import java.util.LinkedList;
@@ -30,33 +30,42 @@ public class Game
     public Game(String plugin)
     {
         logic = new Plugin("TicTacToe");
-        logic.initializeGame(null);
-/*
-        System.out.println(logic.currentPlayer() + " moved to 0,1");
+        logic.initializeGame(new String[] {"test1", "test2"});
+        System.out.println(getBoard());
+        System.out.println("test1  moved to 0,1");
         logic.makeMove(0, 1, "test1");
-        System.out.println(logic.currentPlayer() + " moved to 0,0");
+        System.out.println("test2 moved to 0,0");
         logic.makeMove(0, 0, "test2");
-        System.out.println(logic.currentPlayer() + " moved to 1,0");
+        System.out.println("test1 moved to 1,0");
         logic.makeMove(1, 0, "test1");
-        System.out.println(logic.currentPlayer() + " moved to 0,2");
+        System.out.println("test 2 moved to 0,2");
         logic.makeMove(0, 2, "test2");
-        System.out.println(logic.currentPlayer() + " moved to 1,1");
+        System.out.println("test 1 moved to 1,1");
         logic.makeMove(1, 1, "test1");
-        System.out.println(logic.currentPlayer() + " moved to 1,2");
+        System.out.println("test 2 moved to 1,2");
         logic.makeMove(1, 2, "test2");
-        System.out.println(logic.currentPlayer() + " moved to 2,0");
+        System.out.println("test 1 moved to 2,0");
         logic.makeMove(2, 0, "test1");
-        System.out.println(logic.currentPlayer() + " moved to 2,1");
+        System.out.println("test 2 moved to 2,1");
         logic.makeMove(2, 1, "test2");
-        System.out.println(logic.currentPlayer() + " moved to 2,2");
+        System.out.println("test1 moved to 2,2");
         logic.makeMove(2, 2, "test1");
-        if (logic.checkForGameOver() == true)
-        {
-            System.out.println("Game over: " + logic.getWinner());
-        }
-        */
+/*        
+        System.out.println(logic.makeMove(0, 0, "Test1"));
+        logic.makeMove(1, 0, "Test2");
+        logic.makeMove(0, 1, "Test1");
+        logic.makeMove(1, 1, "Test2");
+        logic.makeMove(0, 2, "Test1");
+*/        
+        System.out.println(logic.getBoard());
     }
 
+    /**
+     * main constructor, creates a game object, adds the player to the game
+     * stores 
+     * @param player
+     * @param plugin
+     */
     public Game(Player player, String plugin)
     {
         players = new LinkedList<>();
@@ -64,34 +73,23 @@ public class Game
         pluginName = plugin;
     }
 
-    public synchronized boolean makeMove(int x, int y, String player)
+    public synchronized void makeMove(int x, int y, String player)
     {
         String winner = "";
         boolean goodMove;
 
-        if ((goodMove = logic.makeMove(x, y, player)) == true)
+        if (logic.makeMove(x, y, player))
         {
-            for (Player p : players)
-            {
-                // The move was good so we need to update all of the players with
-                // a new board, generate a new board via JSON and then send it
-                // via p.sendMessage
-                p.sendMessage(getBoard());
-            }
+            messagePlayers(getBoard());
         }
-        return goodMove;
     }
-
-    public synchronized boolean checkForGameOver()
+    
+    public synchronized void buttonPressed(String button, String player)
     {
-    	/*
-        if (logic.checkForGameOver())
-        {
-            gameWon();
-            return true;
-        }
-        */
-        return false;
+    	if (logic.buttonPressed(button, player))
+    	{
+    		messagePlayers(getBoard());
+    	}
     }
 
     public synchronized String getBoard()
@@ -99,10 +97,6 @@ public class Game
         return logic.getBoard();
     }
 
-    public synchronized String getWinner()
-    {	
-        return "TIE";//return logic.getWinner();
-    }
 
     public int getCurrentNumPlayers()
     {
@@ -119,7 +113,7 @@ public class Game
         players.add(player);
         if (players.size() == maxPlayers)
         {
-            startGame();
+        	startGame();
         }
     }
     
@@ -143,33 +137,22 @@ public class Game
     {
         // Todo: We need to start the game here
         logic = new Plugin(pluginName);
-        logic.initializeGame((String[])players.toArray());
+//        logic.initializeGame((String[])players.toArray());
         
     	// TODO: get game state via getBoard, send gamestate to everyone in the 'players' list
         for (Player player : players)
         {
             player.sendMessage(getBoard());
-        } 
+        }    
     }
     
-    private final synchronized void gameWon()
+    public final String getPluginName()
     {
-        String winner = getWinner();
-        
-        for (Player player : players)
-        {
-            if (player.getName().equals(winner))
-                player.wonGame(pluginName);
-            else
-                player.lostGame(pluginName);
-            
-            player.leaveGame();
-        }
-        
+        return this.pluginName;
     }
-
-	public String getPluginName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    
+    public final static List<String> getGameList()
+    {
+        return Plugin.getGameList();
+    }
 }

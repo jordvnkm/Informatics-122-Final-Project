@@ -1,4 +1,7 @@
 package GamePlugins;
+import Server.Player;
+
+import java.util.List;
 
 
 public abstract class GameState {
@@ -8,8 +11,6 @@ public abstract class GameState {
 	protected String currentTurn;
 	protected String winner;
 	protected boolean isRunning;
-	protected String errorMsg;
-	protected String gameMsg;
 	
 	
 	public GameState(String[] players){
@@ -18,8 +19,6 @@ public abstract class GameState {
 		this.turn = 0;
 		this.currentTurn = players[0];
 		this.winner = "TIE";
-		this.errorMsg = "default";
-		this.gameMsg = "default";
 	}
 	
 	
@@ -33,7 +32,7 @@ public abstract class GameState {
 	
 	public abstract void changeTurn();
 	
-	
+	public abstract boolean buttonPressed(String button, String name);
 	
 	public String getCurrentTurn(){
 		return this.currentTurn;
@@ -41,6 +40,10 @@ public abstract class GameState {
 	
 	public String getWinner(){
 		return this.winner;
+	}
+	
+	public void setWinner(String name){
+		this.winner = name;
 	}
 	
 	public int getTurn(){
@@ -51,20 +54,7 @@ public abstract class GameState {
 		return this.isRunning;
 	}
 	
-	public String getErrorMsg(){
-		return this.errorMsg;
-	}
-	
-	public String getGameMsg(){
-		return this.gameMsg;
-	}
-	
 	public Board getBoard(){
 		return this.board;
-	}
-	
-	public String getGameState(){
-		String jsonString = GameStateToJSON.gameStateToJSON(this.board, this.currentTurn, this.winner, this.isRunning, this.errorMsg, this.gameMsg);
-		return jsonString;
 	}
 }
