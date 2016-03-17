@@ -233,16 +233,17 @@ public class Lobby
             fullGames.add(game);
         }
     }
-//    public List<Player> getInactivePlayers()
-//    {
-//        List<Player> retList = new ArrayList<>();
-//        players.stream().filter((player) -> (player.getGame() == null)).forEach((player) ->
-//        {
-//            retList.add(player);
-//        });
-//        
-//        return retList;
-//    }
+    
+    public String getPlayers()
+    {
+        ArrayList<String> retList = new ArrayList<>();
+        players.stream().forEach((player) ->
+        {
+            retList.add(player.getName());
+        });
+        
+        return JSONServerTranslator.playerList(retList);
+    }
 //    
 //    public List<Player> getAllPlayers()
 //    {
