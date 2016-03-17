@@ -51,6 +51,7 @@ public class Communication extends Thread
 	 */
 	public boolean sendMessage(String s)
 	{
+		System.out.println(s);
 		try 
 		{
 			output.writeUTF(s);

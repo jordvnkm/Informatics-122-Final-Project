@@ -114,6 +114,7 @@ public class Client implements Runnable{
 			String game = Dialogs.chooseGame(gameData.getGames().toArray(new String[]{}), players);
 			if(game!=null){
 				com.sendMessage(JSONClientTranslator.selectedGame(game));
+				gui.logger("Looking for game..", false);
 			}
 			
 		}
@@ -648,6 +649,7 @@ public class Client implements Runnable{
     		
     		
     		}catch(Exception e){
+    			e.printStackTrace();
     			break;
     		}
 
