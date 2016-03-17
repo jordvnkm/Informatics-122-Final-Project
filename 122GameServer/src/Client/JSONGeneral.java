@@ -98,7 +98,7 @@ public class JSONGeneral
 		//When the server passes the gameBoard
 		else if(type.equals("GameBoard")){
 			returnString.add("GameBoard");
-			returnString.add(jsonObj.get("Board").toString());
+			returnString.add(jsonObj.toString());
 		}
 		
 		//When the server pass the openGameList
