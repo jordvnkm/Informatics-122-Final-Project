@@ -1,4 +1,4 @@
-package plugin;
+package GamePlugins;
 
 import java.util.List;
 import java.util.Random;
