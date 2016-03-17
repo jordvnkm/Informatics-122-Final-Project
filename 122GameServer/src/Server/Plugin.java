@@ -171,8 +171,9 @@ public class Plugin {
         {
             if (file.isFile() && file.getName().endsWith(".jar")) 
             {
-            	test = new Plugin(file.getName().split("\\.")[0]);
-            	if (test.isValidPlugin())
+//            	String fileName = file.getName().split("\\.")[0];
+//            	test = new Plugin(fileName);
+//            	if (validatePlugin(fileName))
             		pluginList.add(file.getName().split("\\.")[0]);
             }
         }
