@@ -53,7 +53,7 @@ public class Client implements Runnable{
 		gui = inputgui;
 		setupBoard(); // will need to do this when parsing game state
 		setupMenuListeners();
-
+		selectServer();
 	}
 	
 	
