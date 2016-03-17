@@ -33,7 +33,7 @@ public class JSONServerGeneral
 			returnString = new String[3];
 			returnString[0] = "MovePiece";
 			returnString[1] = jsonObj.get("X").toString();
-			returnString[1] = jsonObj.get("Y").toString();
+			returnString[2] = jsonObj.get("Y").toString();
 		}
 		
 		//For The button on the GUI: For example "roll", "skipTurn"
