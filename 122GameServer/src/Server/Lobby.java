@@ -236,13 +236,18 @@ public class Lobby
     
     public String getPlayers()
     {
+        return JSONServerTranslator.playerList(getPlayerList());
+    }
+    
+    public ArrayList<String> getPlayerList()
+    {
         ArrayList<String> retList = new ArrayList<>();
+
         players.stream().forEach((player) ->
         {
             retList.add(player.getName());
         });
-        
-        return JSONServerTranslator.playerList(retList);
+        return retList;
     }
 //    
 //    public List<Player> getAllPlayers()

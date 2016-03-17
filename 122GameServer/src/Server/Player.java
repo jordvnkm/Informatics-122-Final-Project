@@ -309,7 +309,9 @@ public class Player extends Thread
     	String message = receiveMessage();
     	String[] tokens = JSONServerGeneral.checkType(message);
     	System.out.println("Logging Player In: " + message);
-    	if (lobby.)
+    	if (lobby.getPlayerList().contains(tokens[1]))
+    		return false;
+    	
     	this.profile = new Profile();
     	if(tokens[0].equals("Username") && !this.profile.profileExists(tokens[1]))
     		return false;
