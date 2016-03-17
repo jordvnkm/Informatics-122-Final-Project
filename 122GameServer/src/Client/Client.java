@@ -249,12 +249,9 @@ public class Client implements Runnable{
         			Tile t = (Tile)e.getSource();
                 	int xloc= t.getXlocation();
                 	int yloc= t.getYlocation();
-                	gui.logger("Mouse clicked: "+xloc+","+yloc,true);
-//                	tic.playMove(xloc, yloc, tic.getCurrentTurn());
-//                	parseGameState(tic.getGameState());
                 	if (myTurn && isRunning)
                 	{
-                		//t.setText("X");
+                		gui.logger("Mouse clicked: "+xloc+","+yloc,true);
                 		setMove( xloc, yloc);
                 	}
                 	else if (!isRunning)
@@ -263,9 +260,9 @@ public class Client implements Runnable{
                 	}
                 	else if (!myTurn)
                 	{
+                		System.out.println("HELLO");
                 		gui.logger("Not Your Turn", true);
                 	}
-
 
                 });
         	}
@@ -392,16 +389,8 @@ public class Client implements Runnable{
 	
 	////////////////////////////////////////////////////////////
 	//// parses board state
-	public void parseGameState(String jsonString/*Communication com*/)
-	{
-//		String jsonString = "";
-//		while (true)
-//		{
-//			//jsonString = com.receiveMessage();
-//			if (!jsonString.equals(""))
-//				break;
-//		}	
-		
+	public void parseGameState(String jsonString)
+	{	
 		JSONBoard state = new JSONBoard(jsonString);
 		
 		Platform.runLater(new Runnable() {
@@ -433,24 +422,43 @@ public class Client implements Runnable{
 						t.draw();
 					}
 				}
+				
+				/////////////////////////////////////////////////////
+				////// set turn
+				if (state.getCurrentTurn().equals(clientName))
+				{
+					myTurn = true;
+				}
+				
+				//// set running state
+				isRunning = state.getIsRunning();
+				
+				
+				//// game is not running set winner
+				if (!isRunning){
+					winner = state.getWinner();
+					gui.logger("Winner is " + winner + "!", true);
+					
+				}
 			}
 		});
 		
-		/////////////////////////////////////////////////////
-		////// set turn
-		if (state.getCurrentTurn().equals(clientName))
-		{
-			myTurn = true;
-		}
-		
-		//// set running state
-		isRunning = state.getIsRunning();
-		
-		
-		//// game is not running set winner
-		if (!isRunning){
-			winner = state.getWinner();
-		}
+//		/////////////////////////////////////////////////////
+//		////// set turn
+//		if (state.getCurrentTurn().equals(clientName))
+//		{
+//			myTurn = true;
+//		}
+//		
+//		//// set running state
+//		isRunning = state.getIsRunning();
+//		
+//		
+//		//// game is not running set winner
+//		if (!isRunning){
+//			winner = state.getWinner();
+//			
+//		}
 		
 
 	}
@@ -496,7 +504,6 @@ public class Client implements Runnable{
 		String jsonString = "";
 		while (true)
 		{
-			//jsonString = com.receiveMessage();
 			if (!jsonString.equals(""))
 				break;
 		}
