@@ -40,6 +40,12 @@ public class GameData {
 	public void clearPlayerData(){
 		players.clear();
 	}
+	
+	public void clearWaitingData()
+	{
+		playersWaiting.clear();
+	}
+	
 	public ArrayList<String> getPlayers(){
 		return players;
 	}

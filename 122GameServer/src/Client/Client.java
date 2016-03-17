@@ -117,6 +117,17 @@ public class Client implements Runnable{
 	 * Opens request game menu and sends the client response to the server
 	 */
 	public void requestGame(){
+		if(com!=null){
+			String players = "";
+			for (String s:gameData.getPlayers())
+				players+=s+"\n";
+			String game = Dialogs.chooseGame(gameData.getGames().toArray(new String[]{}), players);
+			if(game!=null){
+				com.sendMessage(JSONClientTranslator.selectedGame(game));
+			}
+			
+		}
+
 		
 	}
 	
@@ -128,6 +139,7 @@ public class Client implements Runnable{
 		{
 			com.sendMessage(JSONClientTranslator.quitGame());
 		}
+
 	}
 	
 	/**
@@ -201,6 +213,7 @@ public class Client implements Runnable{
 	{
 		gui.getButton().setOnAction((ActionEvent e) -> { // need to figure out action for button
 			gui.logger("Button Pressed !",true);
+			com.sendMessage(JSONClientTranslator.buttonPressed("roll"));
 			if (myTurn)
 			{
 				if (buttonValid)
@@ -625,37 +638,38 @@ public class Client implements Runnable{
     				gameData.addGame(parsed.get(i));
     			}
     		}
-    		else if (type.equals("error")){
-    			writeToLogger(parsed.get(1));
+
+    		else if(type.equals("WaitingToPlay")){
+    			//similar to PlayerList, may not implement
     		}
-    		else if (type.equals("PlayerList"))
-    		{
-    			for (int i = 1; i < parsed.size(); i ++)
-    			{
+    		else if(type.equals("PlayerList")){
+    			gameData.clearPlayerData();
+    			for(int i=1;i<parsed.size();i++)
     				gameData.addPlayer(parsed.get(i));
-    			}
+    			
     		}
-    		else if (type.equals("InvalidPlugin"))
-    		{
-    			if (!Boolean.valueOf(parsed.get(1)))
-    			{
-    				writeToLogger("Invalid plugin");
-    			}
+    		else if(type.equals("ButtonDisabled")){
+    			Platform.runLater(new Runnable() {
+    				@Override
+    				public void run(){
+    					gui.getButton().setDisable(parsed.get(1).equals("true"));
+    				}});			
+    			
     		}
-    		else if (type.equals("WaitingToPlay"))
-    		{
-    			for (int i = 1; i < parsed.size(); i ++)
-    			{
-    				gameData.addWaiting(parsed.get(i));
-    			}
+    		else if(type.equals("ButtonText")){
+    			Platform.runLater(new Runnable() {
+    				@Override
+    				public void run(){
+    					gui.getButton().setText(parsed.get(1));
+    				}});	
     		}
-    		else if (type.equals("SendTextMessage"))
-    		{
-    			writeToLogger(parsed.get(1));
-    		}
-    		else if (type.equals("GameBoard"))
-    		{
-    			parseGameState(parsed.get(1));
+    		else if(type.equals("GameBoard")){
+    			Platform.runLater(new Runnable() {
+    				@Override
+    				public void run(){
+    					parseGameState(parsed.get(1));
+    				}});
+
     		}
     		
     		
