@@ -647,7 +647,11 @@ public class Client implements Runnable{
     		}
     		else if (type.equals("LoginStatus")){
     			writeToLogger("Login " + parsed.get(1));
-    			System.out.println(message);
+    			Platform.runLater(new Runnable() {
+				@Override
+				public void run(){
+					gui.setTitle("INF 122 Game Client - "+clientName);
+				}});			
     			
     		}
     		
