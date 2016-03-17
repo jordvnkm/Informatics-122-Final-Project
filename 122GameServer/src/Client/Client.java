@@ -54,6 +54,7 @@ public class Client implements Runnable{
 		setupBoard(); // will need to do this when parsing game state
 		setupMenuListeners();
 		selectServer();
+		gui.logger("Welcome!", false);
 	}
 	
 	
@@ -251,7 +252,7 @@ public class Client implements Runnable{
                 	int yloc= t.getYlocation();
                 	if (myTurn && isRunning)
                 	{
-                		gui.logger("Mouse clicked: "+xloc+","+yloc,true);
+                		gui.logger("You clicked: "+xloc+","+yloc,true);
                 		setMove( xloc, yloc);
                 	}
                 	else if (!isRunning)

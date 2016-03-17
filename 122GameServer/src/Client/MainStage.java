@@ -87,6 +87,7 @@ public class MainStage extends Stage{
         TAlog = new TextArea();
         TAlog.setMaxHeight(100);
         TAlog.setMaxWidth(500);
+        TAlog.setEditable(false);
         //Button
         actionButton = new Button("Button");
         actionButton.setMinSize(100,100);
@@ -135,7 +136,7 @@ public class MainStage extends Stage{
 	//Debugger lines should be lines not shown to the player.
 	public void logger(String s, boolean debuggerline){
 		if(Debug || (!Debug && !debuggerline))
-			TAlog.appendText("\n" + s);
+			TAlog.appendText(s+"\n");
 	}
 	public void setDebug(boolean input){
 		Debug = input;
