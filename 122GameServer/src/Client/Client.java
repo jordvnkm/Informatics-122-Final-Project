@@ -622,8 +622,9 @@ public class Client implements Runnable{
     		}
     		else if(type.equals("PlayerList")){
     			gameData.clearPlayerData();
-    			for(int i=0;i<parsed.size();i++)
+    			for(int i=1;i<parsed.size();i++)
     				gameData.addPlayer(parsed.get(i));
+    			
     		}
     		else if(type.equals("ButtonDisabled")){
     			Platform.runLater(new Runnable() {
