@@ -52,6 +52,7 @@ public class Client implements Runnable{
 		gameData = new GameData();
 		gui = inputgui;
 		setupBoard(); // will need to do this when parsing game state
+		setupMenuListeners();
 
 	}
 	
@@ -99,6 +100,7 @@ public class Client implements Runnable{
 	 * Opens the server select Dialog, and attempts to establish a conection with the server
 	 */
 	public void selectServer(){
+
 		String[] info = Dialogs.getServerInfo();
 		//if they canceled...
 		if(info==null)
@@ -581,6 +583,7 @@ public class Client implements Runnable{
 				}});
 			e1.printStackTrace();
 		}
+    	
 		
     	while (true){
     		try{
@@ -593,6 +596,8 @@ public class Client implements Runnable{
     			System.out.println("Malformed Message Sent:" + message);
     		}
     		String type = parsed.get(0);
+    		
+    		System.out.println(message);
     		
     		
     		if(type.equals("Welcome")){
