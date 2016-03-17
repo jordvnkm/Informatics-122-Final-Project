@@ -247,6 +247,11 @@ public int[] giveNewSpot(String name){
 			System.out.println("");
 		}
 	}
+
+	@Override
+	public boolean buttonPressed(String button, String name) {
+		return playMove(0,0,name);
+	}
 	
 }
 
