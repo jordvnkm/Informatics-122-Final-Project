@@ -122,7 +122,7 @@ public class Client implements Runnable{
 	 * Sends the server that the client quits the game.
 	 */
 	public void quitGame(){
-		
+		quitGame = true;
 	}
 	
 	/**
@@ -231,14 +231,15 @@ public class Client implements Runnable{
                 		//t.setText("X");
                 		setMove( xloc, yloc);
                 	}
-                	else if (!myTurn)
-                	{
-                		gui.logger("Not Your Turn", true);
-                	}
                 	else if (!isRunning)
                 	{
                 		gui.logger("Game Over", true);
                 	}
+                	else if (!myTurn)
+                	{
+                		gui.logger("Not Your Turn", true);
+                	}
+
 
                 });
         	}
@@ -580,6 +581,10 @@ public class Client implements Runnable{
 		
     	while (true){
     		try{
+    		if (quitGame)
+    		{
+    			sendQuitGame(com);
+    		}
     		String message;
     		message= com.receiveMessage();
     		System.out.println("New Message: "+message);
