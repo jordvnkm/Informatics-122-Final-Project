@@ -12,6 +12,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -91,19 +92,20 @@ public class MainStage extends Stage{
         bottomright.setPadding(new Insets(10,10,10,10));
         
         //centering board
-        StackPane sp = new StackPane();
+        AnchorPane sp = new AnchorPane();
+        AnchorPane.setTopAnchor(gameboard,15.0);
+        AnchorPane.setLeftAnchor(gameboard, 15.0);
         sp.getChildren().add(gameboard);
-        StackPane.setAlignment(gameboard, Pos.CENTER);
-
+		
 		((BorderPane) scene.getRoot()).setTop(mb);
+		
 		((BorderPane) scene.getRoot()).setCenter(sp);
 		((BorderPane) scene.getRoot()).setBottom(bottom);
 		setScene(scene);
-        System.out.println(gameboard.getWidth());
-        System.out.println(gameboard.getHeight());
+		 
 		show();
-        
-		
+
+		System.out.println("b"+gameboard.getWidth());
 	}
 
 	public int getRows()
