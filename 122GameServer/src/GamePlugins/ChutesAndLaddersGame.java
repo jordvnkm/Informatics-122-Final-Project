@@ -1,8 +1,14 @@
-package GamePlugins;
+package plugin;
 
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+
+import plugin.Board;
+import plugin.GameState;
+import plugin.Piece;
+import plugin.Tile;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +16,7 @@ import java.util.Arrays;
 public class ChutesAndLaddersGame extends GameState{
 
 	private HashMap<String, Piece> playerToPiece;
-	private HashMap<int[],int[]> specialty;
+	private HashMap<Integer,Integer> specialty;
 	private HashMap<Integer, int[]> positioning;
 	private HashMap<String,Integer> currentPos;
 	HashMap<int[], Integer> reversedHashMap;
@@ -22,7 +28,7 @@ public class ChutesAndLaddersGame extends GameState{
 	
 	public ChutesAndLaddersGame(String[] players){
 		super(players);
-		specialty = new HashMap<int[],int[]>();
+		specialty = new HashMap<Integer,Integer>();
 		positioning = new HashMap<Integer,int[]>();
 		currentPos = new HashMap<String,Integer>();
 		r = new Random();
@@ -88,20 +94,17 @@ public class ChutesAndLaddersGame extends GameState{
 		board.getTile(4, 7).setBackgroundColor(255, 0, 0);
 		board.getTile(6, 0).setBackgroundColor(255, 0, 0);
 		//ladder
-		board.getTile(4, 0).setBackgroundColor(0,252,255);
-		board.getTile(2, 4).setBackgroundColor(0,252,255);
+		board.getTile(4, 4).setBackgroundColor(0,252,255);
+		board.getTile(0, 2).setBackgroundColor(0,252,255);
 
-		specialty.put( new int[]{4,7}, new int[]{2,4});
-		specialty.put( new int[]{6,0}, new int[]{4,0});
-		specialty.put( new int[]{0,2}, new int[]{2,5});
-		specialty.put( new int[]{4,4}, new int[]{6,4});
+		specialty.put( 25, 12);
+		specialty.put( 34, 18);
+		specialty.put(2, 11);
+		specialty.put( 22, 30);
 		
 		board.addPiece(0 , 0,  new Piece(purple, "CIRCLE", "1", 'O'));
 		board.addPiece(0, 0,  new Piece(green, "CIRCLE", "1", 'O'));
-	 reversedHashMap = new HashMap<int[], Integer>();
-		for (Integer key : positioning.keySet()){
-		    reversedHashMap.put(positioning.get(key), key);
-		}
+	
 		
 	}
 public int randomNumGen(){
@@ -109,17 +112,19 @@ public int randomNumGen(){
 }
 
 
-public int[] giveNewSpot(String name){
+public int giveNewSpot(String name){
 	int moves =randomNumGen();
 	int newPos= moves+currentPos.get(name);
 	if(positioning.containsKey(newPos)){
-		if(specialty.containsKey( positioning.get(moves+currentPos.get(name)))){
-		return specialty.get( positioning.get(moves+currentPos.get(name)));
+        System.out.println(positioning.get(newPos)[0]+","+positioning.get(newPos)[1]);
+		if(specialty.containsKey(newPos)){
+            System.out.println(specialty.get(newPos) );
+            return specialty.get(newPos);
 		}else{
 		
-			return positioning.get(moves+currentPos.get(name));
+			return newPos;
 		}
-	} else{ return new int[]{7,0};}
+	} else{ return 35;}
 	
 }
 	@Override
@@ -133,34 +138,27 @@ public int[] giveNewSpot(String name){
 	@Override
 	public boolean playMove(int x, int y, String name){
 		if(!currentTurn.equals(name)){
+			System.out.println("Name: "+ name);
 			return false;
 		}
-	
-			int[] newSpotCoords =giveNewSpot(name);
+		int newPos=giveNewSpot(currentTurn);
+		int[] newSpotCoords =positioning.get(newPos);
 			
-			board.addPiece(newSpotCoords[0],newSpotCoords[1], playerToPiece.get(currentTurn));
-			int[] a =positioning.get(currentPos.get(name));
-			Piece toRemove = accessPiece(a[0],a[1],name);
-			
-			board.removePiece(a[0], a[1], toRemove);
+		board.addPiece(newSpotCoords[0],newSpotCoords[1], playerToPiece.get(currentTurn));
+		int[] a;
+		a =positioning.get(currentPos.get(currentTurn));
+		Piece toRemove = accessPiece(a[0],a[1],currentTurn);
+		System.out.println("Remove: "+ a[0]+" "+a[1]);
+		board.removePiece(a[0], a[1], toRemove);
 			//how do i get back to the number instead of coords?
-			currentPos.put(name,reversedHashMap.get(newSpotCoords));
-			if(newSpotCoords[0]==7&&newSpotCoords[1]==0){
-				winner=currentTurn;
-				isRunning = false;
-			
-				
-			}else{
+		currentPos.put(currentTurn,newPos);
+		if(newSpotCoords[0]==7&&newSpotCoords[1]==0){
+			winner=currentTurn;
+			isRunning = false;	
+		}else{
 			changeTurn();
-			}
+		}
 			return true;
-					
-				
-			
-
-			
-		
-
 	}
 
 	
@@ -181,8 +179,10 @@ public int[] giveNewSpot(String name){
 	private Piece accessPiece(int row, int column, String name){
 		ArrayList<Piece> pieceArray =board.getBoard()[row][column].getPieces();
 		for(int i=0; i<pieceArray.size();i++){
-			if(pieceArray.get(i).getColor().equals(playerToPiece.get(name).getColor())){
-				return pieceArray.get(i);
+			//if(!(pieceArray.get(i).getType()=='E')){
+					if(pieceArray.get(i).getColor().equals(playerToPiece.get(name).getColor())){
+						return pieceArray.get(i);
+			//	}
 			}
 		}
 		return board.getBoard()[row][column].getPieces().get(0);
@@ -217,7 +217,7 @@ public int[] giveNewSpot(String name){
 		// TODO Auto-generated method stub
 		return false;
 	}
-	public static void main(String[] args){
+/*	public static void main(String[] args){
 		String[] players = new String[]{"Adrian", "Alex"};
 		
 		ChutesAndLaddersGame t = new ChutesAndLaddersGame(players);
@@ -248,6 +248,7 @@ public int[] giveNewSpot(String name){
 		}
 	}
 
+	*/
 	@Override
 	public boolean buttonPressed(String button, String name) {
 		return playMove(0,0,name);
