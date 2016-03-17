@@ -429,6 +429,10 @@ public class Client implements Runnable{
 				{
 					myTurn = true;
 				}
+				else
+				{
+					myTurn  = false;
+				}
 				
 				//// set running state
 				isRunning = state.getIsRunning();
@@ -436,9 +440,13 @@ public class Client implements Runnable{
 				
 				//// game is not running set winner
 				if (!isRunning){
-					winner = state.getWinner();
-					gui.logger("Winner is " + winner + "!", true);
-					
+					if (state.getWinner().equals("TIE"))
+					{
+						gui.logger("Game is a tie!", true);
+					}
+					else{
+						gui.logger("Winner is " + winner + "!", true);
+					}
 				}
 			}
 		});
