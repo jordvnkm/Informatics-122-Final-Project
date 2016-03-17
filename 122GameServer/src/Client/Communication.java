@@ -133,49 +133,49 @@ public class Communication extends Thread
     	
     }
     
-    public static void main(String[] Args)
-    {
-    	Communication c = new Communication("localhost", 8000);
-    	try {
-			c.connectToServer();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-    
-    	c.sendMessage(JSONClientTranslator.loginType("Login"));
-    	
-    	while(true){
-    		try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-			}
-    		break;
-    	}
-    	
-    	c.sendMessage(JSONClientTranslator.username("Alex"));
-    	while(true)
-    	{
-    		try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-    		break;
-    	}
-    	
-    	String message = null;
-		try {
-			message = c.receiveMessage();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	System.out.println(message);
-    	
-    	while(true){
-    		
-    	}
-    }
+//    public static void main(String[] Args)
+//    {
+//    	Communication c = new Communication("localhost", 8000);
+//    	try {
+//			c.connectToServer();
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//    
+//    	c.sendMessage(JSONClientTranslator.loginType("Login"));
+//    	
+//    	while(true){
+//    		try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//			}
+//    		break;
+//    	}
+//    	
+//    	c.sendMessage(JSONClientTranslator.username("Alex"));
+//    	while(true)
+//    	{
+//    		try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//    		break;
+//    	}
+//    	
+//    	String message = null;
+//		try {
+//			message = c.receiveMessage();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//    	System.out.println(message);
+//    	
+//    	while(true){
+//    		
+//    	}
+//    }
 	
 }

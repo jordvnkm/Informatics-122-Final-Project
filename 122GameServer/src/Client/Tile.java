@@ -15,7 +15,8 @@ public class Tile extends Canvas{
 	//resizable canvas source:https://dlemmermann.wordpress.com/2014/04/10/javafx-tip-1-resizable-canvas/
 	private GraphicsContext gc;
 	private Color bg,fg;
-	private String fgText;
+	private String fgText1;
+	private String fgText2;
 	private int xlocation,ylocation;
 	private ArrayList<Piece> pieces;
 	
@@ -33,8 +34,8 @@ public class Tile extends Canvas{
 		setup();
 		xlocation = xloc;
 		ylocation = yloc;
-		draw();
 		pieces = new ArrayList<Piece>();
+		draw();
 	}
 	
 	public void setup(){
@@ -42,23 +43,26 @@ public class Tile extends Canvas{
 		//centering text http://stackoverflow.com/questions/14882806/center-text-on-canvas
 		gc.setTextAlign(TextAlignment.CENTER);
 		gc.setTextBaseline(VPos.CENTER);
-		bg = Color.rgb(0, 0, 0);
-		fg = Color.rgb(255, 255, 255);
-		fgText="";
+		bg = Color.rgb(255, 255, 255);
+		fg = Color.rgb(0, 0, 0);
+		fgText1="";
+		fgText2 = "";
 	}
 	
 	public void setBackgroundColor(int r,int g,int b){
 		bg = Color.rgb(r, g, b);
-		draw();
+		//draw();
 	}
-	public void setForegroundColor(int r,int g,int b){
-		fg = Color.rgb(r, g, b);
-		draw();
-	}
-	public void setText(String s){
-		fgText = s;
-		draw();
-	}
+//	public void setForegroundColor(int r,int g,int b){
+//		fg = Color.rgb(r, g, b);
+//		draw();
+//	}
+//	public void setText(String s){
+//		fgText = s;
+//		draw();
+//	}
+	
+	
 	public void draw(){
 		//draw Background
         gc.setFill(bg);
@@ -67,9 +71,79 @@ public class Tile extends Canvas{
 		gc.setFill(Color.rgb(255, 255, 255));
 		gc.strokeRect(0,0,getWidth(),getHeight());
 		//draw Foreground
-        gc.setFill(fg);
-        gc.setFont(new Font(getHeight()));
-        gc.fillText(fgText, Math.round(getWidth()/2),Math.round(getHeight()/2));
+		
+		if (pieces.size() == 1)
+		{
+			String shape = pieces.get(0).getShape();
+			if (shape.equals("CROSS"))
+			{
+				fgText1 = "X";
+			}
+			else if (shape.equals("CIRCLE"))
+			{
+				fgText1 = "0";
+			}
+			else
+			{
+				fgText1 = "";
+			}
+		}
+		else if (pieces.size() == 2)
+		{
+			String shape1 = pieces.get(0).getShape();
+			String shape2 = pieces.get(1).getShape();
+			if (shape1.equals("CROSS"))
+			{
+				fgText1 = "X";
+			}
+			else if (shape1.equals("CIRCLE"))
+			{
+				fgText1 = "0";
+			}
+			
+			if (shape2.equals("CROSS"))
+			{
+				fgText1 = "X";
+			}
+			else if (shape2.equals("CIRCLE"))
+			{
+				fgText1 = "0";
+			}
+		}
+		else
+		{
+			fgText1 = "";
+		}
+		
+		if ( pieces.size() == 1)
+		{
+			int[] color = pieces.get(0).getColor();
+
+			gc.setFill(Color.rgb(color[0], color[1], color[2]));
+			gc.setFont(new Font(getHeight()));
+			gc.fillText(fgText1, Math.round(getWidth()/2),Math.round(getHeight()/2));
+		}
+		else if (pieces.size() == 2) // more than one piece on a tile
+		{
+			int[] color1 = pieces.get(0).getColor();
+			int[] color2 = pieces.get(1).getColor();
+			
+			// piece 1
+			gc.setFill(Color.rgb(color1[0], color1[1], color1[2]));
+			gc.setFont(new Font(getHeight()));
+			gc.fillText(fgText1,  Math.round(getWidth()/3), Math.round(getHeight()/3));
+			
+			//piece 2
+			gc.setFill(Color.rgb(color2[0], color2[1], color2[2]));
+			gc.setFont(new Font(getHeight()));
+			gc.fillText(fgText1, Math.round((getWidth()/3) + (getWidth()/3)), Math.round(getHeight()/3));
+		}
+		else
+		{
+			//gc.setFill(Color.rgb(0, 0, 0));
+			gc.setFont(new Font(getHeight()));
+			gc.fillText(fgText1, Math.round(getWidth()/2),Math.round(getHeight()/2));
+		}
 	}
 
 	public int getXlocation(){

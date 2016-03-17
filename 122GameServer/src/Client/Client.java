@@ -1,4 +1,5 @@
 package Client;
+import GamePlugins.*;
 
 import java.util.*;
 import org.json.simple.JSONArray;
@@ -23,7 +24,7 @@ public class Client implements Runnable{
 	private GameData gameData;
 	private boolean myTurn = false;
 	private boolean madeMove = false;
-	private ArrayList<Integer> move = new ArrayList<Integer>();
+	private ArrayList<Integer> move;
 	private String clientName;
 	private String opponentName;
 	private String gameName;
@@ -34,6 +35,12 @@ public class Client implements Runnable{
 	private boolean buttonPressed = false;
 	private boolean buttonValid = false;
 	private boolean connectionEstablished = false;
+	private boolean quitGame = false;
+	
+	///// testing purpose only  TODO delete
+	private GameState t;
+	
+	
 	///////////////////////////////////////////
 	//// client constructor
 	public Client(String serverip, int portnum, MainStage inputgui)
@@ -42,7 +49,6 @@ public class Client implements Runnable{
 		port = portnum;
 		gameData = new GameData();
 		gui = inputgui;
-		setupMenuListeners();
 		setupBoard(); // will need to do this when parsing game state
 
 	}
@@ -218,8 +224,8 @@ public class Client implements Runnable{
                 	gui.logger("Mouse clicked: "+xloc+","+yloc,true);
                 	if (myTurn)
                 	{
-                		t.setText("X");
-                		setMove(-1, -1, xloc, yloc);
+                		//t.setText("X");
+                		setMove( xloc, yloc);
                 	}
                 	else
                 	{
@@ -233,12 +239,11 @@ public class Client implements Runnable{
 	
 	///////////////////////////////////////////////////////////////////
 	////// function that is used by mouse listeners.
-	public void setMove(int xOrigin, int yOrigin, int xDest, int yDest)
+	public void setMove(int xlocation, int ylocation)
 	{
-		move.add(xOrigin);
-		move.add(yOrigin);
-		move.add(xDest);
-		move.add(yDest);
+		move = new ArrayList<Integer>();
+		move.add(xlocation);
+		move.add(ylocation);
 
 		System.out.println(move);
 		madeMove = true;
@@ -271,11 +276,25 @@ public class Client implements Runnable{
 	{
 		JSONObject obj = new JSONObject();
 		obj.put("type", "ButtonPressed");
+		obj.put("ButtonType", "Roll");
 
 		if (com.sendMessage(obj.toJSONString()))
 			writeToLogger("Button pressed sent");
 		else
 			writeToLogger("Button pressed failed.");
+	}
+	
+	//////////////////////////////////////////////////////////////////
+	//// sends a string representing that the player wants to quit game
+	public void sendQuitGame(Communication com)
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("type", "QuitGame");
+		
+		if (com.sendMessage(obj.toJSONString()))
+			writeToLogger("Quit game sent");
+		else
+			writeToLogger("Quit game failed.");
 	}
 	
 	
@@ -310,30 +329,6 @@ public class Client implements Runnable{
 	
 	
 	
-	////////////////////////////////////////////////////
-	///// sends location of piece that has been selected
-//	public void sendSelectPiece(int x, int y)
-//	{
-//		JSONObject obj = new JSONObject();
-//		obj.put("type", "selectPiece");
-//		obj.put("xVal", x);
-//		obj.put("yVal", y);
-//		
-//		try 
-//		{
-//			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-//		    out.write(obj.toJSONString());
-//		    out.flush();
-//		    out.close();
-//		}
-//		catch (IOException e)
-//		{
-//			e.printStackTrace();
-//		}
-//	}
-	
-	
-	
 	////////////////////////////////////////////////
 	/// sends the location that the piece is supposed to move 
 	public void sendMove(Communication com)
@@ -341,10 +336,8 @@ public class Client implements Runnable{
 		
 		JSONObject obj = new JSONObject();
 		obj.put("type", "movePiece");
-		obj.put("xOrigin", move.get(0)); // xOrigin
-		obj.put("yOrigin", move.get(1)); // yOrigin
-		obj.put("xDest", move.get(2));   // xDest
-		obj.put("yDest", move.get(3));   // yDest
+		obj.put("X", move.get(0)); // xOrigin
+		obj.put("Y", move.get(1)); // yOrigin
 		
 		if (com.sendMessage(obj.toJSONString())){
 			writeToLogger("Move sent");
@@ -372,6 +365,7 @@ public class Client implements Runnable{
 			if (!jsonString.equals(""))
 				break;
 		}	
+		System.out.println(jsonString);
 		
 		JSONBoard state = new JSONBoard(jsonString);
 		
@@ -392,7 +386,7 @@ public class Client implements Runnable{
 						for (int x = 0 ; x < 2 ; x ++)
 						{
 							String shape = state.getPieceShape(i, j, x);
-							if (!shape.equals("empty"))
+							if (!(shape == null))
 							{
 								int[] color = state.getPieceColor(i, j, x);
 								String layer = state.getPieceLayer(i, j, x);
@@ -400,8 +394,8 @@ public class Client implements Runnable{
 								Piece piece = new Piece(color, shape , layer , type.charAt(0));
 								t.addPiece(piece);
 							}
-
 						}
+						t.draw();
 					}
 				}
 			}
@@ -503,7 +497,7 @@ public class Client implements Runnable{
 	}
 
 	
-	
+	//// parses list of players
 	public void parsePlayerList(Communication com)
 	{
 		String jsonString = "";

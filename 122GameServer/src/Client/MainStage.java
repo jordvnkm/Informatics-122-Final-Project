@@ -106,7 +106,6 @@ public class MainStage extends Stage{
 	
 	public void setBoard(int rows, int columns)
 	{
-//		gameboard = new Board(rows, columns);
 		gameboard.setDimensions(rows, columns);
 
 	}

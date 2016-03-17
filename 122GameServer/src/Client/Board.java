@@ -45,10 +45,10 @@ public class Board extends GridPane{
         		Tile x = new Tile(BOARD_WIDTH/row,BOARD_HEIGHT/row,i,j);
 
         		tiles.get(i).add(x);
-
-        		x.setBackgroundColor(255, 255, 255);
-        		x.setForegroundColor(0, 0, 0);
-        		x.setText("");
+        		//x.setBackgroundColor(255, 255, 255);
+//        		x.setForegroundColor(0, 0, 0);
+//        		x.setText("");
+        		
 
         		this.add(x, i,j);
         		//System.out.println("added tile");
