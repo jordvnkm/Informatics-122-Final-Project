@@ -1,188 +1,129 @@
-package Client;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.json.simple.JSONObject;
+import javax.swing.SwingUtilities;
+import javax.swing.event.SwingPropertyChangeSupport;
 
-public class Communication extends Thread
+
+/**
+ *
+ * @author malar
+ */
+public class Server extends Thread
 {
-	private String serverIP;
-	private int serverPort;
-	private int clientPort;
-	private Socket socket;
-	
-    private DataInputStream input;
-    private DataOutputStream output;
-        
-    boolean listening;
+
+    private ServerSocket server;
+    private boolean runServer;
     
-    boolean consoleDebug = true;
+    private Lobby lobby;
+    private ServerController controller;
     
-	Communication(String serverIP, int serverPort)
-	{
-		this.serverIP = serverIP;
-		this.serverPort = serverPort;
-		
-		listening = false;
-	}
-	
-	/*
-	 * Connects client to server
-	 */
-	public boolean connectToServer()
-	{
-		try{
-			socket = new Socket(serverIP, serverPort);
-			
-            input = new DataInputStream(socket.getInputStream());
-            output = new DataOutputStream(socket.getOutputStream());
-            
-            
-			//this should be the welcome message
-			String serverMessage = input.readUTF();
-			
-			if(true)
-				System.out.println(serverMessage);
-			
-			//Check server msg
-			if(false)
-				throw new Exception("***Server Welcome Message is Incorrect***");
-			
-			}
-			
-		catch (IOException e)
-		{
-			if(consoleDebug)
-			{
-				System.out.println("****Could not connect to server****");
-				e.printStackTrace();
-				return false;
-			}
-		}	
-		
-		catch(Exception e)
-		{
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-		return true;
-	}
-	
-	/*
-	 * Sends a message to the server
-	 */
-	public boolean sendMessage(String s)
-	{
-		try 
-		{
-			output.writeUTF(s);
-			return true;
-		} catch (IOException e) 
-		{
-			if(consoleDebug)
-			{
-				System.out.println("****Message Failed to Send****");
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			return false;
-		}
-		
-	}
-	
-	/*
-	 * Receives a message from the server
-	 */
-	public String receiveMessage()
-	{
-		try 
-		{
-			return(input.readUTF());
+    private boolean consoleDebug = true;
+    
+    
+
+    //non-default constructor
+    public Server(ServerController controller)
+    {
+    	this.controller = controller;
+    	
+        //instantiates our lobby for the connections
+        lobby = new Lobby();   
+    }
+
+    /**
+     * ***************************************************************************
+     * public void execute()
+     *
+     * Begins listening for client connections. When connection is accepted, the
+     * player socket is sent to the Lobby
+     * @throws IOException 
+     * @throws InterruptedException 
+     ****************************************************************************
+     */
+    public void startServer(int portNum) throws IOException
+    {	
+        server = new ServerSocket(portNum);
+
+        runServer = true;
+
+    }
+
+    public void stopServer() 
+    {
+        try {
+            runServer = false;
+			server.close();
 		} 
-		
-		catch (IOException e) {
+        
+        catch (IOException e) 
+        {
 			if(consoleDebug)
 			{
-				System.out.println("****Could not receive a message****");
 				e.printStackTrace();
+				System.out.println("handling closing the server connection to stop the server in the stopServer()");
 			}
-			return "";
 		}
-	}
-	
-	/***************************************************************************
-	 * 	public void loginHandshake()
-	 * 
-	 * 	This method gets the login information from the GUI as a JSON and sends it
-	 * 		to the server. The server will return a JSON message that contains a
-	 * 		status of if the login was good or not along with some other. If the
-	 * 		connection fails, null will be returned 
-	 ***************************************************************************/
-	public String loginHandshake(String s)
-	{
-	
-			//gets the input from the GUI and send the appropriate login information to the server
-			sendMessage(s);
-			
-			
-			//gets the login information from the server
-			String serverMessage = receiveMessage();
-			
-			return serverMessage;
-		
-	}
-	
-	
-	
+      
+    }
+    
+    
+    
+    private void displayConnection(String ip, int port)
+    {
+    	  if (!SwingUtilities.isEventDispatchThread()) {
+    		     SwingUtilities.invokeLater(new Runnable() {
+    		       @Override
+    		       public void run() {
+    		    	   //displayConnection(ip, port);
+    		     	  controller.GUINewConnection(ip, port);
+
+    		       }
+    		     });
+    		   }
+    	  
+    }
+
     @Override
     public void run()
-    {
-    	String serverMessage;
-    	listening = true;
-    	
-    	while(listening)
-    	{
-    		serverMessage = receiveMessage();
-    		//update GUI???
-    		//need to know if its a a game list or something els??
-    	}
-    }
-    
-    public static void main(String[] Args)
-    {
-    	Communication c = new Communication("localhost", 8000);
-    	c.connectToServer();
-    	
-    	JSONObject j = new JSONObject();
-    	j.put("type", "LoginType");
-    	j.put("Command", "CreateUser");
-    	c.sendMessage(j.toJSONString());
-    	
-    	j = new JSONObject();
-    	j.put("type", "Username");
-    	j.put("User", "Alex");
-    	c.sendMessage(j.toJSONString());
-    	
-    	while(true){
-    		try {
-				c.sleep(2000);
-			} catch (InterruptedException e) {
+    {    	
+		Socket tmpSocket;
+
+		while (runServer)
+        {
+			try {
+				
+				//waits for the connection
+				tmpSocket = server.accept();
+				
+				//adds player to lobby
+	            lobby.addNewConnection(tmpSocket);
+	            displayConnection(tmpSocket.getRemoteSocketAddress().toString(), tmpSocket.getPort());
+	            
+	            
+			} 
+			
+			catch (IOException e) 
+			{
+				if(consoleDebug)
+				{
+					e.printStackTrace();
+					System.out.println("handling in the run() method of the server class (IO)");
+				}
 			}
-    		break;
-    	}
-    	
-    	j = new JSONObject();
-    	j.put("type", "Description");
-    	j.put("Bio", "Likes bikes");
-    	c.sendMessage(j.toJSONString());
-    	while(true)
-    	{
-    		// do nothing
-    	}
+
+
+        }
+
     }
-	
+
 }
