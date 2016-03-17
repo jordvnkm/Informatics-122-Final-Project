@@ -3,6 +3,12 @@ package GamePlugins;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+
+import plugin.Board;
+import plugin.GameState;
+import plugin.Piece;
+import plugin.Tile;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +16,7 @@ import java.util.Arrays;
 public class ChutesAndLaddersGame extends GameState{
 
 	private HashMap<String, Piece> playerToPiece;
-	private HashMap<int[],int[]> specialty;
+	private HashMap<Integer,int[]> specialty;
 	private HashMap<Integer, int[]> positioning;
 	private HashMap<String,Integer> currentPos;
 	HashMap<int[], Integer> reversedHashMap;
@@ -22,7 +28,7 @@ public class ChutesAndLaddersGame extends GameState{
 	
 	public ChutesAndLaddersGame(String[] players){
 		super(players);
-		specialty = new HashMap<int[],int[]>();
+		specialty = new HashMap<Integer,int[]>();
 		positioning = new HashMap<Integer,int[]>();
 		currentPos = new HashMap<String,Integer>();
 		r = new Random();
@@ -91,10 +97,10 @@ public class ChutesAndLaddersGame extends GameState{
 		board.getTile(4, 4).setBackgroundColor(0,252,255);
 		board.getTile(0, 2).setBackgroundColor(0,252,255);
 
-		specialty.put( new int[]{4,7}, new int[]{2,4});
-		specialty.put( new int[]{6,0}, new int[]{4,0});
-		specialty.put( new int[]{0,2}, new int[]{2,5});
-		specialty.put( new int[]{4,4}, new int[]{6,4});
+		specialty.put( 25, new int[]{2,4});
+		specialty.put( 34, new int[]{4,0});
+		specialty.put(2, new int[]{2,5});
+		specialty.put( 22, new int[]{6,4});
 		
 		board.addPiece(0 , 0,  new Piece(purple, "CIRCLE", "1", 'O'));
 		board.addPiece(0, 0,  new Piece(green, "CIRCLE", "1", 'O'));
@@ -114,9 +120,9 @@ public int[] giveNewSpot(String name){
 	int newPos= moves+currentPos.get(name);
 	if(positioning.containsKey(newPos)){
         System.out.println(positioning.get(newPos)[0]+","+positioning.get(newPos)[1]);
-		if(specialty.containsKey(positioning.get(newPos))){
-            System.out.println(specialty.get(positioning.get(newPos)[0] +"," +specialty.get(positioning.get(newPos)[1] );
-            return specialty.get(positioning.get(newPos));
+		if(specialty.containsKey(newPos)){
+            System.out.println(specialty.get(newPos)[0] +"," +specialty.get(newPos)[1] );
+            return specialty.get(newPos);
 		}else{
 		
 			return positioning.get(newPos);
