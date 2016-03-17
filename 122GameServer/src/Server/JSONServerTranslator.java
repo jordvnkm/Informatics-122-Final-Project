@@ -96,4 +96,13 @@ public class JSONServerTranslator{
 		return msg.toJSONString();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static String errorMsg(String message){
+		JSONObject msg = new JSONObject();
+		msg.put("type", "error");
+		msg.put("message", message);
+		return msg.toJSONString();
+	}
+	
+	
 }

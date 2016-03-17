@@ -251,10 +251,7 @@ public class Player extends Thread
      */
     private String badLogin()
     {
-        JSONObject message = new JSONObject();
-        message.put("error", "username not valid");
-
-        return message.toJSONString();
+        return JSONServerTranslator.errorMsg("username not valid");
     }
     public void wonGame(String game)
     {
