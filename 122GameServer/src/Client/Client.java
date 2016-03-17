@@ -1,5 +1,5 @@
 package Client;
-import GamePlugins.*; // need to delete
+//import GamePlugins.*; // need to delete
 
 import java.util.*;
 import org.json.simple.JSONArray;
@@ -35,12 +35,12 @@ public class Client implements Runnable{
 	private boolean buttonPressed = false;
 	private boolean buttonValid = false;
 	private boolean connectionEstablished = false;
-	private boolean quitGame = false;
-	private GameState tic;
+//	private boolean quitGame = false;
+//	private GameState tic;
 	
 	
 	///// testing purpose only  TODO delete
-	private GameState t;
+	//private GameState t;
 	
 	
 	///////////////////////////////////////////
@@ -122,7 +122,10 @@ public class Client implements Runnable{
 	 * Sends the server that the client quits the game.
 	 */
 	public void quitGame(){
-		quitGame = true;
+		if (connectionEstablished)
+		{
+			com.sendMessage(JSONClientTranslator.quitGame());
+		}
 	}
 	
 	/**
@@ -581,10 +584,6 @@ public class Client implements Runnable{
 		
     	while (true){
     		try{
-    		if (quitGame)
-    		{
-    			sendQuitGame(com);
-    		}
     		String message;
     		message= com.receiveMessage();
     		System.out.println("New Message: "+message);

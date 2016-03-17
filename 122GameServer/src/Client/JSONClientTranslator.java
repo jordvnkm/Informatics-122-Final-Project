@@ -23,7 +23,7 @@ public class JSONClientTranslator{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static String quiteGame(){
+	public static String quitGame(){
 		JSONObject quit = new JSONObject();
 		quit.put("type", "QuitGame");
 		return quit.toJSONString();
