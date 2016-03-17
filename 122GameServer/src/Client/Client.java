@@ -280,7 +280,7 @@ public class Client implements Runnable{
 		move = new ArrayList<Integer>();
 		move.add(xlocation);
 		move.add(ylocation);
-
+		com.sendMessage(JSONClientTranslator.movePiece(xlocation, ylocation));
 		System.out.println(move);
 		madeMove = true;
 	}
