@@ -107,6 +107,14 @@ public class Client implements Runnable{
 	 * Opens request game menu and sends the client response to the server
 	 */
 	public void requestGame(){
+		if(com!=null){
+			String players = "";
+			for (String s:gameData.getPlayers())
+				players+=s+"\n";
+			Dialogs.chooseGame(gameData.getGames().toArray(new String[]{}), players);
+			
+			
+		}
 		
 	}
 	
@@ -142,6 +150,11 @@ public class Client implements Runnable{
 			return;
 		String username = result[0];
 		String info = result[1];
+		if(connectionEstablished){
+			com.sendMessage(JSONClientTranslator.loginType("CreateUser"));
+		  	com.sendMessage(JSONClientTranslator.username(username));
+		  	com.sendMessage(JSONClientTranslator.username(info));
+		}
 	}
 	public void setupBoard(){
 		//gui.setBoard(0, 0);
@@ -579,11 +592,44 @@ public class Client implements Runnable{
     		
     		if(type.equals("Welcome")){
     			writeToLogger(parsed.get(1));
-    			Platform.runLater(new Runnable() {
+    			
+    			//player needs to choose to make new
+    			//or use existing account on server
+    			//through menus
+    			
+    			/*Platform.runLater(new Runnable() {
     				@Override
     				public void run(){
     					login();
-    				}});
+    				}});*/
+    		}
+    		else if(type.equals("LoginStatus")){
+    			if(parsed.get(1).equals("Successful"))
+    				writeToLogger("Login Successful.");
+    			else if(parsed.get(1).equals("Failure"))
+    				writeToLogger("Login Failed.");
+    		}
+    		else if(type.equals("GameList")){
+    			gameData.clearGameData();
+    			for(int i=1;i<parsed.size();i++)
+    				gameData.addGame(parsed.get(i));
+    		}
+    		else if(type.equals("WaitingToPlay")){
+    			
+    		}
+    		else if(type.equals("PlayerList")){
+    			gameData.clearPlayerData();
+    			for(int i=0;i<parsed.size();i++)
+    				gameData.addPlayer(parsed.get(i));
+    		}
+    		else if(type.equals("ButtonDisabled")){
+    			
+    		}
+    		else if(type.equals("ButtonText")){
+    			
+    		}
+    		else if(type.equals("GameBoard")){
+    			
     		}
     		
     		
