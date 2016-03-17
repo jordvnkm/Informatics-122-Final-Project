@@ -111,8 +111,10 @@ public class Client implements Runnable{
 			String players = "";
 			for (String s:gameData.getPlayers())
 				players+=s+"\n";
-			Dialogs.chooseGame(gameData.getGames().toArray(new String[]{}), players);
-			
+			String game = Dialogs.chooseGame(gameData.getGames().toArray(new String[]{}), players);
+			if(game!=null){
+				com.sendMessage(JSONClientTranslator.selectedGame(game));
+			}
 			
 		}
 		
@@ -122,7 +124,7 @@ public class Client implements Runnable{
 	 * Sends the server that the client quits the game.
 	 */
 	public void quitGame(){
-		
+		//may not implement
 	}
 	
 	/**
@@ -196,6 +198,7 @@ public class Client implements Runnable{
 	{
 		gui.getButton().setOnAction((ActionEvent e) -> { // need to figure out action for button
 			gui.logger("Button Pressed !",true);
+			com.sendMessage(JSONClientTranslator.buttonPressed("roll"));
 			if (myTurn)
 			{
 				if (buttonValid)
