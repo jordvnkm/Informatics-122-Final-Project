@@ -84,6 +84,7 @@ public class Profile {
      */
     public void createNewProfile(String name){
     	this.setProfileFile(name);
+    	this.userName = name;
     	this.initFile();
     	this.loadFile();
     }

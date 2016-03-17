@@ -86,10 +86,6 @@ public class Player extends Thread
         // client, it has to be in a loop
         
         sendMessage(initialHandshake());
-    
-    	if(!loggedIn){
-    		sendMessage(initialHandshake());
-    	}
         
 		//loops until login in reached for this player
 		while(!loggedIn)
@@ -233,9 +229,7 @@ public class Player extends Thread
      */
     private String initialHandshake()
     {
-        JSONObject message = new JSONObject();
-        message.put("Welcome", "Please send the login info");
-        return message.toJSONString();
+        return JSONServerTranslator.welcomeMessage();
     }
 
     /**
