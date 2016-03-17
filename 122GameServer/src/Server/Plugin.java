@@ -163,21 +163,21 @@ public class Plugin {
 		return "Error";
 	}
         
-        public static List<String> getGameList()
+    public static List<String> getGameList()
+    {
+    	Plugin test;
+        File folder = new File(pluginsDir);
+        File[] listOfFiles = folder.listFiles();
+        ArrayList<String> pluginList = new ArrayList<>();
+        for (File file : listOfFiles) 
         {
-        	Plugin test;
-            File folder = new File(pluginsDir);
-            File[] listOfFiles = folder.listFiles();
-            ArrayList<String> pluginList = new ArrayList<>();
-            for (File file : listOfFiles) 
+            if (file.isFile() && file.getName().endsWith(".jar")) 
             {
-                if (file.isFile() && file.getName().endsWith(".jar")) 
-                {
-                	test = new Plugin(file.getName());
-                	if (test.isValidPlugin())
-                		pluginList.add(file.getName().split(".")[0]);
-                }
+            	test = new Plugin(file.getName().split("\\.")[0]);
+            	if (test.isValidPlugin())
+            		pluginList.add(file.getName().split("\\.")[0]);
             }
-            return pluginList;
         }
+        return pluginList;
+    }
 }
