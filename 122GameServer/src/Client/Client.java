@@ -597,7 +597,6 @@ public class Client implements Runnable{
     		}
     		String type = parsed.get(0);
     		
-    		System.out.println(message);
     		
     		
     		if(type.equals("Welcome")){
@@ -607,6 +606,15 @@ public class Client implements Runnable{
     				public void run(){
     					login();
     				}});
+    		}
+    		else if (type.equals("LoginStatus")){
+    			writeToLogger("Login " + parsed.get(1));
+    			System.out.println(message);
+    			
+    		}
+    		
+    		else if (type.equals("GameList")){
+    			
     		}
     		
     		
