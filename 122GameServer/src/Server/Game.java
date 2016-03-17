@@ -1,5 +1,7 @@
 package Server;
 
+import java.util.ArrayList;
+
 //***
 //importing the GamePlugins package to access board
 
@@ -137,7 +139,10 @@ public class Game
     {
         // Todo: We need to start the game here
         logic = new Plugin(pluginName);
-//        logic.initializeGame((String[])players.toArray());
+        String[] playernames = new String[players.size()];
+        for(int i=0;i<playernames.length;i++)
+        	playernames[i]=players.get(i).getPlayerName();
+        logic.initializeGame(playernames);
         
     	// TODO: get game state via getBoard, send gamestate to everyone in the 'players' list
         for (Player player : players)
