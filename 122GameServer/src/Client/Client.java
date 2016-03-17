@@ -445,6 +445,7 @@ public class Client implements Runnable{
 						gui.logger("Game is a tie!", true);
 					}
 					else{
+						winner = state.getWinner();
 						gui.logger("Winner is " + winner + "!", true);
 					}
 				}
