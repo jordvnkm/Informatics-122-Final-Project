@@ -245,7 +245,7 @@ public class Lobby
 
         players.stream().forEach((player) ->
         {
-            retList.add(player.getName());
+            retList.add(player.getPlayerName());
         });
         return retList;
     }
