@@ -81,11 +81,11 @@ public class Tile extends Canvas{
 			}
 			else if (shape.equals("CIRCLE"))
 			{
-				fgText1 = "0";
+				fgText1 = "\u25cf";
 			}
-			else
+			else if (shape.equals("OH"))
 			{
-				fgText1 = "";
+				fgText1 = "O";
 			}
 		}
 		else if (pieces.size() == 2)
@@ -98,16 +98,24 @@ public class Tile extends Canvas{
 			}
 			else if (shape1.equals("CIRCLE"))
 			{
-				fgText1 = "0";
+				fgText1 = "\u25cf";
+			}
+			else if (shape1.equals("OH"))
+			{
+				fgText1 = "O";
 			}
 			
 			if (shape2.equals("CROSS"))
 			{
-				fgText1 = "X";
+				fgText2 = "X";
 			}
 			else if (shape2.equals("CIRCLE"))
 			{
-				fgText1 = "0";
+				fgText2 = "\u25cf";
+			}
+			else if (shape2.equals("OH"))
+			{
+				fgText2 = "O";
 			}
 		}
 		else
@@ -127,16 +135,20 @@ public class Tile extends Canvas{
 		{
 			int[] color1 = pieces.get(0).getColor();
 			int[] color2 = pieces.get(1).getColor();
+			System.out.println("HELLO");
+
+			System.out.println(color1[0] + " " + color1[1]+ " " + color1[2]);
+			System.out.println(color2[0] + " " + color2[1] + " " +color2[2]);
 			
 			// piece 1
 			gc.setFill(Color.rgb(color1[0], color1[1], color1[2]));
 			gc.setFont(new Font(getHeight()));
-			gc.fillText(fgText1,  Math.round(getWidth()/3), Math.round(getHeight()/3));
+			gc.fillText(fgText1,  Math.round(getWidth()/4), Math.round(getHeight()/3));
 			
 			//piece 2
 			gc.setFill(Color.rgb(color2[0], color2[1], color2[2]));
 			gc.setFont(new Font(getHeight()));
-			gc.fillText(fgText1, Math.round((getWidth()/3) + (getWidth()/3)), Math.round(getHeight()/3));
+			gc.fillText(fgText2, Math.round((getWidth()/4) + (getWidth()/4) + (getWidth()/4)), Math.round(getHeight()/3));
 		}
 		else
 		{

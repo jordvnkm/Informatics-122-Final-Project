@@ -1,5 +1,5 @@
 package Client;
-import GamePlugins.*;
+import GamePlugins.*; // need to delete
 
 import java.util.*;
 import org.json.simple.JSONArray;
@@ -36,6 +36,8 @@ public class Client implements Runnable{
 	private boolean buttonValid = false;
 	private boolean connectionEstablished = false;
 	private boolean quitGame = false;
+	private GameState tic;
+	
 	
 	///// testing purpose only  TODO delete
 	private GameState t;
@@ -222,15 +224,22 @@ public class Client implements Runnable{
                 	int xloc= t.getXlocation();
                 	int yloc= t.getYlocation();
                 	gui.logger("Mouse clicked: "+xloc+","+yloc,true);
-                	if (myTurn)
+//                	tic.playMove(xloc, yloc, tic.getCurrentTurn());
+//                	parseGameState(tic.getGameState());
+                	if (myTurn && isRunning)
                 	{
                 		//t.setText("X");
                 		setMove( xloc, yloc);
                 	}
-                	else
+                	else if (!myTurn)
                 	{
                 		gui.logger("Not Your Turn", true);
                 	}
+                	else if (!isRunning)
+                	{
+                		gui.logger("Game Over", true);
+                	}
+
                 });
         	}
 	}
@@ -356,16 +365,15 @@ public class Client implements Runnable{
 	
 	////////////////////////////////////////////////////////////
 	//// parses board state
-	public void parseGameState(Communication com)
+	public void parseGameState(String jsonString/*Communication com*/)
 	{
-		String jsonString = "";
-		while (true)
-		{
-			//jsonString = com.receiveMessage();
-			if (!jsonString.equals(""))
-				break;
-		}	
-		System.out.println(jsonString);
+//		String jsonString = "";
+//		while (true)
+//		{
+//			//jsonString = com.receiveMessage();
+//			if (!jsonString.equals(""))
+//				break;
+//		}	
 		
 		JSONBoard state = new JSONBoard(jsonString);
 		
@@ -537,6 +545,18 @@ public class Client implements Runnable{
  */
 	@Override
 	public void run() {
+//		String[] players = new String[]{"Adrian", "Alex"};
+//		
+//		tic = new ChutesAndLaddersGame(players);
+//		
+//		while (isRunning)
+//		{
+//			
+//		}
+//
+//		System.out.println("Winner: " + tic.getWinner());
+		
+		
 		System.out.println("Thread to start communicating with server started");
 		//Attempt communication using serverIP and port
 		com = new Communication(serverIP,port);
@@ -592,8 +612,6 @@ public class Client implements Runnable{
 		com.closeConnection();
     	connectionEstablished=false;
     	com=null;
-
-		
 
 	}
 
