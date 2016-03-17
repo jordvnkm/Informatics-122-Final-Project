@@ -426,6 +426,7 @@ public class Client implements Runnable{
 				
 				/////////////////////////////////////////////////////
 				////// set turn
+				gui.logger(state.getCurrentTurn() + "'s turn!", true);
 				if (state.getCurrentTurn().equals(clientName))
 				{
 					myTurn = true;
