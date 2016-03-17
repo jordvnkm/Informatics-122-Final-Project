@@ -112,8 +112,9 @@ public class Player extends Thread
 
 		// TODO : send game plist and players to client
 		System.out.println("Player " + profile.getName() + "  Created/Logged In");
-        
-		sendLists();
+
+		//sendLists();
+		lobby.broadcastLists();
 		String player = profile.getName();
         while (true)
         {

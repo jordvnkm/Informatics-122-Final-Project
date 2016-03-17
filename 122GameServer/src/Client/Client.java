@@ -19,7 +19,6 @@ import java.io.*;
 public class Client implements Runnable{
 	public String serverIP;
 	public int port;
-	public Socket socket;
 	private MainStage gui;
 	private GameData gameData;
 	private boolean myTurn = false;
@@ -658,6 +657,7 @@ public class Client implements Runnable{
     		}
     		
     		else if (type.equals("GameList")){
+    			gameData.clearGameData();
     			for (int i = 1; i < parsed.size(); i ++)
     			{
     				gameData.addGame(parsed.get(i));

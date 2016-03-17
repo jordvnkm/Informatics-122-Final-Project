@@ -27,7 +27,12 @@ public class Lobby
         fullGames = new ArrayList<>();
         openGames = new ArrayList<>();
     }
-
+    
+    public void broadcastLists(){
+        for(Player p:players)
+        	p.sendLists();
+    }
+    
     public void addNewConnection(Socket socket)
     {
         Player tmp = new Player(socket, this);
@@ -36,6 +41,8 @@ public class Lobby
         tmp.start();
 
         players.add(tmp);
+        
+
     }
 
     /**
