@@ -615,7 +615,7 @@ public class Client implements Runnable{
     				gameData.addGame(parsed.get(i));
     		}
     		else if(type.equals("WaitingToPlay")){
-    			
+    			//similar to PlayerList, may not implement
     		}
     		else if(type.equals("PlayerList")){
     			gameData.clearPlayerData();
@@ -623,13 +623,22 @@ public class Client implements Runnable{
     				gameData.addPlayer(parsed.get(i));
     		}
     		else if(type.equals("ButtonDisabled")){
+    			Platform.runLater(new Runnable() {
+    				@Override
+    				public void run(){
+    					gui.getButton().setDisable(parsed.get(1).equals("true"));
+    				}});			
     			
     		}
     		else if(type.equals("ButtonText")){
-    			
+    			Platform.runLater(new Runnable() {
+    				@Override
+    				public void run(){
+    					gui.getButton().setText(parsed.get(1));
+    				}});	
     		}
     		else if(type.equals("GameBoard")){
-    			
+    			//gameboard method to update
     		}
     		
     		
