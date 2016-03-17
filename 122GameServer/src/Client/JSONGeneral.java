@@ -109,6 +109,12 @@ public class JSONGeneral
 				  returnString.add(GameList.get(i).toString());
 			}
 		}
+		
+		else if(type.equals("error")){
+			returnString.add("error");
+			returnString.add(jsonObj.get("message").toString());
+		}
 		return returnString;
 	}
+	
 }
