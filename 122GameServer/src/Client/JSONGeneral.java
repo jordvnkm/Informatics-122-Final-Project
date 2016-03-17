@@ -100,6 +100,21 @@ public class JSONGeneral
 			returnString.add("GameBoard");
 			returnString.add(jsonObj.get("Board").toString());
 		}
+		
+		//When the server pass the openGameList
+		else if(type.equals("OpenGameList")){
+			returnString.add("OpenGameList");
+			JSONArray GameList = (JSONArray)jsonObj.get("List");
+			for (int i = 0; i < GameList.size(); i++) {
+				  returnString.add(GameList.get(i).toString());
+			}
+		}
+		
+		else if(type.equals("error")){
+			returnString.add("error");
+			returnString.add(jsonObj.get("message").toString());
+		}
 		return returnString;
 	}
+	
 }

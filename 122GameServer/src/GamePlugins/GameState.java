@@ -1,7 +1,5 @@
 package GamePlugins;
-import Server.Player;
 
-import java.util.List;
 
 
 public abstract class GameState {
@@ -11,6 +9,8 @@ public abstract class GameState {
 	protected String currentTurn;
 	protected String winner;
 	protected boolean isRunning;
+	protected String errorMsg;
+	protected String gameMsg;
 	
 	
 	public GameState(String[] players){
@@ -56,5 +56,10 @@ public abstract class GameState {
 	
 	public Board getBoard(){
 		return this.board;
+	}
+	
+	public String getGameState(){
+		String jsonString = GameStateToJSON.gameStateToJSON(this.board, this.currentTurn, this.winner, this.isRunning, this.errorMsg, this.gameMsg);
+		return jsonString;
 	}
 }

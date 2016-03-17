@@ -26,17 +26,6 @@ public class JSONServerTranslator{
 		return login.toJSONString();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static String gameList(ArrayList<String> game){
-		JSONObject games = new JSONObject();
-		JSONArray gameArray = new JSONArray();
-		games.put("type", "GameList");
-		for(String g : game){
-			gameArray.add(g);
-		}
-		games.put("List", gameArray);
-		return games.toJSONString();
-	}
 	
 	@SuppressWarnings("unchecked")
 	public static String waitingToPlay(ArrayList<String> players){
@@ -94,6 +83,7 @@ public class JSONServerTranslator{
 		return text.toJSONString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static String gameList(List<String> games, boolean open)
 	{
 		JSONObject msg = new JSONObject();
@@ -105,5 +95,14 @@ public class JSONServerTranslator{
 		msg.put("List", gameArray);
 		return msg.toJSONString();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static String errorMsg(String message){
+		JSONObject msg = new JSONObject();
+		msg.put("type", "error");
+		msg.put("message", message);
+		return msg.toJSONString();
+	}
+	
 	
 }

@@ -11,7 +11,7 @@ public class TicTacToe extends GameState{
 		super(players);
 		playerToPiece = new HashMap<String, Piece>();
 		playerToPiece.put(players[0], new Piece(new int[]{0, 0, 255}, "CROSS", "1", 'X'));
-		playerToPiece.put(players[1], new Piece(new int[]{255, 0, 0}, "CIRCLE", "1", 'O'));
+		playerToPiece.put(players[1], new Piece(new int[]{255, 0, 0}, "OH", "1", 'O'));
 		setUpBoard();
 	}
 	
