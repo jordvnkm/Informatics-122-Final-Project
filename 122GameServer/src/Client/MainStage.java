@@ -1,6 +1,8 @@
 package Client;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -11,6 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainStage extends Stage{
@@ -33,7 +36,8 @@ public class MainStage extends Stage{
 	//main GUI setup
 	public MainStage(){
 		super();
-
+		setResizable(false);
+		
 		setTitle("INF 122 Game Client");
         Scene scene = new Scene(new BorderPane());
         //Menus
@@ -73,7 +77,7 @@ public class MainStage extends Stage{
         //text area
         TAlog = new TextArea();
         TAlog.setMaxHeight(100);
-
+        TAlog.setMaxWidth(500);
         //Button
         actionButton = new Button("Button");
         actionButton.setMinSize(100,100);
@@ -84,11 +88,19 @@ public class MainStage extends Stage{
         BorderPane bottomright = new BorderPane();
         bottomright.setCenter(actionButton);
         bottom.setRight(bottomright);
+        bottomright.setPadding(new Insets(10,10,10,10));
         
+        //centering board
+        StackPane sp = new StackPane();
+        sp.getChildren().add(gameboard);
+        StackPane.setAlignment(gameboard, Pos.CENTER);
+
 		((BorderPane) scene.getRoot()).setTop(mb);
-		((BorderPane) scene.getRoot()).setCenter(gameboard);
+		((BorderPane) scene.getRoot()).setCenter(sp);
 		((BorderPane) scene.getRoot()).setBottom(bottom);
 		setScene(scene);
+        System.out.println(gameboard.getWidth());
+        System.out.println(gameboard.getHeight());
 		show();
         
 		
