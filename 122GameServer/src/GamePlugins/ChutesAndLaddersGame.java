@@ -88,8 +88,8 @@ public class ChutesAndLaddersGame extends GameState{
 		board.getTile(4, 7).setBackgroundColor(255, 0, 0);
 		board.getTile(6, 0).setBackgroundColor(255, 0, 0);
 		//ladder
-		board.getTile(4, 0).setBackgroundColor(0,252,255);
-		board.getTile(2, 4).setBackgroundColor(0,252,255);
+		board.getTile(4, 4).setBackgroundColor(0,252,255);
+		board.getTile(0, 2).setBackgroundColor(0,252,255);
 
 		specialty.put( new int[]{4,7}, new int[]{2,4});
 		specialty.put( new int[]{6,0}, new int[]{4,0});
@@ -113,11 +113,13 @@ public int[] giveNewSpot(String name){
 	int moves =randomNumGen();
 	int newPos= moves+currentPos.get(name);
 	if(positioning.containsKey(newPos)){
-		if(specialty.containsKey( positioning.get(moves+currentPos.get(name)))){
-		return specialty.get( positioning.get(moves+currentPos.get(name)));
+        System.out.println(positioning.get(newPos)[0]+","+positioning.get(newPos)[1]);
+		if(specialty.containsKey(positioning.get(newPos))){
+            System.out.println(specialty.get(positioning.get(newPos)[0] +"," +specialty.get(positioning.get(newPos)[1] );
+            return specialty.get(positioning.get(newPos));
 		}else{
 		
-			return positioning.get(moves+currentPos.get(name));
+			return positioning.get(newPos);
 		}
 	} else{ return new int[]{7,0};}
 	
@@ -136,7 +138,7 @@ public int[] giveNewSpot(String name){
 			return false;
 		}
 	
-			int[] newSpotCoords =giveNewSpot(name);
+			int[] newSpotCoords =giveNewSpot(currentTurn);
 			
 			board.addPiece(newSpotCoords[0],newSpotCoords[1], playerToPiece.get(currentTurn));
 			int[] a =positioning.get(currentPos.get(name));
