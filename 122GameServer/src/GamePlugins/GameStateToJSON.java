@@ -107,6 +107,7 @@ public class GameStateToJSON
 		jsonGameState.put("columnNum", board.getColumns());
 		jsonGameState.put("errorMsg", errorMsg);
 		jsonGameState.put("gameMsg", gameMsg);
+		jsonGameState.put("type", "GameBoard");
 		
 		
 		
