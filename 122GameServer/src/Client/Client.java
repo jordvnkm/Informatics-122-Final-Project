@@ -154,6 +154,7 @@ public class Client implements Runnable{
 		if(connectionEstablished){
 			com.sendMessage(JSONClientTranslator.loginType("Login"));
 		  	com.sendMessage(JSONClientTranslator.username(username));
+		  	clientName = username;
 		}
 	}
 	
@@ -172,6 +173,7 @@ public class Client implements Runnable{
 			com.sendMessage(JSONClientTranslator.loginType("CreateUser"));
 		  	com.sendMessage(JSONClientTranslator.username(username));
 		  	com.sendMessage(JSONClientTranslator.description(info));
+		  	clientName = username;
 		}
 	}
 	public void setupBoard(){

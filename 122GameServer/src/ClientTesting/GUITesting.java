@@ -86,7 +86,7 @@ class DummyClient implements Runnable{
                 	int xloc= t.getXlocation();
                 	int yloc= t.getYlocation();
                 	gui.logger("Mouse clicked: "+xloc+","+yloc,true);
-            		t.setText("X");
+            		//t.setText("X");
                 });
         	}
 	}
